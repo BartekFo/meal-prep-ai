@@ -1,3 +1,4 @@
+import { login } from "@/app/(auth-pages)/login/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -33,7 +34,7 @@ export function LoginForm({
 					</div>
 					<Input id="password" type="password" required />
 				</div>
-				<Button type="submit" className="w-full">
+				<Button formAction={login} className="w-full">
 					Login
 				</Button>
 			</div>
