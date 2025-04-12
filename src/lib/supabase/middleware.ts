@@ -58,7 +58,5 @@ export const updateSession = async (request: NextRequest) => {
 		return NextResponse.redirect(new URL("/dashboard", request.url));
 	}
 
-	console.log(user);
-
 	return response;
 };
