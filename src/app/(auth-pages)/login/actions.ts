@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { routes } from "@/lib/constants/routes";
 import { createClient } from "@/lib/supabase/server";
 
 export async function login(formData: FormData) {
@@ -26,5 +27,5 @@ export async function login(formData: FormData) {
 	}
 
 	revalidatePath("/", "layout");
-	redirect("/");
+	redirect(routes.dashboard);
 }

@@ -9,6 +9,7 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { routes } from "@/lib/constants/routes";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -18,16 +19,16 @@ export function NavMain() {
 		<SidebarGroup>
 			<SidebarMenu>
 				<SidebarMenuItem>
-					<SidebarMenuButton asChild isActive={pathname === "/dashboard"}>
-						<Link href="/dashboard">
+					<SidebarMenuButton asChild isActive={pathname === routes.dashboard}>
+						<Link href={routes.dashboard}>
 							<Home />
 							<span>Dashboard</span>
 						</Link>
 					</SidebarMenuButton>
 				</SidebarMenuItem>
 				<SidebarMenuItem>
-					<SidebarMenuButton asChild isActive={pathname === "/recipes"}>
-						<Link href="/recipes">
+					<SidebarMenuButton asChild isActive={pathname === routes.recipes}>
+						<Link href={routes.recipes}>
 							<BookOpen />
 							<span>Recipes</span>
 						</Link>

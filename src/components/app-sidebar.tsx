@@ -4,7 +4,7 @@ import {} from "lucide-react";
 import type * as React from "react";
 
 import { NavMain } from "@/components/nav-main";
-import { NavUser } from "@/components/nav-user";
+import { NavUser } from "@/components/ui/nav-user";
 import {
 	Sidebar,
 	SidebarContent,
