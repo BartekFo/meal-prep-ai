@@ -1,8 +1,3 @@
-"use client";
-
-import {} from "lucide-react";
-import type * as React from "react";
-
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/ui/nav-user";
 import {
@@ -25,13 +20,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				{/* <NavProjects projects={data.projects} /> */}
 			</SidebarContent>
 			<SidebarFooter>
-				<NavUser
-					user={{
-						avatar: "/avatars/shadcn.jpg",
-						email: "m@example.com",
-						name: "shadcn",
-					}}
-				/>
+				<NavUser />
 			</SidebarFooter>
 			<SidebarRail />
 		</Sidebar>

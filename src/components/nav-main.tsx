@@ -2,7 +2,6 @@
 
 import { BookOpen, Home } from "lucide-react";
 
-import {} from "@/components/ui/collapsible";
 import {
 	SidebarGroup,
 	SidebarMenu,
