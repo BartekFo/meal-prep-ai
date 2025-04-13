@@ -6,9 +6,9 @@ export default function AuthLayout({
 	children: React.ReactNode;
 }) {
 	return (
-		<div className="min-h-screen grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-background">
+		<div className="grid min-h-screen grid-cols-1 gap-4 bg-background p-4 md:grid-cols-2">
 			{children}
-			<div className="hidden md:block bg-sidebar-accent relative aspect-auto rounded-lg overflow-hidden shadow-md">
+			<div className="relative hidden aspect-auto overflow-hidden rounded-lg bg-sidebar-accent shadow-md md:block">
 				<Image
 					src={"/auth-background-food-boxes.jpg?height=600&width=600&text=Meal"}
 					alt={"Meal prep image"}

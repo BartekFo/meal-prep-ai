@@ -48,10 +48,10 @@ export function LoginForm({
 				</form>
 			</CardContent>
 			<CardFooter className="flex flex-col space-y-4">
-				<div className="relative flex items-center w-full">
-					<div className="flex-grow border-t border-gray-300" />
-					<span className="mx-4 text-sm text-gray-500">or</span>
-					<div className="flex-grow border-t border-gray-300" />
+				<div className="relative flex w-full items-center">
+					<div className="flex-grow border-gray-300 border-t" />
+					<span className="mx-4 text-gray-500 text-sm">or</span>
+					<div className="flex-grow border-gray-300 border-t" />
 				</div>
 				<div className="text-center text-sm">
 					Don&apos;t have an account?{" "}

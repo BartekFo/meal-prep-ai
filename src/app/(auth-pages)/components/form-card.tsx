@@ -19,11 +19,11 @@ export function FormCard({
 }: React.PropsWithChildren<IFormCardProps>) {
 	return (
 		<Card className="w-full shadow-xl">
-			<CardHeader className="space-y-1 flex flex-col items-center">
-				<div className="w-12 h-12 bg-foreground rounded-full flex items-center justify-center mb-2">
+			<CardHeader className="flex flex-col items-center space-y-1">
+				<div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-foreground">
 					<UtensilsCrossed className="h-6 w-6 text-primary" />
 				</div>
-				<CardTitle className="text-2xl font-bold text-center">
+				<CardTitle className="text-center font-bold text-2xl">
 					{title}
 				</CardTitle>
 				<CardDescription className="text-center">{description}</CardDescription>
