@@ -13,6 +13,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
+import Link from "next/link";
 
 interface Recipe {
 	id: string;
@@ -79,8 +80,8 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
 				</div>
 			</CardContent>
 			<CardFooter className="p-4 pt-0">
-				<Button variant="outline" className="w-full">
-					View Recipe
+				<Button variant="outline" className="w-full" asChild>
+					<Link href={`/recipes/${recipe.id}`}>View Recipe</Link>
 				</Button>
 			</CardFooter>
 		</Card>
