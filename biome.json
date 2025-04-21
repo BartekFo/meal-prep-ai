@@ -1,52 +1,53 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
-	"vcs": {
-		"enabled": true,
-		"clientKind": "git",
-		"useIgnoreFile": false
-	},
-	"files": {
-		"ignoreUnknown": false,
-		"ignore": ["node_modules", "dist", ".*"]
-	},
-	"formatter": {
-		"enabled": true,
-		"indentStyle": "tab",
-		"ignore": ["node_modules", "dist", ".*"]
-	},
-	"organizeImports": {
-		"enabled": true
-	},
-	"linter": {
-		"enabled": true,
-		"rules": {
-			"recommended": true,
-			"correctness": {
-				"noUnusedImports": "error"
-			},
-			"nursery": {
-				"useSortedClasses": "error"
-			}
-		},
-		"ignore": ["node_modules", "dist", ".*"]
-	},
-	"javascript": {
-		"formatter": {
-			"quoteStyle": "double",
-			"semicolons": "always",
-			"bracketSpacing": true,
-			"arrowParentheses": "always"
-		}
-	},
-	"css": {
-		"formatter": {
-			"enabled": true
-		},
-		"assists": {
-			"enabled": true
-		},
-		"linter": {
-			"enabled": true
-		}
-	}
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": false
+  },
+  "files": {
+    "ignoreUnknown": false,
+    "ignore": ["node_modules", "dist", ".*"]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "ignore": ["node_modules", "dist", ".*"]
+  },
+  "organizeImports": {
+    "enabled": true
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "correctness": {
+        "noUnusedImports": "error",
+        "noChildrenProp": "off"
+      },
+      "nursery": {
+        "useSortedClasses": "error"
+      }
+    },
+    "ignore": ["node_modules", "dist", ".*"]
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double",
+      "semicolons": "always",
+      "bracketSpacing": true,
+      "arrowParentheses": "always"
+    }
+  },
+  "css": {
+    "formatter": {
+      "enabled": true
+    },
+    "assists": {
+      "enabled": true
+    },
+    "linter": {
+      "enabled": true
+    }
+  }
 }
