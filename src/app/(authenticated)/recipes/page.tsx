@@ -1,6 +1,7 @@
 import { Plus } from "lucide-react";
 import { Suspense } from "react";
 
+import { Heading1 } from "@/components/typography";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { RecipeFilters } from "./components/recipe-filters";
@@ -11,7 +12,7 @@ export default function RecipesPage() {
   return (
     <div className="flex h-full flex-col">
       <div className="flex items-center justify-between border-b px-6 py-4">
-        <h1 className="font-semibold text-2xl">Recipes</h1>
+        <Heading1 className="font-semibold text-2xl">Recipes</Heading1>
         <Button asChild>
           <Link href="/recipes/new">
             <Plus className="mr-2 h-4 w-4" />

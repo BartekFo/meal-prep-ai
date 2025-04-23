@@ -14,7 +14,7 @@ export function Heading2({
   ...props
 }: { children: React.ReactNode } & React.ComponentProps<"h2">) {
   return (
-    <h2 className="scroll-m-20 border-b pb-2 font-semibold text-3xl tracking-tight first:mt-0">
+    <h2 className="scroll-m-20 font-semibold text-3xl tracking-tight first:mt-0">
       {children}
     </h2>
   );

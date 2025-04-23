@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+import { Heading2 } from "@/components/typography";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAppForm } from "@/components/ui/form";
@@ -15,61 +16,38 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import { type IRecipeFormValues, recipeFormSchema } from "../schema";
+import { useStore, useTransform } from "@tanstack/react-form";
+import { initialFormState, mergeForm } from "@tanstack/react-form/nextjs";
+import { Loader2, Plus, Trash2 } from "lucide-react";
+import { useActionState } from "react";
+import addRecipeAction from "../form-logic/action";
+import { formOpts } from "../form-logic/shared-code";
 import { ImageUpload } from "./image-upload";
 
-async function saveRecipe(data: IRecipeFormValues) {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      console.log("Recipe data:", data);
-      resolve({ success: true });
-    }, 1500);
-  });
-}
-
-const defatultRecipeFormValues: IRecipeFormValues = {
-  title: "",
-  description: "",
-  image: "",
-  prepTime: "",
-  cookTime: "",
-  servings: 4,
-  mealType: "",
-  calories: 0,
-  protein: 0,
-  carbs: 0,
-  fat: 0,
-  ingredients: [],
-  instructions: [],
-};
-
 export function AddRecipeForm() {
-  const router = useRouter();
+  const [state, action] = useActionState(addRecipeAction, initialFormState);
 
   const form = useAppForm({
-    defaultValues: defatultRecipeFormValues,
-    validators: {
-      onSubmit: recipeFormSchema,
-    },
-    onSubmit: async ({ value }) => {
-      await saveRecipe(value);
-      toast.success("Recipe created");
-      router.push("/recipes");
-    },
+    ...formOpts,
+    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+    transform: useTransform((baseForm) => mergeForm(baseForm, state!), [state]),
   });
+
+  const formErrors = useStore(form.store, (formState) => formState.errors)[0];
+
+  console.log("formErrors", formErrors);
 
   return (
     <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
+      action={action as never}
+      onSubmit={() => {
         form.handleSubmit();
       }}
       className="space-y-8"
     >
+      {/* {formErrors && Object.values(formErrors).map((error) => (
+        <p key={error[0].message}>{error[0].message}</p>
+      ))} */}
       <Card>
         <CardContent className="pt-6">
           <div className="grid gap-6 md:grid-cols-2">
@@ -81,6 +59,7 @@ export function AddRecipeForm() {
                     <field.Label>Recipe Title</field.Label>
                     <field.Control>
                       <Input
+                        name={field.name}
                         placeholder="Enter recipe title"
                         value={field.state.value}
                         onBlur={field.handleBlur}
@@ -101,6 +80,7 @@ export function AddRecipeForm() {
                     <field.Label>Description</field.Label>
                     <field.Control>
                       <Textarea
+                        name={field.name}
                         placeholder="Describe your recipe"
                         className="min-h-[100px]"
                         value={field.state.value}
@@ -142,7 +122,9 @@ export function AddRecipeForm() {
                   <field.Label>Prep Time (minutes)</field.Label>
                   <field.Control>
                     <Input
-                      type="text"
+                      name={field.name}
+                      type="number"
+                      min={1}
                       placeholder="15"
                       value={field.state.value}
                       onBlur={field.handleBlur}
@@ -161,7 +143,9 @@ export function AddRecipeForm() {
                   <field.Label>Cook Time (minutes)</field.Label>
                   <field.Control>
                     <Input
-                      type="text"
+                      name={field.name}
+                      type="number"
+                      min={1}
                       placeholder="30"
                       value={field.state.value}
                       onBlur={field.handleBlur}
@@ -180,15 +164,12 @@ export function AddRecipeForm() {
                   <Label>Servings</Label>
                   <field.Control>
                     <Input
+                      name={field.name}
                       type="number"
                       min={1}
                       value={field.state.value}
                       onBlur={field.handleBlur}
-                      onChange={(e) =>
-                        field.handleChange(
-                          e.target.value ? Number(e.target.value) : 0,
-                        )
-                      }
+                      onChange={(e) => field.handleChange(e.target.value)}
                     />
                   </field.Control>
                   <field.Message />
@@ -203,13 +184,14 @@ export function AddRecipeForm() {
                   <field.Label>Meal Type</field.Label>
                   <field.Control>
                     <Select
+                      name={field.name}
                       onValueChange={field.handleChange}
                       defaultValue={field.state.value}
                       value={field.state.value}
                       onOpenChange={field.handleBlur}
                     >
                       <div>
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select meal type" />
                         </SelectTrigger>
                       </div>
@@ -229,237 +211,157 @@ export function AddRecipeForm() {
         </CardContent>
       </Card>
 
+      <Card>
+        <CardContent className="pt-6">
+          <form.AppField name="ingredients" mode="array">
+            {(field) => {
+              return (
+                <>
+                  <div className="mb-4 flex items-center justify-between">
+                    <Heading2 className="font-semibold text-xl">
+                      Ingredients
+                    </Heading2>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => field.pushValue("")}
+                    >
+                      <Plus className="mr-2 h-4 w-4" />
+                      Add Ingredient
+                    </Button>
+                  </div>
+                  <div className="space-y-4">
+                    {field.state.value.length > 0 &&
+                      field.state.value.map((_, i) => {
+                        return (
+                          // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+                          <form.AppField key={i} name={`ingredients[${i}]`}>
+                            {(subField) => {
+                              return (
+                                <div
+                                  key={subField.name}
+                                  className="flex items-start gap-2"
+                                >
+                                  <subField.Item className="flex-1">
+                                    <subField.Control>
+                                      <Input
+                                        name={subField.name}
+                                        placeholder="e.g. 1 cup flour"
+                                        value={subField.state.value}
+                                        onBlur={subField.handleBlur}
+                                        onChange={(e) =>
+                                          subField.handleChange(e.target.value)
+                                        }
+                                      />
+                                    </subField.Control>
+                                    <subField.Message />
+                                  </subField.Item>
+
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => field.removeValue(i)}
+                                    disabled={field.state.value.length === 1}
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                    <span className="sr-only">
+                                      Remove ingredient
+                                    </span>
+                                  </Button>
+                                </div>
+                              );
+                            }}
+                          </form.AppField>
+                        );
+                      })}
+                  </div>
+                </>
+              );
+            }}
+          </form.AppField>
+        </CardContent>
+      </Card>
+
       {/* <Card>
-				<CardContent className="pt-6">
-					<h2 className="mb-4 font-semibold text-xl">Nutrition Information</h2>
-					<div className="grid gap-6 md:grid-cols-4">
-						<form.Field
-							name="calories"
-							children={(field) => (
-								<FormItem>
-									<FormLabel>Calories</FormLabel>
-									<Input
-										type="number"
-										min={0}
-										value={String(field.state.value)}
-										onBlur={field.handleBlur}
-										onChange={(e) =>
-											field.handleChange(
-												e.target.value ? Number(e.target.value) : "",
-											)
-										}
-									/>
-									{field.state.meta.errors ? (
-										<FormMessage>
-											{field.state.meta.errors.join(", ")}
-										</FormMessage>
-									) : null}
-								</FormItem>
-							)}
-						/>
+        <CardContent className="pt-6">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="font-semibold text-xl">Instructions</h2>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={addInstruction} // Call local state function
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Add Step
+            </Button>
+          </div>
 
-						<form.Field
-							name="protein"
-							children={(field) => (
-								<FormItem>
-									<FormLabel>Protein (g)</FormLabel>
-									<Input
-										type="number"
-										min={0}
-										value={String(field.state.value)}
-										onBlur={field.handleBlur}
-										onChange={(e) =>
-											field.handleChange(
-												e.target.value ? Number(e.target.value) : "",
-											)
-										}
-									/>
-									{field.state.meta.errors ? (
-										<FormMessage>
-											{field.state.meta.errors.join(", ")}
-										</FormMessage>
-									) : null}
-								</FormItem>
-							)}
-						/>
+          {instructions.map((instruction, index) => (
+            // Use a unique key for each item
+            <div key={index} className="mb-4 flex items-start gap-2">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted font-medium text-sm">
+                {index + 1}
+              </div>
+              <form.Field
+                name={`instructions[${index}].value`}
+                validators={{
+                  onChange: formSchema.shape.instructions.element.shape.value,
+                }}
+                children={(field) => (
+                  <FormItem className="flex-1">
+                    <Textarea
+                      placeholder="Describe this step"
+                      className="min-h-[80px]"
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                    />
+                    {field.state.meta.errors ? (
+                      <FormMessage>
+                        {field.state.meta.errors.join(", ")}
+                      </FormMessage>
+                    ) : null}
+                  </FormItem>
+                )}
+              />
 
-						<form.Field
-							name="carbs"
-							children={(field) => (
-								<FormItem>
-									<FormLabel>Carbs (g)</FormLabel>
-									<Input
-										type="number"
-										min={0}
-										value={String(field.state.value)}
-										onBlur={field.handleBlur}
-										onChange={(e) =>
-											field.handleChange(
-												e.target.value ? Number(e.target.value) : "",
-											)
-										}
-									/>
-									{field.state.meta.errors ? (
-										<FormMessage>
-											{field.state.meta.errors.join(", ")}
-										</FormMessage>
-									) : null}
-								</FormItem>
-							)}
-						/>
-
-						<form.Field
-							name="fat"
-							children={(field) => (
-								<FormItem>
-									<FormLabel>Fat (g)</FormLabel>
-									<Input
-										type="number"
-										min={0}
-										value={String(field.state.value)}
-										onBlur={field.handleBlur}
-										onChange={(e) =>
-											field.handleChange(
-												e.target.value ? Number(e.target.value) : "",
-											)
-										}
-									/>
-									{field.state.meta.errors ? (
-										<FormMessage>
-											{field.state.meta.errors.join(", ")}
-										</FormMessage>
-									) : null}
-								</FormItem>
-							)}
-						/>
-					</div>
-				</CardContent>
-			</Card>
-
-			<Card>
-				<CardContent className="pt-6">
-					<div className="mb-4 flex items-center justify-between">
-						<h2 className="font-semibold text-xl">Ingredients</h2>
-						<Button
-							type="button"
-							variant="outline"
-							size="sm"
-							onClick={addIngredient} // Call local state function
-						>
-							<Plus className="mr-2 h-4 w-4" />
-							Add Ingredient
-						</Button>
-					</div>
-
-					{ingredients.map((ingredient, index) => (
-						// Use a unique key for each item
-						<div key={index} className="mb-4 flex items-start gap-2">
-							<form.Field
-								name={`ingredients[${index}].value`}
-								validators={{
-									onChange: formSchema.shape.ingredients.element.shape.value,
-								}}
-								children={(field) => (
-									<FormItem className="flex-1">
-										<Input
-											placeholder="e.g. 1 cup flour"
-											value={field.state.value}
-											onBlur={field.handleBlur}
-											onChange={(e) => field.handleChange(e.target.value)}
-										/>
-										{field.state.meta.errors ? (
-											<FormMessage>
-												{field.state.meta.errors.join(", ")}
-											</FormMessage>
-										) : null}
-									</FormItem>
-								)}
-							/>
-
-							<Button
-								type="button"
-								variant="ghost"
-								size="icon"
-								onClick={() => removeIngredient(index)} // Call local state function
-								disabled={ingredients.length === 1}
-							>
-								<Trash2 className="h-4 w-4" />
-								<span className="sr-only">Remove ingredient</span>
-							</Button>
-						</div>
-					))}
-				</CardContent>
-			</Card>
-
-			<Card>
-				<CardContent className="pt-6">
-					<div className="mb-4 flex items-center justify-between">
-						<h2 className="font-semibold text-xl">Instructions</h2>
-						<Button
-							type="button"
-							variant="outline"
-							size="sm"
-							onClick={addInstruction} // Call local state function
-						>
-							<Plus className="mr-2 h-4 w-4" />
-							Add Step
-						</Button>
-					</div>
-
-					{instructions.map((instruction, index) => (
-						// Use a unique key for each item
-						<div key={index} className="mb-4 flex items-start gap-2">
-							<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted font-medium text-sm">
-								{index + 1}
-							</div>
-							<form.Field
-								name={`instructions[${index}].value`}
-								validators={{
-									onChange: formSchema.shape.instructions.element.shape.value,
-								}}
-								children={(field) => (
-									<FormItem className="flex-1">
-										<Textarea
-											placeholder="Describe this step"
-											className="min-h-[80px]"
-											value={field.state.value}
-											onBlur={field.handleBlur}
-											onChange={(e) => field.handleChange(e.target.value)}
-										/>
-										{field.state.meta.errors ? (
-											<FormMessage>
-												{field.state.meta.errors.join(", ")}
-											</FormMessage>
-										) : null}
-									</FormItem>
-								)}
-							/>
-
-							<Button
-								type="button"
-								variant="ghost"
-								size="icon"
-								onClick={() => removeInstruction(index)} // Call local state function
-								disabled={instructions.length === 1}
-							>
-								<Trash2 className="h-4 w-4" />
-								<span className="sr-only">Remove step</span>
-							</Button>
-						</div>
-					))}
-				</CardContent>
-			</Card> */}
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => removeInstruction(index)} // Call local state function
+                disabled={instructions.length === 1}
+              >
+                <Trash2 className="h-4 w-4" />
+                <span className="sr-only">Remove step</span>
+              </Button>
+            </div>
+          ))}
+        </CardContent>
+      </Card> */}
 
       <div className="flex justify-end gap-4">
         <Button variant="outline" type="button" asChild>
           <Link href="/recipes">Cancel</Link>
         </Button>
-        <Button type="submit" disabled={form.state.isSubmitting}>
-          {form.state.isSubmitting && (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        <form.Subscribe
+          selector={(formState) => [
+            formState.canSubmit,
+            formState.isSubmitting,
+          ]}
+        >
+          {([canSubmit, isSubmitting]) => (
+            <Button type="submit" disabled={!canSubmit}>
+              {isSubmitting && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              {isSubmitting ? "Saving..." : "Save Recipe"}
+            </Button>
           )}
-          {form.state.isSubmitting ? "Saving..." : "Save Recipe"}
-        </Button>
+        </form.Subscribe>
       </div>
     </form>
   );
