@@ -95,8 +95,12 @@ const getRecipe = (id: string) => {
   return recipes.find((recipe) => recipe.id === id);
 };
 
-export default function RecipePage({ params }: { params: { id: string } }) {
-  const recipe = getRecipe(params.id);
+export default async function RecipePage({
+  params,
+}: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+
+  const recipe = getRecipe(id);
 
   if (!recipe) {
     return <div className="p-6">Recipe not found</div>;
