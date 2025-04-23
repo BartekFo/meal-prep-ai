@@ -2,21 +2,11 @@
 
 import Link from "next/link";
 
-import { useForm } from "@tanstack/react-form";
-import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-// Note: We will replace FormField and FormControl from react-hook-form
-// with manual wiring using TanStack Form's field state or form.Field
-import {
-  FormDescription,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { useAppForm } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -25,6 +15,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { type IRecipeFormValues, recipeFormSchema } from "../schema";
 import { ImageUpload } from "./image-upload";
@@ -38,26 +30,27 @@ async function saveRecipe(data: IRecipeFormValues) {
   });
 }
 
+const defatultRecipeFormValues: IRecipeFormValues = {
+  title: "",
+  description: "",
+  image: "",
+  prepTime: "",
+  cookTime: "",
+  servings: 4,
+  mealType: "",
+  calories: 0,
+  protein: 0,
+  carbs: 0,
+  fat: 0,
+  ingredients: [],
+  instructions: [],
+};
+
 export function AddRecipeForm() {
   const router = useRouter();
 
-  // Initialize TanStack Form
-  const form = useForm({
-    defaultValues: {
-      title: "",
-      description: "",
-      image: "",
-      prepTime: "",
-      cookTime: "",
-      servings: 4,
-      mealType: "",
-      calories: 0,
-      protein: 0,
-      carbs: 0,
-      fat: 0,
-      ingredients: [],
-      instructions: [],
-    } as IRecipeFormValues,
+  const form = useAppForm({
+    defaultValues: defatultRecipeFormValues,
     validators: {
       onSubmit: recipeFormSchema,
     },
@@ -81,169 +74,155 @@ export function AddRecipeForm() {
         <CardContent className="pt-6">
           <div className="grid gap-6 md:grid-cols-2">
             <div className="md:col-span-2">
-              <form.Field
+              <form.AppField
                 name="title"
                 children={(field) => (
-                  <FormItem>
-                    <FormLabel>Recipe Title</FormLabel>
-                    <Input
-                      placeholder="Enter recipe title"
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                    />
-                    {field.state.meta.errors ? (
-                      <FormMessage>
-                        {field.state.meta.errors.join(", ")}
-                      </FormMessage>
-                    ) : null}
-                  </FormItem>
+                  <field.Item>
+                    <field.Label>Recipe Title</field.Label>
+                    <field.Control>
+                      <Input
+                        placeholder="Enter recipe title"
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                      />
+                    </field.Control>
+                    <field.Message />
+                  </field.Item>
                 )}
               />
             </div>
 
             <div className="md:col-span-2">
-              <form.Field
+              <form.AppField
                 name="description"
                 children={(field) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <Textarea
-                      placeholder="Describe your recipe"
-                      className="min-h-[100px]"
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                    />
-                    {field.state.meta.errors ? (
-                      <FormMessage>
-                        {field.state.meta.errors.join(", ")}
-                      </FormMessage>
-                    ) : null}
-                  </FormItem>
+                  <field.Item>
+                    <field.Label>Description</field.Label>
+                    <field.Control>
+                      <Textarea
+                        placeholder="Describe your recipe"
+                        className="min-h-[100px]"
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                      />
+                    </field.Control>
+                    <field.Message />
+                  </field.Item>
                 )}
               />
             </div>
 
             <div className="md:col-span-2">
-              <form.Field
+              <form.AppField
                 name="image"
                 children={(field) => (
-                  <FormItem>
-                    <FormLabel>Recipe Image</FormLabel>
-                    <ImageUpload
-                      value={field.state.value || ""}
-                      onChange={field.handleChange}
-                    />
-                    <FormDescription>
+                  <field.Item>
+                    <field.Label>Recipe Image</field.Label>
+                    <field.Control>
+                      <ImageUpload
+                        value={field.state.value || ""}
+                        onChange={field.handleChange}
+                      />
+                    </field.Control>
+                    <field.Description>
                       Upload an image of your recipe (optional)
-                    </FormDescription>
-                    {field.state.meta.errors ? (
-                      <FormMessage>
-                        {field.state.meta.errors.join(", ")}
-                      </FormMessage>
-                    ) : null}
-                  </FormItem>
+                    </field.Description>
+                    <field.Message />
+                  </field.Item>
                 )}
               />
             </div>
 
-            <form.Field
+            <form.AppField
               name="prepTime"
               children={(field) => (
-                <FormItem>
-                  <FormLabel>Prep Time (minutes)</FormLabel>
-                  <Input
-                    type="text"
-                    placeholder="15"
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  />
-                  {field.state.meta.errors ? (
-                    <FormMessage>
-                      {field.state.meta.errors.join(", ")}
-                    </FormMessage>
-                  ) : null}
-                </FormItem>
+                <field.Item>
+                  <field.Label>Prep Time (minutes)</field.Label>
+                  <field.Control>
+                    <Input
+                      type="text"
+                      placeholder="15"
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                    />
+                  </field.Control>
+                  <field.Message />
+                </field.Item>
               )}
             />
 
-            <form.Field
+            <form.AppField
               name="cookTime"
               children={(field) => (
-                <FormItem>
-                  <FormLabel>Cook Time (minutes)</FormLabel>
-                  <Input
-                    type="text"
-                    placeholder="30"
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  />
-                  {field.state.meta.errors ? (
-                    <FormMessage>
-                      {field.state.meta.errors.join(", ")}
-                    </FormMessage>
-                  ) : null}
-                </FormItem>
+                <field.Item>
+                  <field.Label>Cook Time (minutes)</field.Label>
+                  <field.Control>
+                    <Input
+                      type="text"
+                      placeholder="30"
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                    />
+                  </field.Control>
+                  <field.Message />
+                </field.Item>
               )}
             />
 
-            <form.Field
+            <form.AppField
               name="servings"
               children={(field) => (
-                <FormItem>
-                  <FormLabel>Servings</FormLabel>
-                  <Input
-                    type="number"
-                    min={1}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) =>
-                      field.handleChange(
-                        e.target.value ? Number(e.target.value) : 0,
-                      )
-                    }
-                  />
-                  {field.state.meta.errors ? (
-                    <FormMessage>
-                      {field.state.meta.errors.join(", ")}
-                    </FormMessage>
-                  ) : null}
-                </FormItem>
+                <field.Item>
+                  <Label>Servings</Label>
+                  <field.Control>
+                    <Input
+                      type="number"
+                      min={1}
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) =>
+                        field.handleChange(
+                          e.target.value ? Number(e.target.value) : 0,
+                        )
+                      }
+                    />
+                  </field.Control>
+                  <field.Message />
+                </field.Item>
               )}
             />
 
-            <form.Field
+            <form.AppField
               name="mealType"
               children={(field) => (
-                <FormItem>
-                  <FormLabel>Meal Type</FormLabel>
-                  <Select
-                    onValueChange={field.handleChange}
-                    defaultValue={field.state.value}
-                    value={field.state.value}
-                    onOpenChange={field.handleBlur}
-                  >
-                    <div>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select meal type" />
-                      </SelectTrigger>
-                    </div>
-                    <SelectContent>
-                      <SelectItem value="breakfast">Breakfast</SelectItem>
-                      <SelectItem value="lunch">Lunch</SelectItem>
-                      <SelectItem value="dinner">Dinner</SelectItem>
-                      <SelectItem value="snack">Snack</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {field.state.meta.errors ? (
-                    <FormMessage>
-                      {field.state.meta.errors.join(", ")}
-                    </FormMessage>
-                  ) : null}
-                </FormItem>
+                <field.Item>
+                  <field.Label>Meal Type</field.Label>
+                  <field.Control>
+                    <Select
+                      onValueChange={field.handleChange}
+                      defaultValue={field.state.value}
+                      value={field.state.value}
+                      onOpenChange={field.handleBlur}
+                    >
+                      <div>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select meal type" />
+                        </SelectTrigger>
+                      </div>
+                      <SelectContent>
+                        <SelectItem value="breakfast">Breakfast</SelectItem>
+                        <SelectItem value="lunch">Lunch</SelectItem>
+                        <SelectItem value="dinner">Dinner</SelectItem>
+                        <SelectItem value="snack">Snack</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </field.Control>
+                  <field.Message />
+                </field.Item>
               )}
             />
           </div>
