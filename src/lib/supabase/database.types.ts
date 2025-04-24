@@ -7,31 +7,6 @@ export type Json =
   | Json[];
 
 export type Database = {
-  graphql_public: {
-    Tables: {
-      [_ in never]: never;
-    };
-    Views: {
-      [_ in never]: never;
-    };
-    Functions: {
-      graphql: {
-        Args: {
-          operationName?: string;
-          query?: string;
-          variables?: Json;
-          extensions?: Json;
-        };
-        Returns: Json;
-      };
-    };
-    Enums: {
-      [_ in never]: never;
-    };
-    CompositeTypes: {
-      [_ in never]: never;
-    };
-  };
   public: {
     Tables: {
       favorites: {
@@ -92,33 +67,42 @@ export type Database = {
       };
       recipes: {
         Row: {
-          comment: string | null;
+          cook_time: number | null;
           created_at: string;
           description: string;
           id: number;
           ingredients: Json;
+          instructions: Json | null;
+          meal_type: Database["public"]["Enums"]["meal_type"];
+          prep_time: number | null;
           servings: number | null;
-          titile: string;
+          title: string;
           user_id: string;
         };
         Insert: {
-          comment?: string | null;
+          cook_time?: number | null;
           created_at?: string;
           description: string;
           id?: number;
           ingredients: Json;
+          instructions?: Json | null;
+          meal_type: Database["public"]["Enums"]["meal_type"];
+          prep_time?: number | null;
           servings?: number | null;
-          titile: string;
+          title: string;
           user_id: string;
         };
         Update: {
-          comment?: string | null;
+          cook_time?: number | null;
           created_at?: string;
           description?: string;
           id?: number;
           ingredients?: Json;
+          instructions?: Json | null;
+          meal_type?: Database["public"]["Enums"]["meal_type"];
+          prep_time?: number | null;
           servings?: number | null;
-          titile?: string;
+          title?: string;
           user_id?: string;
         };
         Relationships: [];
@@ -131,7 +115,7 @@ export type Database = {
       [_ in never]: never;
     };
     Enums: {
-      [_ in never]: never;
+      meal_type: "breakfast" | "lunch" | "dinner" | "snack";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -245,10 +229,9 @@ export type CompositeTypes<
     : never;
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
-    Enums: {},
+    Enums: {
+      meal_type: ["breakfast", "lunch", "dinner", "snack"],
+    },
   },
 } as const;

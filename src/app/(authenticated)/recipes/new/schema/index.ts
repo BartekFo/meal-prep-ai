@@ -37,9 +37,9 @@ export const recipeFormSchema = v.object({
     v.array(v.pipe(v.string(), v.nonEmpty("Ingredient is required"))),
     v.minLength(1, "At least one ingredient is required"),
   ),
-  instructions: v.optional(
+  instructions: v.pipe(
     v.array(v.string()),
-    // v.minLength(1, "At least one instruction is required"),
+    v.minLength(1, "At least one instruction is required"),
   ),
 });
 

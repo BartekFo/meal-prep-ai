@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { MEAL_TYPES } from "@/lib/constants/meal-types";
 import { useStore, useTransform } from "@tanstack/react-form";
 import { initialFormState, mergeForm } from "@tanstack/react-form/nextjs";
 import { Loader2, Plus, Trash2 } from "lucide-react";
@@ -196,10 +197,18 @@ export function AddRecipeForm() {
                         </SelectTrigger>
                       </div>
                       <SelectContent>
-                        <SelectItem value="breakfast">Breakfast</SelectItem>
-                        <SelectItem value="lunch">Lunch</SelectItem>
-                        <SelectItem value="dinner">Dinner</SelectItem>
-                        <SelectItem value="snack">Snack</SelectItem>
+                        <SelectItem value={MEAL_TYPES[0]}>
+                          {MEAL_TYPES[0]}
+                        </SelectItem>
+                        <SelectItem value={MEAL_TYPES[1]}>
+                          {MEAL_TYPES[1]}
+                        </SelectItem>
+                        <SelectItem value={MEAL_TYPES[2]}>
+                          {MEAL_TYPES[2]}
+                        </SelectItem>
+                        <SelectItem value={MEAL_TYPES[3]}>
+                          {MEAL_TYPES[3]}
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </field.Control>
@@ -284,64 +293,77 @@ export function AddRecipeForm() {
         </CardContent>
       </Card>
 
-      {/* <Card>
+      <Card>
         <CardContent className="pt-6">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="font-semibold text-xl">Instructions</h2>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={addInstruction} // Call local state function
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Add Step
-            </Button>
-          </div>
+          <form.AppField name="instructions" mode="array">
+            {(field) => {
+              return (
+                <>
+                  <div className="mb-4 flex items-center justify-between">
+                    <Heading2 className="font-semibold text-xl">
+                      Instructions
+                    </Heading2>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => field.pushValue("")}
+                    >
+                      <Plus className="mr-2 h-4 w-4" />
+                      Add Step
+                    </Button>
+                  </div>
+                  <div className="space-y-4">
+                    {field.state.value.length > 0 &&
+                      field.state.value.map((_, i) => {
+                        return (
+                          // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+                          <form.AppField key={i} name={`instructions[${i}]`}>
+                            {(subField) => {
+                              return (
+                                <div
+                                  key={subField.name}
+                                  className="flex items-start gap-2"
+                                >
+                                  <subField.Item className="flex-1">
+                                    <subField.Control>
+                                      <Textarea
+                                        name={subField.name}
+                                        placeholder="Describe this step"
+                                        className="min-h-[80px]"
+                                        value={subField.state.value}
+                                        onBlur={subField.handleBlur}
+                                        onChange={(e) =>
+                                          subField.handleChange(e.target.value)
+                                        }
+                                      />
+                                    </subField.Control>
+                                    <subField.Message />
+                                  </subField.Item>
 
-          {instructions.map((instruction, index) => (
-            // Use a unique key for each item
-            <div key={index} className="mb-4 flex items-start gap-2">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted font-medium text-sm">
-                {index + 1}
-              </div>
-              <form.Field
-                name={`instructions[${index}].value`}
-                validators={{
-                  onChange: formSchema.shape.instructions.element.shape.value,
-                }}
-                children={(field) => (
-                  <FormItem className="flex-1">
-                    <Textarea
-                      placeholder="Describe this step"
-                      className="min-h-[80px]"
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                    />
-                    {field.state.meta.errors ? (
-                      <FormMessage>
-                        {field.state.meta.errors.join(", ")}
-                      </FormMessage>
-                    ) : null}
-                  </FormItem>
-                )}
-              />
-
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                onClick={() => removeInstruction(index)} // Call local state function
-                disabled={instructions.length === 1}
-              >
-                <Trash2 className="h-4 w-4" />
-                <span className="sr-only">Remove step</span>
-              </Button>
-            </div>
-          ))}
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => field.removeValue(i)}
+                                    disabled={field.state.value.length === 1}
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                    <span className="sr-only">Remove step</span>
+                                  </Button>
+                                </div>
+                              );
+                            }}
+                          </form.AppField>
+                        );
+                      })}
+                  </div>
+                </>
+              );
+            }}
+          </form.AppField>
         </CardContent>
-      </Card> */}
+      </Card>
 
       <div className="flex justify-end gap-4">
         <Button variant="outline" type="button" asChild>
