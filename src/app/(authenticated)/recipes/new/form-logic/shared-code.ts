@@ -4,7 +4,6 @@ import { type IRecipeFormValues, recipeFormSchema } from "../schema";
 const defatultRecipeFormValues: IRecipeFormValues = {
   title: "",
   description: "",
-  image: "",
   prepTime: "",
   cookTime: "",
   servings: "4",

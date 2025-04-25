@@ -23,7 +23,6 @@ import { Loader2, Plus, Trash2 } from "lucide-react";
 import { useActionState } from "react";
 import addRecipeAction from "../form-logic/action";
 import { formOpts } from "../form-logic/shared-code";
-import { ImageUpload } from "./image-upload";
 
 export function AddRecipeForm() {
   const [state, action] = useActionState(addRecipeAction, initialFormState);
@@ -44,6 +43,7 @@ export function AddRecipeForm() {
       onSubmit={() => {
         form.handleSubmit();
       }}
+      encType="multipart/form-data"
       className="space-y-8"
     >
       {/* {formErrors && Object.values(formErrors).map((error) => (
@@ -102,10 +102,31 @@ export function AddRecipeForm() {
                   <field.Item>
                     <field.Label>Recipe Image</field.Label>
                     <field.Control>
-                      <ImageUpload
-                        value={field.state.value || ""}
-                        onChange={field.handleChange}
+                      <input
+                        type="file"
+                        name="image"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          field.handleChange(file);
+                        }}
                       />
+                      {/* <ImageUpload
+                        value={field.state.value}
+                        onChange={(file) => {
+                          field.handleChange(file);
+                          const input = document.getElementById(
+                            "actual-image-upload",
+                          ) as HTMLInputElement;
+                          if (input) {
+                            const dataTransfer = new DataTransfer();
+                            if (file) {
+                              dataTransfer.items.add(file);
+                            }
+                            input.files = dataTransfer.files;
+                          }
+                        }}
+                      /> */}
                     </field.Control>
                     <field.Description>
                       Upload an image of your recipe (optional)
