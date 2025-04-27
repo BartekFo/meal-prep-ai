@@ -30,8 +30,10 @@ export function AddRecipeForm() {
 
   const form = useAppForm({
     ...formOpts,
-    // biome-ignore lint/style/noNonNullAssertion: <explanation>
-    transform: useTransform((baseForm) => mergeForm(baseForm, state!), [state]),
+    transform: useTransform(
+      (baseForm) => mergeForm(baseForm, state ?? {}),
+      [state],
+    ),
   });
 
   const formErrors = useStore(form.store, (formState) => formState.errors)[0];
@@ -102,18 +104,9 @@ export function AddRecipeForm() {
                   <field.Item>
                     <field.Label>Recipe Image</field.Label>
                     <field.Control>
-                      {/* <input
-                        type="file"
-                        name="image"
-                        accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          field.handleChange(file);
-                        }}
-                      /> */}
                       <RecipeImageUpload
                         name={field.name}
-                        value={field.state.value}
+                        value={field.state.value as File}
                         onChange={(file) => {
                           field.handleChange(file);
                         }}

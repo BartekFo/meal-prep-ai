@@ -1,74 +1,54 @@
 "use server";
 
-import { MEAL_TYPES } from "@/lib/constants/meal-types";
 import { createClient } from "@/lib/supabase/server";
-import type { TMealType } from "@/lib/types";
 import {
   ServerValidateError,
   createServerValidate,
 } from "@tanstack/react-form/nextjs";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { safeParse } from "valibot";
+import { recipeFormSchema } from "../schema";
+import { convertObjectToArray, isMealType } from "./helpers";
+import { uploadImageToSupabase } from "./image-upload";
 import { formOpts } from "./shared-code";
 
 const serverValidate = createServerValidate({
   ...formOpts,
   onServerValidate: ({ value }) => {
-    // const result = safeParse(recipeFormSchema, value);
-    // if (result.issues && result.issues.length > 0) {
-    //   console.log(result.issues);
-    //   return result.issues;
-    // }
-  },
-});
-
-function isMealType(value: string): value is TMealType {
-  return MEAL_TYPES.includes(value as TMealType);
-}
-
-interface IUploadImageToSupabaseArgs {
-  imageFile: File | undefined;
-  title: string;
-  userId: string;
-}
-
-async function uploadImageToSupabase({
-  imageFile,
-  userId,
-  title,
-}: IUploadImageToSupabaseArgs) {
-  try {
-    const supabase = await createClient();
-
-    if (!imageFile) return null;
-
-    const fileName = `${userId}/${imageFile.name}`;
-
-    const { error, data } = await supabase.storage
-      .from("recipes-images")
-      .upload(fileName, imageFile, {
-        upsert: true,
-      });
-
-    if (error) {
-      console.error("Error uploading image:", error);
-      return null;
+    // Ensure ingredients and instructions are proper arrays
+    if (
+      value.ingredients &&
+      typeof value.ingredients === "object" &&
+      !Array.isArray(value.ingredients)
+    ) {
+      value.ingredients = convertObjectToArray<string>(
+        value.ingredients as Record<string, string>,
+      );
     }
 
-    return data.path;
-  } catch (error) {
-    console.error("Error in uploadImageToSupabase:", error);
-    return null;
-  }
-}
+    if (
+      value.instructions &&
+      typeof value.instructions === "object" &&
+      !Array.isArray(value.instructions)
+    ) {
+      value.instructions = convertObjectToArray<string>(
+        value.instructions as Record<string, string>,
+      );
+    }
+
+    const result = safeParse(recipeFormSchema, value);
+    if (result.issues && result.issues.length > 0) {
+      return result.issues;
+    }
+  },
+});
 
 export default async function addRecipeAction(
   prev: unknown,
   formData: FormData,
 ) {
   try {
-    const imageFile = formData.get("image") as File;
-
     const validatedData = await serverValidate(formData);
 
     const supabase = await createClient();
@@ -83,8 +63,7 @@ export default async function addRecipeAction(
     }
 
     const imageUrl = await uploadImageToSupabase({
-      imageFile,
-      title: validatedData.title,
+      imageFile: validatedData.image,
       userId,
     });
 

@@ -7,7 +7,7 @@ export const recipeFormSchema = v.object({
     v.minLength(3, "Title must be at least 3 characters"),
   ),
   description: v.optional(v.string()),
-  image: v.optional(v.file()),
+  image: v.optional(v.blob()),
   prepTime: v.pipe(
     v.string(),
     v.nonEmpty("Prep time is required"),
