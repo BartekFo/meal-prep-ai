@@ -7,7 +7,11 @@ const defatultRecipeFormValues: IRecipeFormValues = {
   prepTime: "",
   cookTime: "",
   servings: "4",
-  mealType: "",
+  mealType: "breakfast",
+  calories: "",
+  protein: "",
+  carbs: "",
+  fat: "",
   ingredients: [""],
   instructions: [""],
 };

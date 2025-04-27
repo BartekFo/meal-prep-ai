@@ -4,7 +4,7 @@ import Link from "next/link";
 
 import { Heading2 } from "@/components/typography";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import {} from "@/components/ui/card";
 import { useAppForm } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,13 +16,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { MEAL_TYPES } from "@/lib/constants/meal-types";
+import { MEAL_TYPES, type MealType } from "@/lib/constants/meal-types";
 import { useStore, useTransform } from "@tanstack/react-form";
 import { initialFormState, mergeForm } from "@tanstack/react-form/nextjs";
 import { Loader2, Plus, Trash2 } from "lucide-react";
 import { useActionState } from "react";
 import addRecipeAction from "../form-logic/action";
 import { formOpts } from "../form-logic/shared-code";
+import { RecipeFormCard } from "./recipe-form-card";
 import { RecipeImageUpload } from "./recipe-image-upload";
 
 export function AddRecipeForm() {
@@ -51,255 +52,338 @@ export function AddRecipeForm() {
       {/* {formErrors && Object.values(formErrors).map((error) => (
         <p key={error[0].message}>{error[0].message}</p>
       ))} */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="grid gap-6 md:grid-cols-2">
-            <div className="md:col-span-2">
-              <form.AppField
-                name="title"
-                children={(field) => (
-                  <field.Item>
-                    <field.Label>Recipe Title</field.Label>
-                    <field.Control>
-                      <Input
-                        name={field.name}
-                        placeholder="Enter recipe title"
-                        value={field.state.value}
-                        onBlur={field.handleBlur}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                      />
-                    </field.Control>
-                    <field.Message />
-                  </field.Item>
-                )}
-              />
-            </div>
-
-            <div className="md:col-span-2">
-              <form.AppField
-                name="description"
-                children={(field) => (
-                  <field.Item>
-                    <field.Label>Description</field.Label>
-                    <field.Control>
-                      <Textarea
-                        name={field.name}
-                        placeholder="Describe your recipe"
-                        className="min-h-[100px]"
-                        value={field.state.value}
-                        onBlur={field.handleBlur}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                      />
-                    </field.Control>
-                    <field.Message />
-                  </field.Item>
-                )}
-              />
-            </div>
-
-            <div className="md:col-span-2">
-              <form.AppField
-                name="image"
-                children={(field) => (
-                  <field.Item>
-                    <field.Label>Recipe Image</field.Label>
-                    <field.Control>
-                      <RecipeImageUpload
-                        name={field.name}
-                        value={field.state.value as File}
-                        onChange={(file) => {
-                          field.handleChange(file);
-                        }}
-                      />
-                    </field.Control>
-                    <field.Description>
-                      Upload an image of your recipe (optional)
-                    </field.Description>
-                    <field.Message />
-                  </field.Item>
-                )}
-              />
-            </div>
-
+      <RecipeFormCard>
+        <Heading2 className="mb-4 font-semibold text-xl">
+          Recipe Details
+        </Heading2>
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className="md:col-span-2">
             <form.AppField
-              name="prepTime"
+              name="title"
               children={(field) => (
                 <field.Item>
-                  <field.Label>Prep Time (minutes)</field.Label>
+                  <field.Label>Recipe Title</field.Label>
                   <field.Control>
                     <Input
                       name={field.name}
-                      type="number"
-                      min={1}
-                      placeholder="15"
+                      placeholder="Enter recipe title"
                       value={field.state.value}
                       onBlur={field.handleBlur}
                       onChange={(e) => field.handleChange(e.target.value)}
                     />
-                  </field.Control>
-                  <field.Message />
-                </field.Item>
-              )}
-            />
-
-            <form.AppField
-              name="cookTime"
-              children={(field) => (
-                <field.Item>
-                  <field.Label>Cook Time (minutes)</field.Label>
-                  <field.Control>
-                    <Input
-                      name={field.name}
-                      type="number"
-                      min={1}
-                      placeholder="30"
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                    />
-                  </field.Control>
-                  <field.Message />
-                </field.Item>
-              )}
-            />
-
-            <form.AppField
-              name="servings"
-              children={(field) => (
-                <field.Item>
-                  <Label>Servings</Label>
-                  <field.Control>
-                    <Input
-                      name={field.name}
-                      type="number"
-                      min={1}
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                    />
-                  </field.Control>
-                  <field.Message />
-                </field.Item>
-              )}
-            />
-
-            <form.AppField
-              name="mealType"
-              children={(field) => (
-                <field.Item>
-                  <field.Label>Meal Type</field.Label>
-                  <field.Control>
-                    <Select
-                      name={field.name}
-                      onValueChange={field.handleChange}
-                      defaultValue={field.state.value}
-                      value={field.state.value}
-                      onOpenChange={field.handleBlur}
-                    >
-                      <div>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select meal type" />
-                        </SelectTrigger>
-                      </div>
-                      <SelectContent>
-                        <SelectItem value={MEAL_TYPES[0]}>
-                          {MEAL_TYPES[0]}
-                        </SelectItem>
-                        <SelectItem value={MEAL_TYPES[1]}>
-                          {MEAL_TYPES[1]}
-                        </SelectItem>
-                        <SelectItem value={MEAL_TYPES[2]}>
-                          {MEAL_TYPES[2]}
-                        </SelectItem>
-                        <SelectItem value={MEAL_TYPES[3]}>
-                          {MEAL_TYPES[3]}
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
                   </field.Control>
                   <field.Message />
                 </field.Item>
               )}
             />
           </div>
-        </CardContent>
-      </Card>
 
-      <Card>
-        <CardContent className="pt-6">
-          <form.AppField name="ingredients" mode="array">
-            {(field) => {
-              return (
-                <>
-                  <div className="mb-4 flex items-center justify-between">
-                    <Heading2 className="font-semibold text-xl">
-                      Ingredients
-                    </Heading2>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => field.pushValue("")}
-                    >
-                      <Plus className="mr-2 h-4 w-4" />
-                      Add Ingredient
-                    </Button>
-                  </div>
-                  <div className="space-y-4">
-                    {field.state.value.length > 0 &&
-                      field.state.value.map((_, i) => {
-                        return (
-                          // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-                          <form.AppField key={i} name={`ingredients[${i}]`}>
-                            {(subField) => {
-                              return (
-                                <div
-                                  key={subField.name}
-                                  className="flex items-start gap-2"
+          <div className="md:col-span-2">
+            <form.AppField
+              name="description"
+              children={(field) => (
+                <field.Item>
+                  <field.Label>Description</field.Label>
+                  <field.Control>
+                    <Textarea
+                      name={field.name}
+                      placeholder="Describe your recipe"
+                      className="min-h-[100px]"
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                    />
+                  </field.Control>
+                  <field.Message />
+                </field.Item>
+              )}
+            />
+          </div>
+
+          <div className="md:col-span-2">
+            <form.AppField
+              name="image"
+              children={(field) => (
+                <field.Item>
+                  <field.Label>Recipe Image</field.Label>
+                  <field.Control>
+                    <RecipeImageUpload
+                      name={field.name}
+                      value={field.state.value as File}
+                      onChange={(file) => {
+                        field.handleChange(file);
+                      }}
+                    />
+                  </field.Control>
+                  <field.Description>
+                    Upload an image of your recipe (optional)
+                  </field.Description>
+                  <field.Message />
+                </field.Item>
+              )}
+            />
+          </div>
+
+          <form.AppField
+            name="prepTime"
+            children={(field) => (
+              <field.Item>
+                <field.Label>Prep Time (minutes)</field.Label>
+                <field.Control>
+                  <Input
+                    name={field.name}
+                    type="number"
+                    min={1}
+                    placeholder="15"
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                </field.Control>
+                <field.Message />
+              </field.Item>
+            )}
+          />
+
+          <form.AppField
+            name="cookTime"
+            children={(field) => (
+              <field.Item>
+                <field.Label>Cook Time (minutes)</field.Label>
+                <field.Control>
+                  <Input
+                    name={field.name}
+                    type="number"
+                    min={1}
+                    placeholder="30"
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                </field.Control>
+                <field.Message />
+              </field.Item>
+            )}
+          />
+
+          <form.AppField
+            name="servings"
+            children={(field) => (
+              <field.Item>
+                <Label>Servings</Label>
+                <field.Control>
+                  <Input
+                    name={field.name}
+                    type="number"
+                    min={1}
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                </field.Control>
+                <field.Message />
+              </field.Item>
+            )}
+          />
+
+          <form.AppField
+            name="mealType"
+            children={(field) => (
+              <field.Item>
+                <field.Label>Meal Type</field.Label>
+                <field.Control>
+                  <Select
+                    name={field.name}
+                    onValueChange={(value: MealType) =>
+                      field.handleChange(value)
+                    }
+                    defaultValue={field.state.value}
+                    value={field.state.value}
+                    onOpenChange={field.handleBlur}
+                  >
+                    <div>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select meal type" />
+                      </SelectTrigger>
+                    </div>
+                    <SelectContent>
+                      <SelectItem value={MEAL_TYPES[0]}>
+                        {MEAL_TYPES[0]}
+                      </SelectItem>
+                      <SelectItem value={MEAL_TYPES[1]}>
+                        {MEAL_TYPES[1]}
+                      </SelectItem>
+                      <SelectItem value={MEAL_TYPES[2]}>
+                        {MEAL_TYPES[2]}
+                      </SelectItem>
+                      <SelectItem value={MEAL_TYPES[3]}>
+                        {MEAL_TYPES[3]}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </field.Control>
+                <field.Message />
+              </field.Item>
+            )}
+          />
+        </div>
+      </RecipeFormCard>
+
+      <RecipeFormCard>
+        <Heading2 className="mb-4 font-semibold text-xl">
+          Nutrition Information
+        </Heading2>
+        <div className="grid gap-6 md:grid-cols-4">
+          <form.AppField
+            name="calories"
+            children={(field) => (
+              <field.Item>
+                <field.Label>Calories</field.Label>
+                <field.Control>
+                  <Input
+                    placeholder="0"
+                    type="number"
+                    min={0}
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                </field.Control>
+                <field.Message />
+              </field.Item>
+            )}
+          />
+          <form.AppField
+            name="protein"
+            children={(field) => (
+              <field.Item>
+                <field.Label>Protein (g)</field.Label>
+                <field.Control>
+                  <Input
+                    placeholder="0"
+                    type="number"
+                    min={0}
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                </field.Control>
+                <field.Message />
+              </field.Item>
+            )}
+          />
+
+          <form.AppField
+            name="carbs"
+            children={(field) => (
+              <field.Item>
+                <field.Label>Carbs (g)</field.Label>
+                <field.Control>
+                  <Input
+                    type="number"
+                    min={0}
+                    placeholder="0"
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                </field.Control>
+                <field.Message />
+              </field.Item>
+            )}
+          />
+
+          <form.AppField
+            name="fat"
+            children={(field) => (
+              <field.Item>
+                <field.Label>Fat (g)</field.Label>
+                <field.Control>
+                  <Input
+                    type="number"
+                    min={0}
+                    placeholder="0"
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                </field.Control>
+                <field.Message />
+              </field.Item>
+            )}
+          />
+        </div>
+      </RecipeFormCard>
+
+      <RecipeFormCard>
+        <form.AppField name="ingredients" mode="array">
+          {(field) => {
+            return (
+              <>
+                <div className="mb-4 flex items-center justify-between">
+                  <Heading2 className="font-semibold text-xl">
+                    Ingredients
+                  </Heading2>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => field.pushValue("")}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add Ingredient
+                  </Button>
+                </div>
+                <div className="space-y-4">
+                  {field.state.value.length > 0 &&
+                    field.state.value.map((_, i) => {
+                      return (
+                        // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+                        <form.AppField key={i} name={`ingredients[${i}]`}>
+                          {(subField) => {
+                            return (
+                              <div
+                                key={subField.name}
+                                className="flex items-start gap-2"
+                              >
+                                <subField.Item className="flex-1">
+                                  <subField.Control>
+                                    <Input
+                                      name={subField.name}
+                                      placeholder="e.g. 1 cup flour"
+                                      value={subField.state.value}
+                                      onBlur={subField.handleBlur}
+                                      onChange={(e) =>
+                                        subField.handleChange(e.target.value)
+                                      }
+                                    />
+                                  </subField.Control>
+                                  <subField.Message />
+                                </subField.Item>
+
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => field.removeValue(i)}
+                                  disabled={field.state.value.length === 1}
                                 >
-                                  <subField.Item className="flex-1">
-                                    <subField.Control>
-                                      <Input
-                                        name={subField.name}
-                                        placeholder="e.g. 1 cup flour"
-                                        value={subField.state.value}
-                                        onBlur={subField.handleBlur}
-                                        onChange={(e) =>
-                                          subField.handleChange(e.target.value)
-                                        }
-                                      />
-                                    </subField.Control>
-                                    <subField.Message />
-                                  </subField.Item>
+                                  <Trash2 className="h-4 w-4" />
+                                  <span className="sr-only">
+                                    Remove ingredient
+                                  </span>
+                                </Button>
+                              </div>
+                            );
+                          }}
+                        </form.AppField>
+                      );
+                    })}
+                </div>
+              </>
+            );
+          }}
+        </form.AppField>
+      </RecipeFormCard>
 
-                                  <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => field.removeValue(i)}
-                                    disabled={field.state.value.length === 1}
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                    <span className="sr-only">
-                                      Remove ingredient
-                                    </span>
-                                  </Button>
-                                </div>
-                              );
-                            }}
-                          </form.AppField>
-                        );
-                      })}
-                  </div>
-                </>
-              );
-            }}
-          </form.AppField>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="pt-6">
+      <RecipeFormCard>
+        <Heading2 className="mb-4 font-semibold text-xl">
           <form.AppField name="instructions" mode="array">
             {(field) => {
               return (
@@ -367,8 +451,8 @@ export function AddRecipeForm() {
               );
             }}
           </form.AppField>
-        </CardContent>
-      </Card>
+        </Heading2>
+      </RecipeFormCard>
 
       <div className="flex justify-end gap-4">
         <Button variant="outline" type="button" asChild>

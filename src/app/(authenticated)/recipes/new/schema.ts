@@ -1,3 +1,4 @@
+import { MEAL_TYPES } from "@/lib/constants/meal-types";
 import * as v from "valibot";
 
 export const recipeFormSchema = v.object({
@@ -32,13 +33,41 @@ export const recipeFormSchema = v.object({
     v.minValue(1, "Servings must be at least 1"),
     v.transform(String),
   ),
-  mealType: v.pipe(v.string(), v.nonEmpty("Meal type is required")),
+  mealType: v.pipe(v.picklist(MEAL_TYPES), v.nonEmpty("Meal type is required")),
+  calories: v.pipe(
+    v.string(),
+    v.transform(Number),
+    v.number(),
+    v.minValue(1, "Calories must be at least 0"),
+    v.transform(String),
+  ),
+  protein: v.pipe(
+    v.string(),
+    v.transform(Number),
+    v.number(),
+    v.minValue(1, "Protein must be at least 1"),
+    v.transform(String),
+  ),
+  carbs: v.pipe(
+    v.string(),
+    v.transform(Number),
+    v.number(),
+    v.minValue(1, "Carbs must be at least 1"),
+    v.transform(String),
+  ),
+  fat: v.pipe(
+    v.string(),
+    v.transform(Number),
+    v.number(),
+    v.minValue(1, "Fat must be at least 1"),
+    v.transform(String),
+  ),
   ingredients: v.pipe(
     v.array(v.pipe(v.string(), v.nonEmpty("Ingredient is required"))),
     v.minLength(1, "At least one ingredient is required"),
   ),
   instructions: v.pipe(
-    v.array(v.string()),
+    v.array(v.pipe(v.string(), v.nonEmpty("Instruction is required"))),
     v.minLength(1, "At least one instruction is required"),
   ),
 });

@@ -107,7 +107,7 @@ export default async function RecipePage({
   }
 
   return (
-    <div className="container mx-auto max-w-4xl py-6">
+    <div className="container mx-auto p-6">
       <div className="mb-6 flex items-center justify-between">
         <Button variant="ghost" size="sm" asChild>
           <Link href="/recipes">
