@@ -23,6 +23,7 @@ import { Loader2, Plus, Trash2 } from "lucide-react";
 import { useActionState } from "react";
 import addRecipeAction from "../form-logic/action";
 import { formOpts } from "../form-logic/shared-code";
+import { RecipeImageUpload } from "./recipe-image-upload";
 
 export function AddRecipeForm() {
   const [state, action] = useActionState(addRecipeAction, initialFormState);
@@ -101,7 +102,7 @@ export function AddRecipeForm() {
                   <field.Item>
                     <field.Label>Recipe Image</field.Label>
                     <field.Control>
-                      <input
+                      {/* <input
                         type="file"
                         name="image"
                         accept="image/*"
@@ -109,23 +110,14 @@ export function AddRecipeForm() {
                           const file = e.target.files?.[0];
                           field.handleChange(file);
                         }}
-                      />
-                      {/* <ImageUpload
+                      /> */}
+                      <RecipeImageUpload
+                        name={field.name}
                         value={field.state.value}
                         onChange={(file) => {
                           field.handleChange(file);
-                          const input = document.getElementById(
-                            "actual-image-upload",
-                          ) as HTMLInputElement;
-                          if (input) {
-                            const dataTransfer = new DataTransfer();
-                            if (file) {
-                              dataTransfer.items.add(file);
-                            }
-                            input.files = dataTransfer.files;
-                          }
                         }}
-                      /> */}
+                      />
                     </field.Control>
                     <field.Description>
                       Upload an image of your recipe (optional)

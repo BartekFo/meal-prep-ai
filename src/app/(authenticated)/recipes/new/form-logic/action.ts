@@ -42,15 +42,13 @@ async function uploadImageToSupabase({
 
     if (!imageFile) return null;
 
-    const fileExt = imageFile.name.split(".").pop();
-    const fileName = `${userId}/${title}.${fileExt}`;
+    const fileName = `${userId}/${imageFile.name}`;
 
     const { error, data } = await supabase.storage
       .from("recipes-images")
       .upload(fileName, imageFile, {
         upsert: true,
       });
-    console.log("data", data);
 
     if (error) {
       console.error("Error uploading image:", error);
@@ -70,7 +68,6 @@ export default async function addRecipeAction(
 ) {
   try {
     const imageFile = formData.get("image") as File;
-    console.log("imageFile", imageFile);
 
     const validatedData = await serverValidate(formData);
 
