@@ -4,7 +4,6 @@ import Link from "next/link";
 
 import { Heading2 } from "@/components/typography";
 import { Button } from "@/components/ui/button";
-import {} from "@/components/ui/card";
 import { useAppForm } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
