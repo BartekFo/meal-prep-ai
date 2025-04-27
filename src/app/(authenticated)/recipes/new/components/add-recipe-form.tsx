@@ -43,7 +43,6 @@ export function AddRecipeForm() {
       onSubmit={() => {
         form.handleSubmit();
       }}
-      encType="multipart/form-data"
       className="space-y-8"
     >
       {/* {formErrors && Object.values(formErrors).map((error) => (

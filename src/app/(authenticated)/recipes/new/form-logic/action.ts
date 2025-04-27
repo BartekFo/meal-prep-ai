@@ -40,21 +40,24 @@ async function uploadImageToSupabase({
   try {
     const supabase = await createClient();
 
-    if (!imageFile) throw new Error("No image file provided");
+    if (!imageFile) return null;
 
     const fileExt = imageFile.name.split(".").pop();
     const fileName = `${userId}/${title}.${fileExt}`;
 
-    const { error } = await supabase.storage
+    const { error, data } = await supabase.storage
       .from("recipes-images")
       .upload(fileName, imageFile, {
         upsert: true,
       });
+    console.log("data", data);
 
     if (error) {
       console.error("Error uploading image:", error);
       return null;
     }
+
+    return data.path;
   } catch (error) {
     console.error("Error in uploadImageToSupabase:", error);
     return null;
@@ -82,14 +85,11 @@ export default async function addRecipeAction(
       throw new Error("Invalid meal type");
     }
 
-    let imageUrl = null;
-    if (imageFile && imageFile.size > 0) {
-      imageUrl = await uploadImageToSupabase({
-        imageFile,
-        title: validatedData.title,
-        userId,
-      });
-    }
+    const imageUrl = await uploadImageToSupabase({
+      imageFile,
+      title: validatedData.title,
+      userId,
+    });
 
     const { error } = await supabase.from("recipes").insert([
       {
