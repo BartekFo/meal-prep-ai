@@ -7,7 +7,7 @@ import { AddRecipeForm } from "./components/add-recipe-form";
 
 export default function AddRecipePage() {
   return (
-    <div className="container mx-auto max-w-4xl p-6">
+    <div className="container mx-auto max-w-5xl p-6">
       <div className="mb-6 flex items-center">
         <Button variant="ghost" size="sm" asChild>
           <Link href="/recipes">

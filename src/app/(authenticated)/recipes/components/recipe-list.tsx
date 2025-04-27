@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { mapRecipeFromDTO } from "../utils/dto";
 import { RecipeCard } from "./recipe-card";
 
 export async function RecipeList() {
@@ -18,9 +19,11 @@ export async function RecipeList() {
     );
   }
 
+  const recipes = data.map(mapRecipeFromDTO);
+
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {data.map((recipe) => (
+      {recipes.map((recipe) => (
         <RecipeCard key={recipe.id} recipe={recipe} />
       ))}
     </div>

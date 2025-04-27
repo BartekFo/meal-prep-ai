@@ -1,5 +1,3 @@
-"use client";
-
 import { Clock, CookingPot } from "lucide-react";
 import Image from "next/image";
 
@@ -14,22 +12,22 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Tables } from "@/lib/supabase/database.types";
 import Link from "next/link";
+import type { Recipe } from "../types";
 
 interface RecipeCardProps {
-  recipe: Tables<"recipes">;
+  recipe: Recipe;
 }
 
 export function RecipeCard({ recipe }: RecipeCardProps) {
-  const totalTime = `${recipe.prep_time} prep · ${recipe.cook_time} cook`;
+  const totalTime = `${recipe.prepTime} prep · ${recipe.cookTime} cook`;
 
   return (
     <Card className="overflow-hidden transition-all hover:shadow-md">
       <div className="relative aspect-video">
-        {recipe.image_url ? (
+        {recipe.imageUrl ? (
           <Image
-            src={recipe.image_url}
+            src={recipe.imageUrl}
             alt={recipe.title}
             fill
             className="object-cover"
@@ -41,7 +39,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
           </div>
         )}
         <Badge className="absolute top-2 right-2 capitalize">
-          {recipe.meal_type}
+          {recipe.mealType}
         </Badge>
       </div>
       <CardHeader className="p-4">

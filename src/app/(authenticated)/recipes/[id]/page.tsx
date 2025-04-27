@@ -1,8 +1,9 @@
-import { ArrowLeft, Clock, Printer, Share2 } from "lucide-react";
+import { ArrowLeft, Clock, CookingPot, Printer, Share2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { Text } from "@/components/typography";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -29,7 +30,7 @@ async function getRecipe(id: string) {
     id: recipe.id.toString(),
     title: recipe.title,
     description: recipe.description,
-    image: recipe.image_url || "/placeholder.svg?height=400&width=800",
+    image: recipe.image_url,
     prepTime: `${recipe.prep_time} min`,
     cookTime: `${recipe.cook_time} min`,
     servings: recipe.servings || 4,
@@ -56,7 +57,7 @@ export default async function RecipePage({
   }
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="container mx-auto max-w-5xl p-6">
       <div className="mb-6 flex items-center justify-between">
         <Button variant="ghost" size="sm" asChild>
           <Link href="/recipes">
@@ -77,13 +78,19 @@ export default async function RecipePage({
       </div>
 
       <div className="relative mb-6 aspect-video w-full overflow-hidden rounded-lg">
-        <Image
-          src={recipe.image || "/placeholder.svg"}
-          alt={recipe.title}
-          fill
-          className="object-cover"
-          priority
-        />
+        {recipe.image ? (
+          <Image
+            src={recipe.image}
+            alt={recipe.title}
+            className="object-cover"
+            fill
+          />
+        ) : (
+          <div className="flex h-full flex-col items-center justify-center gap-2">
+            <CookingPot className="h-12 w-12" />
+            <Text>No image provided</Text>
+          </div>
+        )}
         <Badge className="absolute top-4 right-4 capitalize">
           {recipe.mealType}
         </Badge>
@@ -123,7 +130,7 @@ export default async function RecipePage({
           <div className="mb-1 flex items-center justify-center">
             <span className="font-medium text-sm">Servings</span>
           </div>
-          <p className="font-semibold text-lg">{recipe.servings}</p>
+          <p className="font-semibold text-lg">recipe.servings</p>
         </Card>
       </div>
 
