@@ -18,7 +18,7 @@ async function getRecipe(id: string) {
   const { data: recipe, error } = await supabase
     .from("recipes")
     .select("*")
-    .eq("id", id)
+    .eq("id", Number(id))
     .single();
 
   if (error || !recipe) {
@@ -34,11 +34,10 @@ async function getRecipe(id: string) {
     cookTime: `${recipe.cook_time} min`,
     servings: recipe.servings || 4,
     mealType: recipe.meal_type,
-    // Default nutritional values if not available in the database
-    calories: 450,
-    protein: 35,
-    carbs: 30,
-    fat: 15,
+    calories: recipe.calories || 0,
+    protein: recipe.protein || 0,
+    carbs: recipe.carbs || 0,
+    fat: recipe.fat || 0,
     ingredients: recipe.ingredients as string[],
     instructions: recipe.instructions as string[],
   };
@@ -47,9 +46,10 @@ async function getRecipe(id: string) {
 export default async function RecipePage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const recipe = await getRecipe(params.id);
+  const { id } = await params;
+  const recipe = await getRecipe(id);
 
   if (!recipe) {
     notFound();
