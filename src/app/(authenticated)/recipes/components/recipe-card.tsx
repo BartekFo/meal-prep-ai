@@ -1,8 +1,9 @@
 "use client";
 
-import { Clock } from "lucide-react";
+import { Clock, CookingPot } from "lucide-react";
 import Image from "next/image";
 
+import { Text } from "@/components/typography";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,40 +14,34 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import type { Tables } from "@/lib/supabase/database.types";
 import Link from "next/link";
 
-interface Recipe {
-  id: string;
-  title: string;
-  description: string;
-  image: string;
-  prepTime: string;
-  cookTime: string;
-  mealType: string;
-  calories: number;
-  protein: number;
-  carbs: number;
-  fat: number;
-}
-
 interface RecipeCardProps {
-  recipe: Recipe;
+  recipe: Tables<"recipes">;
 }
 
 export function RecipeCard({ recipe }: RecipeCardProps) {
-  const totalTime = `${recipe.prepTime} prep · ${recipe.cookTime} cook`;
+  const totalTime = `${recipe.prep_time} prep · ${recipe.cook_time} cook`;
 
   return (
     <Card className="overflow-hidden transition-all hover:shadow-md">
       <div className="relative aspect-video">
-        <Image
-          src={recipe.image || "/placeholder.svg"}
-          alt={recipe.title}
-          fill
-          className="object-cover"
-        />
+        {recipe.image_url ? (
+          <Image
+            src={recipe.image_url}
+            alt={recipe.title}
+            fill
+            className="object-cover"
+          />
+        ) : (
+          <div className="flex h-full flex-col items-center justify-center gap-2">
+            <CookingPot className="h-12 w-12" />
+            <Text>No image provided</Text>
+          </div>
+        )}
         <Badge className="absolute top-2 right-2 capitalize">
-          {recipe.mealType}
+          {recipe.meal_type}
         </Badge>
       </div>
       <CardHeader className="p-4">

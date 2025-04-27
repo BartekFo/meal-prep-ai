@@ -1,109 +1,58 @@
 import { ArrowLeft, Clock, Printer, Share2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { createClient } from "@/lib/supabase/server";
 import { RecipeIngredients } from "./components/recipe-ingredients";
 import { RecipeInstructions } from "./components/recipe-instructions";
 import { RecipeNutrition } from "./components/recipe-nutrition";
 
-// This would typically come from a database fetch
-const getRecipe = (id: string) => {
-  // Sample data - in a real app, you would fetch this from your database
-  const recipes = [
-    {
-      id: "1",
-      title: "Chicken Stir Fry",
-      description:
-        "A quick and healthy weeknight dinner option packed with vegetables and lean protein.",
-      image: "/placeholder.svg?height=400&width=800",
-      prepTime: "15 min",
-      cookTime: "20 min",
-      servings: 4,
-      mealType: "dinner",
-      calories: 450,
-      protein: 35,
-      carbs: 30,
-      fat: 15,
-      ingredients: [
-        "1 lb boneless, skinless chicken breast, cut into bite-sized pieces",
-        "2 tbsp vegetable oil",
-        "1 red bell pepper, sliced",
-        "1 yellow bell pepper, sliced",
-        "1 cup broccoli florets",
-        "1 cup snap peas",
-        "2 carrots, julienned",
-        "3 cloves garlic, minced",
-        "1 tbsp ginger, minced",
-        "¼ cup low-sodium soy sauce",
-        "2 tbsp honey",
-        "1 tbsp cornstarch",
-        "¼ cup water",
-        "2 green onions, sliced",
-        "Sesame seeds for garnish",
-      ],
-      instructions: [
-        "In a small bowl, whisk together soy sauce, honey, cornstarch, and water. Set aside.",
-        "Heat 1 tablespoon of oil in a large wok or skillet over medium-high heat.",
-        "Add chicken and cook until no longer pink, about 5-6 minutes. Remove from pan and set aside.",
-        "Add remaining oil to the pan. Add bell peppers, broccoli, snap peas, and carrots. Stir-fry for 3-4 minutes until vegetables begin to soften.",
-        "Add garlic and ginger, stir-fry for 30 seconds until fragrant.",
-        "Return chicken to the pan. Pour sauce over the chicken and vegetables.",
-        "Cook, stirring frequently, until sauce thickens and everything is well coated, about 2 minutes.",
-        "Garnish with green onions and sesame seeds before serving.",
-        "Serve hot over rice or noodles if desired.",
-      ],
-    },
-    {
-      id: "2",
-      title: "Overnight Oats",
-      description:
-        "Prepare the night before for a quick breakfast that's packed with fiber and protein.",
-      image: "/placeholder.svg?height=400&width=800",
-      prepTime: "10 min",
-      cookTime: "0 min",
-      servings: 1,
-      mealType: "breakfast",
-      calories: 350,
-      protein: 15,
-      carbs: 55,
-      fat: 8,
-      ingredients: [
-        "½ cup rolled oats",
-        "½ cup milk of choice",
-        "¼ cup Greek yogurt",
-        "1 tbsp chia seeds",
-        "1 tbsp honey or maple syrup",
-        "½ tsp vanilla extract",
-        "Pinch of salt",
-        "Toppings: fresh berries, sliced banana, nuts, or nut butter",
-      ],
-      instructions: [
-        "In a jar or container with a lid, combine oats, milk, yogurt, chia seeds, honey, vanilla extract, and salt.",
-        "Stir well until all ingredients are combined.",
-        "Seal the container and refrigerate overnight or for at least 4 hours.",
-        "In the morning, stir the oats and add a splash of milk if they're too thick.",
-        "Top with your favorite toppings and enjoy cold.",
-      ],
-    },
-    // Add more recipes as needed
-  ];
+async function getRecipe(id: string) {
+  const supabase = await createClient();
 
-  return recipes.find((recipe) => recipe.id === id);
-};
+  const { data: recipe, error } = await supabase
+    .from("recipes")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error || !recipe) {
+    return null;
+  }
+
+  return {
+    id: recipe.id.toString(),
+    title: recipe.title,
+    description: recipe.description,
+    image: recipe.image_url || "/placeholder.svg?height=400&width=800",
+    prepTime: `${recipe.prep_time} min`,
+    cookTime: `${recipe.cook_time} min`,
+    servings: recipe.servings || 4,
+    mealType: recipe.meal_type,
+    // Default nutritional values if not available in the database
+    calories: 450,
+    protein: 35,
+    carbs: 30,
+    fat: 15,
+    ingredients: recipe.ingredients as string[],
+    instructions: recipe.instructions as string[],
+  };
+}
 
 export default async function RecipePage({
   params,
-}: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-
-  const recipe = getRecipe(id);
+}: {
+  params: { id: string };
+}) {
+  const recipe = await getRecipe(params.id);
 
   if (!recipe) {
-    return <div className="p-6">Recipe not found</div>;
+    notFound();
   }
 
   return (
