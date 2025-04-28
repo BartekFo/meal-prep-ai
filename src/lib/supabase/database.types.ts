@@ -74,7 +74,7 @@ export type Database = {
           description: string | null;
           fat: number;
           id: number;
-          image_url: string;
+          image_url: string | null;
           ingredients: Json;
           instructions: Json;
           meal_type: Database["public"]["Enums"]["meal_type"];
@@ -92,7 +92,7 @@ export type Database = {
           description?: string | null;
           fat: number;
           id?: number;
-          image_url: string;
+          image_url?: string | null;
           ingredients: Json;
           instructions: Json;
           meal_type: Database["public"]["Enums"]["meal_type"];
@@ -110,7 +110,7 @@ export type Database = {
           description?: string | null;
           fat?: number;
           id?: number;
-          image_url?: string;
+          image_url?: string | null;
           ingredients?: Json;
           instructions?: Json;
           meal_type?: Database["public"]["Enums"]["meal_type"];

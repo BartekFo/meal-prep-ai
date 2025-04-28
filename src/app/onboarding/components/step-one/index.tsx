@@ -1,28 +1,34 @@
 "use client";
 import { parseAsInteger, useQueryState } from "nuqs";
-import { z } from "zod";
 
 import { Heading2 } from "@/components/typography";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useAppForm } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useTransform } from "@tanstack/react-form";
+import { initialFormState, mergeForm } from "@tanstack/react-form/nextjs";
+import { useActionState } from "react";
 import { onboardingSearchParamsKeys } from "../../search-params";
 import { AvatarUpload } from "../avatar-upload";
-const formSchema = z.object({
-  firstName: z
-    .string()
-    .min(2, { message: "First name must be at least 2 characters" }),
-  lastName: z
-    .string()
-    .min(2, { message: "Last name must be at least 2 characters" }),
-  avatar: z.string().optional(),
-});
+import saveUserDataAction from "./actions";
+import { formOpts } from "./shared-form-code";
 
 export function StepOne() {
   const [_, setStep] = useQueryState(
     onboardingSearchParamsKeys.step,
     parseAsInteger.withDefault(1),
   );
+
+  const [state, action] = useActionState(saveUserDataAction, initialFormState);
+
+  const form = useAppForm({
+    ...formOpts,
+    transform: useTransform(
+      (baseForm) => mergeForm(baseForm, state ?? {}),
+      [state],
+    ),
+  });
 
   return (
     <div className="space-y-6">

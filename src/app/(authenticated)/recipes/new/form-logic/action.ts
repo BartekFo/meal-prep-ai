@@ -11,7 +11,7 @@ import { safeParse } from "valibot";
 import { recipeFormSchema } from "../schema";
 import { convertObjectToArray, isMealType } from "./helpers";
 import { uploadImageToSupabase } from "./image-upload";
-import { formOpts } from "./shared-code";
+import { formOpts } from "./shared-form-code";
 
 const serverValidate = createServerValidate({
   ...formOpts,
