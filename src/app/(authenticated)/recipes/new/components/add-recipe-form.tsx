@@ -12,7 +12,7 @@ import { initialFormState, mergeForm } from "@tanstack/react-form/nextjs";
 import { Loader2, Plus, Trash2 } from "lucide-react";
 import { useActionState } from "react";
 import addRecipeAction from "../form-logic/action";
-import { formOpts } from "../form-logic/shared-form-code";
+import { recipeFormOpts } from "../form-logic/shared-form-code";
 import { RecipeDetailsFields } from "./recipe-details-fields";
 import { RecipeFormCard } from "./recipe-form-card";
 
@@ -20,7 +20,7 @@ export function AddRecipeForm() {
   const [state, action] = useActionState(addRecipeAction, initialFormState);
 
   const form = useAppForm({
-    ...formOpts,
+    ...recipeFormOpts,
     transform: useTransform(
       (baseForm) => mergeForm(baseForm, state ?? {}),
       [state],

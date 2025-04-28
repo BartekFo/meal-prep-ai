@@ -16,7 +16,7 @@ const defatultRecipeFormValues: IRecipeFormValues = {
   instructions: [""],
 };
 
-export const formOpts = formOptions({
+export const recipeFormOpts = formOptions({
   defaultValues: defatultRecipeFormValues,
   validators: {
     onSubmit: recipeFormSchema,

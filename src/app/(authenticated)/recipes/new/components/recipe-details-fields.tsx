@@ -10,12 +10,12 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { MEAL_TYPES, type MealType } from "@/lib/constants/meal-types";
-import { formOpts } from "../form-logic/shared-form-code";
+import { recipeFormOpts } from "../form-logic/shared-form-code";
 import { RecipeFormCard } from "./recipe-form-card";
 import { RecipeImageUpload } from "./recipe-image-upload";
 
 export const RecipeDetailsFields = withForm({
-  ...formOpts,
+  ...recipeFormOpts,
   render: ({ form }) => {
     return (
       <RecipeFormCard>
