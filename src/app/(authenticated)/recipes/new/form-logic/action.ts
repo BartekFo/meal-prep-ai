@@ -79,6 +79,10 @@ export default async function addRecipeAction(
         ingredients: JSON.stringify(validatedData.ingredients),
         instructions: JSON.stringify(validatedData.instructions),
         image_url: imageUrl,
+        calories: Number(validatedData.calories),
+        carbs: Number(validatedData.carbs),
+        fat: Number(validatedData.fat),
+        protein: Number(validatedData.protein),
       },
     ]);
 
