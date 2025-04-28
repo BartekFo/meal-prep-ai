@@ -21,7 +21,7 @@ import { initialFormState, mergeForm } from "@tanstack/react-form/nextjs";
 import { Loader2, Plus, Trash2 } from "lucide-react";
 import { useActionState } from "react";
 import addRecipeAction from "../form-logic/action";
-import { formOpts } from "../form-logic/shared-code";
+import { formOpts } from "../form-logic/shared-form-code";
 import { RecipeFormCard } from "./recipe-form-card";
 import { RecipeImageUpload } from "./recipe-image-upload";
 
