@@ -1,12 +1,9 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
-import type { UserData } from "../page";
 import { DietaryPreferenceOption } from "./dietary-preference-option";
 
 const formSchema = z.object({
@@ -14,13 +11,6 @@ const formSchema = z.object({
     .array(z.string())
     .min(1, { message: "Please select at least one dietary preference" }),
 });
-
-interface StepTwoProps {
-  userData: UserData;
-  updateUserData: (data: Partial<UserData>) => void;
-  onNext: () => void;
-  onBack: () => void;
-}
 
 const dietaryOptions = [
   {
@@ -76,20 +66,8 @@ const dietaryOptions = [
   },
 ];
 
-export function StepTwo({
-  userData,
-  updateUserData,
-  onNext,
-  onBack,
-}: StepTwoProps) {
+export function StepTwo() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      dietaryPreferences: userData.dietaryPreferences,
-    },
-  });
 
   return (
     <div className="space-y-6">

@@ -5,15 +5,28 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { routes } from "@/lib/constants/routes";
+import Link from "next/link";
 import { AppLogo } from "./app-logo";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <AppLogo />
+        <SidebarMenu>
+          <SidebarMenuItem className="py-4">
+            <SidebarMenuButton asChild>
+              <Link href={routes.dashboard}>
+                <AppLogo />
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
         <NavMain />
