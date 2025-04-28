@@ -36,11 +36,11 @@ export function StepOne() {
       <form className="space-y-6">
         <Card>
           <CardContent className="pt-6">
-            <div className="flex justify-center">
+            <div className="mb-6 flex flex-col items-center justify-center">
               <AvatarUpload value={""} onChange={() => {}} />
             </div>
 
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid gap-4 md:grid-cols-2">
               <Input placeholder="John" />
 
               <Input placeholder="Doe" />
