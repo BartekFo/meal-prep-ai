@@ -1,10 +1,10 @@
 "use client";
 import { parseAsInteger, useQueryState } from "nuqs";
 
+import { useAppForm } from "@/components/form";
 import { Heading2 } from "@/components/typography";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useAppForm } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useTransform } from "@tanstack/react-form";
 import { initialFormState, mergeForm } from "@tanstack/react-form/nextjs";
@@ -12,7 +12,7 @@ import { useActionState } from "react";
 import { onboardingSearchParamsKeys } from "../../search-params";
 import { AvatarUpload } from "../avatar-upload";
 import saveUserDataAction from "./actions";
-import { formOpts } from "./shared-form-code";
+import { onboardingStepOneFormOpts } from "./shared-form-code";
 
 export function StepOne() {
   const [_, setStep] = useQueryState(
@@ -23,7 +23,7 @@ export function StepOne() {
   const [state, action] = useActionState(saveUserDataAction, initialFormState);
 
   const form = useAppForm({
-    ...formOpts,
+    ...onboardingStepOneFormOpts,
     transform: useTransform(
       (baseForm) => mergeForm(baseForm, state ?? {}),
       [state],

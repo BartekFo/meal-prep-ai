@@ -12,7 +12,7 @@ const defatultOnboardingStepOneFormValues: IOnboardingStepOneFormValues = {
   weightGoal: "",
 };
 
-export const formOpts = formOptions({
+export const onboardingStepOneFormOpts = formOptions({
   defaultValues: defatultOnboardingStepOneFormValues,
   validators: {
     onSubmit: onboardingStepOneFormSchema,
