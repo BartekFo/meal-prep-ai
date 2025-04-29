@@ -8,8 +8,10 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
 import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
+import { Loader2 } from "lucide-react";
+import { Button } from "./ui/button";
 
-export const { fieldContext, formContext, useFieldContext } =
+export const { fieldContext, formContext, useFieldContext, useFormContext } =
   createFormHookContexts();
 
 export const { useAppForm, withForm } = createFormHook({
@@ -22,7 +24,9 @@ export const { useAppForm, withForm } = createFormHook({
     Control: FormControl,
     Message: FormMessage,
   },
-  formComponents: {},
+  formComponents: {
+    SubmitButton: FormSubmitButton,
+  },
 });
 
 function FormItem({ className, ...props }: React.ComponentProps<"div">) {
@@ -102,5 +106,24 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
     >
       {body}
     </p>
+  );
+}
+
+function FormSubmitButton({
+  children,
+  ...props
+}: React.ComponentProps<"button">) {
+  const form = useFormContext();
+  return (
+    <form.Subscribe
+      selector={(formState) => [formState.canSubmit, formState.isSubmitting]}
+    >
+      {([canSubmit, isSubmitting]) => (
+        <Button type="submit" disabled={!canSubmit} {...props}>
+          {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          {isSubmitting ? "Saving..." : children}
+        </Button>
+      )}
+    </form.Subscribe>
   );
 }
