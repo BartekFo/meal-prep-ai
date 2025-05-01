@@ -1,21 +1,18 @@
+"use server";
+
 import { createClient } from "@/lib/supabase/server";
 import {
   ServerValidateError,
   createServerValidate,
 } from "@tanstack/react-form/nextjs";
 import { redirect } from "next/navigation";
-import { safeParse } from "valibot";
 import { onboardingSearchParamsKeys } from "../../search-params";
 import { onboardingStepOneFormSchema } from "./schema";
-import { formOpts } from "./shared-form-code";
+import { onboardingStepOneFormOpts } from "./shared-form-code";
+
 const serverValidate = createServerValidate({
-  ...formOpts,
-  onServerValidate: ({ value }) => {
-    const result = safeParse(onboardingStepOneFormSchema, value);
-    if (result.issues && result.issues.length > 0) {
-      return result.issues;
-    }
-  },
+  ...onboardingStepOneFormOpts,
+  onServerValidate: onboardingStepOneFormSchema,
 });
 
 export default async function saveUserDataAction(

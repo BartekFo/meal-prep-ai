@@ -3,9 +3,6 @@
 import { useState } from "react";
 import { z } from "zod";
 
-import { Button } from "@/components/ui/button";
-import { DietaryPreferenceOption } from "./dietary-preference-option";
-
 const formSchema = z.object({
   dietaryPreferences: z
     .array(z.string())
@@ -79,7 +76,7 @@ export function StepTwo() {
         </p>
       </div>
 
-      <form className="space-y-6">
+      {/* <form className="space-y-6">
         <div className="grid gap-4 sm:grid-cols-2">
           {dietaryOptions.map((option) => (
             <DietaryPreferenceOption
@@ -126,7 +123,7 @@ export function StepTwo() {
             {isSubmitting ? "Saving..." : "Continue"}
           </Button>
         </div>
-      </form>
+      </form> */}
     </div>
   );
 }
