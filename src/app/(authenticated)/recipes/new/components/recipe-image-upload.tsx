@@ -25,6 +25,7 @@ export function RecipeImageUpload({
 }: IImageUploadProps) {
   const [error, setError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const isFileVisible = value && previewUrl;
   const ref = useRef<HTMLInputElement>(null);
 
   function clearPreviewUrl() {
@@ -69,36 +70,34 @@ export function RecipeImageUpload({
     <div>
       {error && <div className="mb-2 text-destructive text-sm">{error}</div>}
 
-      <div className={cn("relative", !value && "hidden")}>
-        <Card>
-          <CardContent className="p-0">
-            {value && previewUrl && (
-              <div className="relative aspect-video w-full overflow-hidden rounded-md">
-                <Image
-                  src={previewUrl}
-                  alt="Preview"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            )}
-            <Button
-              type="button"
-              variant="destructive"
-              size="icon"
-              className="absolute top-2 right-2"
-              onClick={handleRemoveImage}
-            >
-              <X className="h-4 w-4" />
-              <span className="sr-only">Remove image</span>
-            </Button>
-            <div className="p-4 pt-10 text-center text-muted-foreground text-sm">
-              {value?.name}
+      <Card className={cn("relative", !isFileVisible && "hidden")}>
+        <CardContent className="p-0">
+          {value && previewUrl && (
+            <div className="relative aspect-video w-full overflow-hidden rounded-md">
+              <Image
+                src={previewUrl}
+                alt="Preview"
+                fill
+                className="object-cover"
+              />
             </div>
-          </CardContent>
-        </Card>
-      </div>
-      <Card className={cn("border-dashed", value && "hidden")}>
+          )}
+          <Button
+            type="button"
+            variant="destructive"
+            size="icon"
+            className="absolute top-2 right-2"
+            onClick={handleRemoveImage}
+          >
+            <X className="h-4 w-4" />
+            <span className="sr-only">Remove image</span>
+          </Button>
+          <div className="p-4 pt-10 text-center text-muted-foreground text-sm">
+            {value?.name}
+          </div>
+        </CardContent>
+      </Card>
+      <Card className={cn("border-dashed", isFileVisible && "hidden")}>
         <CardContent className="flex flex-col items-center justify-center p-6">
           <label
             htmlFor="image"

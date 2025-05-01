@@ -3,10 +3,12 @@
 import Link from "next/link";
 
 import { useAppForm } from "@/components/form";
+import { Heading3 } from "@/components/typography";
 import { Button } from "@/components/ui/button";
 import { useStore, useTransform } from "@tanstack/react-form";
 import { initialFormState, mergeForm } from "@tanstack/react-form/nextjs";
 import { useActionState } from "react";
+import { isServerSideErrors } from "../../../../../lib/type-guards/form-error-types";
 import addRecipeAction from "../form-logic/action";
 import { recipeFormOpts } from "../form-logic/shared-form-code";
 import { IngredientsFields } from "./ingredients-fields";
@@ -27,19 +29,25 @@ export function AddRecipeForm() {
 
   const formErrors = useStore(form.store, (formState) => formState.errors)[0];
 
-  console.log("formErrors", formErrors);
-
   return (
     <form
-      action={action as never}
+      action={action}
       onSubmit={() => {
         form.handleSubmit();
       }}
       className="space-y-8"
     >
-      {/* {formErrors && Object.values(formErrors).map((error) => (
-        <p key={error[0].message}>{error[0].message}</p>
-      ))} */}
+      {isServerSideErrors(formErrors) && formErrors.length > 0 && (
+        <div className="rounded-md border border-destructive bg-destructive/10 p-4 text-destructive">
+          <Heading3>Validation Errors:</Heading3>
+          <ul className="ml-4 list-disc space-y-1 pt-2 text-sm">
+            {formErrors.map((error, index) => (
+              // biome-ignore lint/suspicious/noArrayIndexKey: static list of errors
+              <li key={index}>{error?.message}</li>
+            ))}
+          </ul>
+        </div>
+      )}
       <RecipeDetailsFields form={form} />
       <NutritionInformationFields form={form} />
       <IngredientsFields form={form} />
