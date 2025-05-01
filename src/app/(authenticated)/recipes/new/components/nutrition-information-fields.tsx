@@ -20,6 +20,7 @@ export const NutritionInformationFields = withForm({
                 <field.Label>Calories</field.Label>
                 <field.Control>
                   <Input
+                    name={field.name}
                     placeholder="0"
                     type="number"
                     min={0}
@@ -38,6 +39,7 @@ export const NutritionInformationFields = withForm({
                 <field.Label>Protein (g)</field.Label>
                 <field.Control>
                   <Input
+                    name={field.name}
                     placeholder="0"
                     type="number"
                     min={0}
@@ -57,6 +59,7 @@ export const NutritionInformationFields = withForm({
                 <field.Label>Carbs (g)</field.Label>
                 <field.Control>
                   <Input
+                    name={field.name}
                     type="number"
                     min={0}
                     placeholder="0"
@@ -77,6 +80,7 @@ export const NutritionInformationFields = withForm({
                 <field.Control>
                   <Input
                     type="number"
+                    name={field.name}
                     min={0}
                     placeholder="0"
                     value={field.state.value}
