@@ -3,12 +3,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { Header } from "@/components/header";
 import { Text } from "@/components/typography";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { createClient } from "@/lib/supabase/server";
+import { getPathnameFromHeaders } from "@/lib/utils/getPathnameFromHeaders";
 import { RecipeIngredients } from "./components/recipe-ingredients";
 import { RecipeInstructions } from "./components/recipe-instructions";
 import { RecipeNutrition } from "./components/recipe-nutrition";
@@ -49,6 +51,7 @@ export default async function RecipePage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const pathname = await getPathnameFromHeaders();
   const { id } = await params;
   const recipe = await getRecipe(id);
 
@@ -56,100 +59,108 @@ export default async function RecipePage({
     notFound();
   }
 
+  const breadcrumbs = [
+    { label: "Recipes", href: "/recipes" },
+    { label: recipe.title, href: `/recipes/${recipe.title}` },
+  ];
+
   return (
-    <div className="container mx-auto max-w-5xl p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <Button variant="ghost" size="sm" asChild>
-          <Link href="/recipes">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Recipes
-          </Link>
-        </Button>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            <Printer className="mr-2 h-4 w-4" />
-            Print
+    <>
+      <Header pathname={pathname} customBreadcrumbs={breadcrumbs} />
+      <div className="container mx-auto max-w-5xl p-6">
+        <div className="mb-6 flex items-center justify-between">
+          <Button variant="ghost" size="sm" asChild>
+            <Link href="/recipes">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Recipes
+            </Link>
           </Button>
-          <Button variant="outline" size="sm">
-            <Share2 className="mr-2 h-4 w-4" />
-            Share
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm">
+              <Printer className="mr-2 h-4 w-4" />
+              Print
+            </Button>
+            <Button variant="outline" size="sm">
+              <Share2 className="mr-2 h-4 w-4" />
+              Share
+            </Button>
+          </div>
+        </div>
+
+        <div className="relative mb-6 aspect-video w-full overflow-hidden rounded-lg">
+          {recipe.image ? (
+            <Image
+              src={recipe.image}
+              alt={recipe.title}
+              className="object-cover"
+              fill
+            />
+          ) : (
+            <div className="flex h-full flex-col items-center justify-center gap-2">
+              <CookingPot className="h-12 w-12" />
+              <Text>No image provided</Text>
+            </div>
+          )}
+          <Badge className="absolute top-4 right-4 capitalize">
+            {recipe.mealType}
+          </Badge>
+        </div>
+
+        <div className="mb-8">
+          <h1 className="mb-2 font-bold text-3xl">{recipe.title}</h1>
+          <p className="text-lg text-muted-foreground">{recipe.description}</p>
+        </div>
+
+        <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <Card className="p-4 text-center">
+            <div className="mb-1 flex items-center justify-center">
+              <Clock className="mr-1 h-4 w-4" />
+              <span className="font-medium text-sm">Prep Time</span>
+            </div>
+            <p className="font-semibold text-lg">{recipe.prepTime}</p>
+          </Card>
+          <Card className="p-4 text-center">
+            <div className="mb-1 flex items-center justify-center">
+              <Clock className="mr-1 h-4 w-4" />
+              <span className="font-medium text-sm">Cook Time</span>
+            </div>
+            <p className="font-semibold text-lg">{recipe.cookTime}</p>
+          </Card>
+          <Card className="p-4 text-center">
+            <div className="mb-1 flex items-center justify-center">
+              <span className="font-medium text-sm">Total Time</span>
+            </div>
+            <p className="font-semibold text-lg">
+              {recipe.cookTime === "0 min"
+                ? recipe.prepTime
+                : `${Number.parseInt(recipe.prepTime) + Number.parseInt(recipe.cookTime)} min`}
+            </p>
+          </Card>
+          <Card className="p-4 text-center">
+            <div className="mb-1 flex items-center justify-center">
+              <span className="font-medium text-sm">Servings</span>
+            </div>
+            <p className="font-semibold text-lg">recipe.servings</p>
+          </Card>
+        </div>
+
+        <RecipeNutrition
+          calories={recipe.calories}
+          protein={recipe.protein}
+          carbs={recipe.carbs}
+          fat={recipe.fat}
+        />
+
+        <Separator className="my-8" />
+
+        <div className="grid gap-8 md:grid-cols-2">
+          <RecipeIngredients
+            ingredients={recipe.ingredients}
+            servings={recipe.servings}
+          />
+          <RecipeInstructions instructions={recipe.instructions} />
         </div>
       </div>
-
-      <div className="relative mb-6 aspect-video w-full overflow-hidden rounded-lg">
-        {recipe.image ? (
-          <Image
-            src={recipe.image}
-            alt={recipe.title}
-            className="object-cover"
-            fill
-          />
-        ) : (
-          <div className="flex h-full flex-col items-center justify-center gap-2">
-            <CookingPot className="h-12 w-12" />
-            <Text>No image provided</Text>
-          </div>
-        )}
-        <Badge className="absolute top-4 right-4 capitalize">
-          {recipe.mealType}
-        </Badge>
-      </div>
-
-      <div className="mb-8">
-        <h1 className="mb-2 font-bold text-3xl">{recipe.title}</h1>
-        <p className="text-lg text-muted-foreground">{recipe.description}</p>
-      </div>
-
-      <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <Card className="p-4 text-center">
-          <div className="mb-1 flex items-center justify-center">
-            <Clock className="mr-1 h-4 w-4" />
-            <span className="font-medium text-sm">Prep Time</span>
-          </div>
-          <p className="font-semibold text-lg">{recipe.prepTime}</p>
-        </Card>
-        <Card className="p-4 text-center">
-          <div className="mb-1 flex items-center justify-center">
-            <Clock className="mr-1 h-4 w-4" />
-            <span className="font-medium text-sm">Cook Time</span>
-          </div>
-          <p className="font-semibold text-lg">{recipe.cookTime}</p>
-        </Card>
-        <Card className="p-4 text-center">
-          <div className="mb-1 flex items-center justify-center">
-            <span className="font-medium text-sm">Total Time</span>
-          </div>
-          <p className="font-semibold text-lg">
-            {recipe.cookTime === "0 min"
-              ? recipe.prepTime
-              : `${Number.parseInt(recipe.prepTime) + Number.parseInt(recipe.cookTime)} min`}
-          </p>
-        </Card>
-        <Card className="p-4 text-center">
-          <div className="mb-1 flex items-center justify-center">
-            <span className="font-medium text-sm">Servings</span>
-          </div>
-          <p className="font-semibold text-lg">recipe.servings</p>
-        </Card>
-      </div>
-
-      <RecipeNutrition
-        calories={recipe.calories}
-        protein={recipe.protein}
-        carbs={recipe.carbs}
-        fat={recipe.fat}
-      />
-
-      <Separator className="my-8" />
-
-      <div className="grid gap-8 md:grid-cols-2">
-        <RecipeIngredients
-          ingredients={recipe.ingredients}
-          servings={recipe.servings}
-        />
-        <RecipeInstructions instructions={recipe.instructions} />
-      </div>
-    </div>
+    </>
   );
 }

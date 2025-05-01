@@ -1,12 +1,12 @@
-"use client";
-
-import { usePathname } from "next/navigation";
+import { Fragment } from "react";
 import { ModeToggle } from "./mode-toggle";
 import {
   Breadcrumb,
   BreadcrumbItem,
+  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
+  BreadcrumbSeparator,
 } from "./ui/breadcrumb";
 import { Separator } from "./ui/separator";
 import { SidebarTrigger } from "./ui/sidebar";
@@ -22,8 +22,12 @@ function generateBreadcrumbs(pathname: string) {
   });
 }
 
-export function Header() {
-  const pathname = usePathname();
+interface HeaderProps {
+  pathname: string;
+  customBreadcrumbs?: { label: string; href: string }[];
+}
+
+export function Header({ pathname, customBreadcrumbs }: HeaderProps) {
   const breadcrumbs = generateBreadcrumbs(pathname);
 
   return (
@@ -36,11 +40,23 @@ export function Header() {
         />
         <Breadcrumb>
           <BreadcrumbList>
-            {breadcrumbs.map((breadcrumb) => (
-              <BreadcrumbItem key={breadcrumb.href}>
-                <BreadcrumbPage>{breadcrumb.label}</BreadcrumbPage>
-              </BreadcrumbItem>
-            ))}
+            {(customBreadcrumbs || breadcrumbs).map((breadcrumb, index) => {
+              const isLast = index === breadcrumbs.length - 1;
+              return (
+                <Fragment key={breadcrumb.href}>
+                  <BreadcrumbItem>
+                    {isLast ? (
+                      <BreadcrumbPage>{breadcrumb.label}</BreadcrumbPage>
+                    ) : (
+                      <BreadcrumbLink href={breadcrumb.href}>
+                        {breadcrumb.label}
+                      </BreadcrumbLink>
+                    )}
+                  </BreadcrumbItem>
+                  {!isLast && <BreadcrumbSeparator />}
+                </Fragment>
+              );
+            })}
           </BreadcrumbList>
         </Breadcrumb>
       </div>
