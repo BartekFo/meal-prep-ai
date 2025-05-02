@@ -7,6 +7,7 @@ import {
 const defatultOnboardingStepOneFormValues: IOnboardingStepOneFormValues = {
   firstName: "",
   lastName: "",
+  dateOfBirth: undefined,
   gender: "",
   activityLevel: "",
   weightGoal: "",
