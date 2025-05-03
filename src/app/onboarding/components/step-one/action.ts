@@ -23,7 +23,7 @@ export default async function saveUserDataAction(
     const validatedData = await serverValidate(formData);
 
     const supabase = await createClient();
-    const { data, error } = await supabase.auth.updateUser({
+    const { error, data } = await supabase.auth.updateUser({
       data: {
         first_name: validatedData.firstName,
         last_name: validatedData.lastName,
@@ -33,6 +33,9 @@ export default async function saveUserDataAction(
         weight_goal: validatedData.weightGoal,
       },
     });
+
+    console.log(data);
+    console.log(error);
 
     if (error) {
       throw new Error(error.message);

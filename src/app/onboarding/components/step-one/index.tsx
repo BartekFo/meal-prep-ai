@@ -1,10 +1,9 @@
 "use client";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { parseAsInteger, useQueryState } from "nuqs";
 
 import { useAppForm } from "@/components/form";
-import { Heading2 } from "@/components/typography";
+import { Heading2, Heading3 } from "@/components/typography";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,7 +13,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { RadioGroup } from "@/components/ui/radio-group";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
   SelectContent,
@@ -24,21 +23,14 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { RadioGroupItem } from "@radix-ui/react-radio-group";
-import { useTransform } from "@tanstack/react-form";
+import { useStore, useTransform } from "@tanstack/react-form";
 import { initialFormState, mergeForm } from "@tanstack/react-form/nextjs";
 import { useActionState } from "react";
-import { onboardingSearchParamsKeys } from "../../search-params";
 import { AvatarUpload } from "../avatar-upload";
-import saveUserDataAction from "./actions";
+import saveUserDataAction from "./action";
 import { onboardingStepOneFormOpts } from "./shared-form-code";
 
 export function StepOne() {
-  const [_, setStep] = useQueryState(
-    onboardingSearchParamsKeys.step,
-    parseAsInteger.withDefault(1),
-  );
-
   const [state, action] = useActionState(saveUserDataAction, initialFormState);
 
   const form = useAppForm({
@@ -49,6 +41,9 @@ export function StepOne() {
     ),
   });
 
+  const formErrors = useStore(form.store, (formState) => formState.errors);
+
+  console.log(formErrors);
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -58,14 +53,14 @@ export function StepOne() {
         </p>
       </div>
 
-      <form className="space-y-6">
+      <form action={action} onSubmit={form.handleSubmit} className="space-y-6">
         <Card>
           <CardContent className="pt-6">
             <div className="mb-6 flex flex-col items-center justify-center">
               <AvatarUpload value={""} onChange={() => {}} />
             </div>
 
-            <div className="grid gap-x-4 gap-y-6">
+            <div className="grid gap-x-4 gap-y-6 md:grid-cols-2">
               <form.AppField
                 name="firstName"
                 children={(field) => (
@@ -73,12 +68,14 @@ export function StepOne() {
                     <field.Label>First Name</field.Label>
                     <field.Control>
                       <Input
+                        name={field.name}
                         placeholder="First Name"
                         value={field.state.value}
                         onBlur={field.handleBlur}
                         onChange={(e) => field.handleChange(e.target.value)}
                       />
                     </field.Control>
+                    <field.Message />
                   </field.Item>
                 )}
               />
@@ -90,12 +87,14 @@ export function StepOne() {
                     <field.Label>Last Name</field.Label>
                     <field.Control>
                       <Input
+                        name={field.name}
                         placeholder="Last Name"
                         value={field.state.value}
                         onBlur={field.handleBlur}
                         onChange={(e) => field.handleChange(e.target.value)}
                       />
                     </field.Control>
+                    <field.Message />
                   </field.Item>
                 )}
               />
@@ -121,14 +120,31 @@ export function StepOne() {
                             ) : (
                               <span>Pick a date</span>
                             )}
+                            <input
+                              type="hidden"
+                              name={field.name}
+                              value={field.state.value}
+                              onChange={(e) => {
+                                field.handleChange(e.target.value);
+                              }}
+                            />
                           </Button>
                         </field.Control>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0">
                         <Calendar
+                          captionLayout="dropdown"
+                          fromYear={1900}
+                          toYear={new Date().getFullYear()}
                           mode="single"
-                          selected={field.state.value}
-                          onSelect={field.handleChange}
+                          selected={
+                            field.state.value
+                              ? new Date(field.state.value)
+                              : undefined
+                          }
+                          onSelect={(day) => {
+                            field.handleChange(day?.toISOString() ?? "");
+                          }}
                           disabled={(date) =>
                             date > new Date() || date < new Date("1900-01-01")
                           }
@@ -147,6 +163,7 @@ export function StepOne() {
                   <field.Item>
                     <field.Label>Gender</field.Label>
                     <Select
+                      name={field.name}
                       onValueChange={field.handleChange}
                       defaultValue={field.state.value}
                     >
@@ -173,7 +190,9 @@ export function StepOne() {
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <h3 className="mb-4 font-medium text-lg">Fitness Goals</h3>
+            <Heading3 className="mb-4 font-medium text-lg">
+              Fitness Goals
+            </Heading3>
             <div className="space-y-4">
               <form.AppField
                 name="activityLevel"
@@ -182,58 +201,63 @@ export function StepOne() {
                     <field.Label>Activity Level</field.Label>
                     <field.Control>
                       <RadioGroup
+                        name={field.name}
                         onValueChange={field.handleChange}
                         defaultValue={field.state.value}
                         className="flex flex-col space-y-1"
                       >
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="sedentary" id="sedentary" />
-                          <label
+                        <field.Item className="flex items-center space-x-3 space-y-0">
+                          <field.Control>
+                            <RadioGroupItem value="sedentary" id="sedentary" />
+                          </field.Control>
+                          <field.Label
                             htmlFor="sedentary"
-                            className="font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            className="font-normal"
                           >
                             Sedentary (little or no exercise)
-                          </label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="light" id="light" />
-                          <label
-                            htmlFor="light"
-                            className="font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                          >
+                          </field.Label>
+                        </field.Item>
+                        <field.Item className="flex items-center space-x-3 space-y-0">
+                          <field.Control>
+                            <RadioGroupItem value="light" id="light" />
+                          </field.Control>
+                          <field.Label htmlFor="light" className="font-normal">
                             Light (exercise 1-3 days/week)
-                          </label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="moderate" id="moderate" />
-                          <label
+                          </field.Label>
+                        </field.Item>
+                        <field.Item className="flex items-center space-x-3 space-y-0">
+                          <field.Control>
+                            <RadioGroupItem value="moderate" id="moderate" />
+                          </field.Control>
+                          <field.Label
                             htmlFor="moderate"
-                            className="font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            className="font-normal"
                           >
                             Moderate (exercise 3-5 days/week)
-                          </label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="active" id="active" />
-                          <label
-                            htmlFor="active"
-                            className="font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                          >
+                          </field.Label>
+                        </field.Item>
+                        <field.Item className="flex items-center space-x-3 space-y-0">
+                          <field.Control>
+                            <RadioGroupItem value="active" id="active" />
+                          </field.Control>
+                          <field.Label htmlFor="active" className="font-normal">
                             Active (exercise 6-7 days/week)
-                          </label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem
-                            value="very-active"
-                            id="very-active"
-                          />
-                          <label
+                          </field.Label>
+                        </field.Item>
+                        <field.Item className="flex items-center space-x-3 space-y-0">
+                          <field.Control>
+                            <RadioGroupItem
+                              value="very-active"
+                              id="very-active"
+                            />
+                          </field.Control>
+                          <field.Label
                             htmlFor="very-active"
-                            className="font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            className="font-normal"
                           >
                             Very Active (hard exercise daily or 2x/day)
-                          </label>
-                        </div>
+                          </field.Label>
+                        </field.Item>
                       </RadioGroup>
                     </field.Control>
                     <field.Message />
@@ -250,37 +274,31 @@ export function StepOne() {
                     <field.Label>Weight Goal</field.Label>
                     <field.Control>
                       <RadioGroup
+                        name={field.name}
                         onValueChange={field.handleChange}
                         defaultValue={field.state.value}
                         className="flex flex-col space-y-1"
                       >
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="lose" id="lose" />
-                          <label
-                            htmlFor="lose"
-                            className="font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                          >
-                            Lose weight
-                          </label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="maintain" id="maintain" />
-                          <label
-                            htmlFor="maintain"
-                            className="font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                          >
+                        <field.Item className="flex items-center space-x-2 space-y-0">
+                          <field.Control>
+                            <RadioGroupItem value="lose" id="lose" />
+                          </field.Control>
+                          <field.Label htmlFor="lose">Lose weight</field.Label>
+                        </field.Item>
+                        <field.Item className="flex items-center space-x-2 space-y-0">
+                          <field.Control>
+                            <RadioGroupItem value="maintain" id="maintain" />
+                          </field.Control>
+                          <field.Label htmlFor="maintain">
                             Maintain weight
-                          </label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="gain" id="gain" />
-                          <label
-                            htmlFor="gain"
-                            className="font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                          >
-                            Gain weight
-                          </label>
-                        </div>
+                          </field.Label>
+                        </field.Item>
+                        <field.Item className="flex items-center space-x-2 space-y-0">
+                          <field.Control>
+                            <RadioGroupItem value="gain" id="gain" />
+                          </field.Control>
+                          <field.Label htmlFor="gain">Gain weight</field.Label>
+                        </field.Item>
                       </RadioGroup>
                     </field.Control>
                     <field.Message />

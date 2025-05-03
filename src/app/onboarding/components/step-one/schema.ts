@@ -4,7 +4,7 @@ export const onboardingStepOneFormSchema = v.object({
   firstName: v.string(),
   lastName: v.string(),
   avatar: v.optional(v.blob()),
-  dateOfBirth: v.optional(v.date()),
+  dateOfBirth: v.optional(v.string()),
   gender: v.optional(v.string()),
   activityLevel: v.string(),
   weightGoal: v.string(),

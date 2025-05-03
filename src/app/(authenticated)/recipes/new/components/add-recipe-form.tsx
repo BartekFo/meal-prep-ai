@@ -30,13 +30,7 @@ export function AddRecipeForm() {
   const formErrors = useStore(form.store, (formState) => formState.errors)[0];
 
   return (
-    <form
-      action={action}
-      onSubmit={() => {
-        form.handleSubmit();
-      }}
-      className="space-y-8"
-    >
+    <form action={action} onSubmit={form.handleSubmit} className="space-y-8">
       {isServerSideErrors(formErrors) && formErrors.length > 0 && (
         <div className="rounded-md border border-destructive bg-destructive/10 p-4 text-destructive">
           <Heading3>Validation Errors:</Heading3>
