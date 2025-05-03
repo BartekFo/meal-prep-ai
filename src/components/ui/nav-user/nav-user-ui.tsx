@@ -27,6 +27,7 @@ export function NavUserUi({
     avatar: string;
   };
 }) {
+  console.log(user);
   const { isMobile } = useSidebar();
 
   return (

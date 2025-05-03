@@ -12,7 +12,9 @@ import {
 } from "@/components/ui/sidebar";
 import { routes } from "@/lib/constants/routes";
 import Link from "next/link";
+import { Suspense } from "react";
 import { AppLogo } from "./app-logo";
+import { Skeleton } from "./ui/skeleton";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
@@ -33,7 +35,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser />
+        <Suspense fallback={<Skeleton className="h-10 w-10 rounded-full" />}>
+          <NavUser />
+        </Suspense>
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

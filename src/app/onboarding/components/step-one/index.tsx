@@ -26,8 +26,8 @@ import { cn } from "@/lib/utils";
 import { useStore, useTransform } from "@tanstack/react-form";
 import { initialFormState, mergeForm } from "@tanstack/react-form/nextjs";
 import { useActionState } from "react";
-import { AvatarUpload } from "../avatar-upload";
 import saveUserDataAction from "./action";
+import { AvatarUpload } from "./avatar-upload";
 import { onboardingStepOneFormOpts } from "./shared-form-code";
 
 export function StepOne() {
@@ -57,7 +57,23 @@ export function StepOne() {
         <Card>
           <CardContent className="pt-6">
             <div className="mb-6 flex flex-col items-center justify-center">
-              <AvatarUpload value={""} onChange={() => {}} />
+              <form.AppField
+                name="avatar"
+                children={(field) => (
+                  <field.Item>
+                    <field.Control>
+                      <AvatarUpload
+                        name={field.name}
+                        value={field.state.value as File}
+                        onChange={(file) => {
+                          field.handleChange(file);
+                        }}
+                      />
+                    </field.Control>
+                    <field.Message />
+                  </field.Item>
+                )}
+              />
             </div>
 
             <div className="grid gap-x-4 gap-y-6 md:grid-cols-2">

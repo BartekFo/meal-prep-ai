@@ -8,9 +8,9 @@ import {
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { safeParse } from "valibot";
+import { uploadImageToSupabase } from "../../../../../lib/supabase/image-upload";
 import { recipeFormSchema } from "../schema";
 import { convertObjectToArray, isMealType } from "./helpers";
-import { uploadImageToSupabase } from "./image-upload";
 import { recipeFormOpts } from "./shared-form-code";
 
 const serverValidate = createServerValidate({
@@ -65,6 +65,7 @@ export default async function addRecipeAction(
     const imageUrl = await uploadImageToSupabase({
       imageFile: validatedData.image,
       userId,
+      bucketName: "recipes-images",
     });
 
     const { error } = await supabase.from("recipes").insert([

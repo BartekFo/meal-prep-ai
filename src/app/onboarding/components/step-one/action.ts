@@ -1,5 +1,6 @@
 "use server";
 
+import { uploadImageToSupabase } from "@/lib/supabase/image-upload";
 import { createClient } from "@/lib/supabase/server";
 import {
   ServerValidateError,
@@ -23,7 +24,19 @@ export default async function saveUserDataAction(
     const validatedData = await serverValidate(formData);
 
     const supabase = await createClient();
-    const { error, data } = await supabase.auth.updateUser({
+    const { data: userData } = await supabase.auth.getUser();
+
+    const userId = userData.user?.id;
+
+    if (!userId) throw new Error("User not authenticated");
+
+    const imageUrl = await uploadImageToSupabase({
+      imageFile: validatedData.avatar,
+      userId,
+      bucketName: "avatars",
+    });
+
+    const { error } = await supabase.auth.updateUser({
       data: {
         first_name: validatedData.firstName,
         last_name: validatedData.lastName,
@@ -31,11 +44,9 @@ export default async function saveUserDataAction(
         gender: validatedData.gender,
         activity_level: validatedData.activityLevel,
         weight_goal: validatedData.weightGoal,
+        avatar_url: imageUrl,
       },
     });
-
-    console.log(data);
-    console.log(error);
 
     if (error) {
       throw new Error(error.message);
