@@ -105,7 +105,6 @@ export function StepTwo() {
                   {dietaryOptions.map((option) => (
                     <DietaryPreferenceOption
                       key={option.id}
-                      id={option.id}
                       title={option.title}
                       description={option.description}
                       icon={option.icon}
