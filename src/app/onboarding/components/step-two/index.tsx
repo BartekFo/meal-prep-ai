@@ -3,20 +3,13 @@
 import { useAppForm } from "@/components/form";
 import { Heading2 } from "@/components/typography";
 import { Button } from "@/components/ui/button";
-import { useTransform } from "@tanstack/react-form";
+import { useStore, useTransform } from "@tanstack/react-form";
 import { initialFormState, mergeForm } from "@tanstack/react-form/nextjs";
 import Link from "next/link";
 import { useActionState } from "react";
-import { z } from "zod";
 import saveDietaryPreferencesAction from "./action";
 import { DietaryPreferenceOption } from "./dietary-preference-option";
 import { onboardingStepTwoFormOpts } from "./shared-form-code";
-
-const formSchema = z.object({
-  dietaryPreferences: z
-    .array(z.string())
-    .min(1, { message: "Please select at least one dietary preference" }),
-});
 
 const dietaryOptions = [
   {
@@ -85,6 +78,9 @@ export function StepTwo() {
       [state],
     ),
   });
+  const formErrors = useStore(form.store, (formState) => formState.errors)[0];
+
+  console.log(formErrors);
 
   return (
     <div className="space-y-6">
@@ -99,37 +95,54 @@ export function StepTwo() {
       <form action={action} onSubmit={form.handleSubmit} className="space-y-6">
         <div className="grid gap-4 sm:grid-cols-2">
           <form.AppField name="dietaryPreferences" mode="array">
-            {(field) => {
-              return (
-                <>
-                  {dietaryOptions.map((option) => (
-                    <DietaryPreferenceOption
-                      key={option.id}
-                      title={option.title}
-                      description={option.description}
-                      icon={option.icon}
-                      selected={field.state.value.includes(option.id)}
-                      onToggle={(selected) => {
-                        const currentPreferences = [...field.state.value];
+            {(field) => (
+              <>
+                {dietaryOptions.map((option) => (
+                  <form.AppField
+                    key={option.id}
+                    name={`dietaryPreferences[${option.id}]`}
+                  >
+                    {(subField) => (
+                      <>
+                        <input
+                          id={option.id}
+                          name={`dietaryPreferences[${option.id}]`}
+                          type="checkbox"
+                          value={option.id}
+                          className="peer sr-only"
+                          checked={subField.state.value.includes(option.id)}
+                          onChange={(e) => {
+                            const isChecked = e.target.checked;
+                            const currentValue = option.id;
+                            const currentPreferences = field.state.value ?? [];
 
-                        if (selected) {
-                          if (!currentPreferences.includes(option.id)) {
-                            currentPreferences.push(option.id);
-                          }
-                        } else {
-                          const index = currentPreferences.indexOf(option.id);
-                          if (index !== -1) {
-                            currentPreferences.splice(index, 1);
-                          }
-                        }
-
-                        field.handleChange(currentPreferences);
-                      }}
-                    />
-                  ))}
-                </>
-              );
-            }}
+                            if (isChecked) {
+                              subField.handleChange([
+                                ...currentPreferences,
+                                currentValue,
+                              ]);
+                            } else {
+                              subField.handleChange(
+                                currentPreferences.filter(
+                                  (pref) => pref !== currentValue,
+                                ),
+                              );
+                            }
+                          }}
+                        />
+                        <DietaryPreferenceOption
+                          id={option.id}
+                          title={option.title}
+                          description={option.description}
+                          icon={option.icon}
+                        />
+                      </>
+                    )}
+                  </form.AppField>
+                ))}
+                <field.Message />
+              </>
+            )}
           </form.AppField>
         </div>
 
