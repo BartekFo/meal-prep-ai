@@ -1,7 +1,8 @@
 import { Progress } from "@/components/ui/progress";
 import type { SearchParams } from "nuqs/server";
+import { Suspense } from "react";
 import { StepOne } from "./components/step-one";
-import { StepTwo } from "./components/step-two";
+import { StepTwo, StepTwoSkeleton } from "./components/step-two";
 import { loadSearchParams } from "./search-params";
 
 export type UserData = {
@@ -60,7 +61,11 @@ export default async function OnboardingPage({ searchParams }: PageProps) {
         </div>
       )}
       {step === 1 && <StepOne />}
-      {step === 2 && <StepTwo />}
+      {step === 2 && (
+        <Suspense fallback={<StepTwoSkeleton />}>
+          <StepTwo />
+        </Suspense>
+      )}
       {/* {step === 3 && <StepThree />} */}
       {/* {step === 4 && <OnboardingComplete />} */}
     </>

@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
+    "update-types": "npx supabase gen types typescript --project-id \"$PROJECT_REF\" > ./src/lib/supabase/database.types.ts",
     "start": "next start",
     "lint": "biome lint",
     "format": "biome format",
