@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 
 import { useAppForm } from "@/components/form";
-import { Heading2, Heading3 } from "@/components/typography";
+import { Heading2, Heading3, TextMuted } from "@/components/typography";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent } from "@/components/ui/card";
@@ -48,9 +48,9 @@ export function StepOne() {
     <div className="space-y-6">
       <div className="text-center">
         <Heading2>Welcome to Meal Prep AI</Heading2>
-        <p className="text-muted-foreground">
+        <TextMuted>
           Let's start by getting to know you a little better.
-        </p>
+        </TextMuted>
       </div>
 
       <form action={action} onSubmit={form.handleSubmit} className="space-y-6">

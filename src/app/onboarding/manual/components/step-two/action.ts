@@ -1,4 +1,5 @@
 "use server";
+import { routes } from "@/lib/constants/routes";
 import { createClient } from "@/lib/supabase/server";
 import { convertObjectToArray } from "@/lib/utils/convertObjectToArray";
 import {
@@ -50,7 +51,9 @@ export async function saveDietaryPreferencesAction(
       throw new Error(error.message);
     }
 
-    redirect(`/onboarding?${onboardingSearchParamsKeys.step}=3`);
+    redirect(
+      `${routes.onboarding.manual}?${onboardingSearchParamsKeys.step}=3`,
+    );
   } catch (e) {
     if (e instanceof ServerValidateError) {
       return e.formState;

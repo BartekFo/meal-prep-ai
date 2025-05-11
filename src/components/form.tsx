@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
 import { Loader2 } from "lucide-react";
 import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
 export const { fieldContext, formContext, useFieldContext, useFormContext } =
   createFormHookContexts();
@@ -23,6 +24,7 @@ export const { useAppForm, withForm } = createFormHook({
     Label: FormLabel,
     Control: FormControl,
     Message: FormMessage,
+    Input,
   },
   formComponents: {
     SubmitButton: FormSubmitButton,

@@ -3,11 +3,13 @@
 import { useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { routes } from "@/lib/constants/routes";
 import type { Tables } from "@/lib/supabase/database.types";
 import { useStore, useTransform } from "@tanstack/react-form";
 import { initialFormState, mergeForm } from "@tanstack/react-form/nextjs";
 import Link from "next/link";
 import { useActionState } from "react";
+import { onboardingSearchParamsKeys } from "../../search-params";
 import saveDietaryPreferencesAction from "./action";
 import { DietaryPreferenceOption } from "./dietary-preference-option";
 import { onboardingStepTwoFormOpts } from "./shared-form-code";
@@ -84,7 +86,11 @@ export function StepTwoForm({ dietaryOptions }: StepTwoFormProps) {
 
       <div className="flex justify-between">
         <Button type="button" variant="outline" asChild>
-          <Link href="/onboarding?step=1">Back</Link>
+          <Link
+            href={`${routes.onboarding.manual}?${onboardingSearchParamsKeys.step}=1`}
+          >
+            Back
+          </Link>
         </Button>
         <form.AppForm>
           <form.SubmitButton>Continue</form.SubmitButton>

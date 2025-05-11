@@ -1,5 +1,6 @@
 "use server";
 
+import { routes } from "@/lib/constants/routes";
 import { uploadImageToSupabase } from "@/lib/supabase/image-upload";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -52,7 +53,9 @@ export default async function saveUserDataAction(
       throw new Error(error.message);
     }
 
-    redirect(`/onboarding?${onboardingSearchParamsKeys.step}=2`);
+    redirect(
+      `${routes.onboarding.manual}?${onboardingSearchParamsKeys.step}=2`,
+    );
   } catch (e) {
     if (e instanceof ServerValidateError) {
       return e.formState;
