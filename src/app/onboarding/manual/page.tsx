@@ -1,6 +1,10 @@
 import { StepTwo } from "./components/step-two";
 
+import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { routes } from "@/lib/constants/routes";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 import type { SearchParams } from "nuqs/server";
 import { Suspense } from "react";
 import { StepOne } from "./components/step-one";
@@ -21,6 +25,15 @@ export default async function ManualPage({ searchParams }: PageProps) {
 
   return (
     <>
+      {step === 1 && (
+        <Button variant="link" asChild className="!px-0 mb-4">
+          <Link href={routes.onboarding.root}>
+            <ArrowLeft />
+            Back to onboarding options
+          </Link>
+        </Button>
+      )}
+
       {step <= TOTAL_STEPS && (
         <div className="mb-8">
           <div className="mb-2 flex justify-between text-sm">
