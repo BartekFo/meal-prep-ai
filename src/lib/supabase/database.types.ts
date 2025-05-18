@@ -9,6 +9,27 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      chat: {
+        Row: {
+          createdAt: string;
+          id: string;
+          title: string;
+          userId: string;
+        };
+        Insert: {
+          createdAt?: string;
+          id?: string;
+          title: string;
+          userId: string;
+        };
+        Update: {
+          createdAt?: string;
+          id?: string;
+          title?: string;
+          userId?: string;
+        };
+        Relationships: [];
+      };
       dietary_options: {
         Row: {
           description: string;
@@ -55,6 +76,38 @@ export type Database = {
             columns: ["recipe_id"];
             isOneToOne: false;
             referencedRelation: "recipes";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      message: {
+        Row: {
+          chatId: string;
+          createdAt: string;
+          id: string;
+          parts: Json;
+          role: string;
+        };
+        Insert: {
+          chatId: string;
+          createdAt?: string;
+          id?: string;
+          parts: Json;
+          role: string;
+        };
+        Update: {
+          chatId?: string;
+          createdAt?: string;
+          id?: string;
+          parts?: Json;
+          role?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "Message_chatId_fkey";
+            columns: ["chatId"];
+            isOneToOne: false;
+            referencedRelation: "chat";
             referencedColumns: ["id"];
           },
         ];
@@ -142,6 +195,65 @@ export type Database = {
           user_id?: string;
         };
         Relationships: [];
+      };
+      stream: {
+        Row: {
+          chatId: string;
+          createdAt: string;
+          id: string;
+        };
+        Insert: {
+          chatId: string;
+          createdAt?: string;
+          id?: string;
+        };
+        Update: {
+          chatId?: string;
+          createdAt?: string;
+          id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "Stream_chatId_fkey";
+            columns: ["chatId"];
+            isOneToOne: false;
+            referencedRelation: "chat";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      vote: {
+        Row: {
+          chatId: string;
+          isUpvoted: boolean;
+          messageId: string;
+        };
+        Insert: {
+          chatId: string;
+          isUpvoted: boolean;
+          messageId: string;
+        };
+        Update: {
+          chatId?: string;
+          isUpvoted?: boolean;
+          messageId?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "Vote_chatId_fkey";
+            columns: ["chatId"];
+            isOneToOne: false;
+            referencedRelation: "chat";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "Vote_messageId_fkey";
+            columns: ["messageId"];
+            isOneToOne: false;
+            referencedRelation: "message";
+            referencedColumns: ["id"];
+          },
+        ];
       };
     };
     Views: {
