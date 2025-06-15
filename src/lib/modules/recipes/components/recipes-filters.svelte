@@ -6,10 +6,20 @@
 	import { Select, SelectContent, SelectItem, SelectTrigger } from '$lib/components/ui/select';
 
 	let searchQuery = page.url.searchParams.get('search');
+	let recipeType = page.url.searchParams.get('type') || 'all';
+	let sortBy = page.url.searchParams.get('sort') || 'newest';
 
 	function handleSearchInput(e: Event) {
 		const target = e.target as HTMLInputElement;
 		goto(`?search=${target.value}`);
+	}
+
+	function handleTypeChange(value: string) {
+		goto(`?type=${value}`);
+	}
+
+	function handleSortChange(value: string) {
+		goto(`?sort=${value}`);
 	}
 </script>
 
@@ -24,8 +34,10 @@
 		/>
 	</div>
 	<div class="flex gap-2">
-		<Select type="single">
-			<SelectTrigger class="w-[140px]"></SelectTrigger>
+		<Select type="single" value={recipeType} onValueChange={handleTypeChange}>
+			<SelectTrigger class="w-36 capitalize">
+				{recipeType}
+			</SelectTrigger>
 			<SelectContent>
 				<SelectItem value="all">All Types</SelectItem>
 				<SelectItem value="breakfast">Breakfast</SelectItem>
@@ -34,8 +46,10 @@
 				<SelectItem value="snack">Snack</SelectItem>
 			</SelectContent>
 		</Select>
-		<Select type="single">
-			<SelectTrigger class="w-[140px]"></SelectTrigger>
+		<Select type="single" value={sortBy} onValueChange={handleSortChange}>
+			<SelectTrigger class="w-36 capitalize">
+				{sortBy}
+			</SelectTrigger>
 			<SelectContent>
 				<SelectItem value="newest">Newest</SelectItem>
 				<SelectItem value="oldest">Oldest</SelectItem>
