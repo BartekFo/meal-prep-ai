@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, uuid, bigint, integer, jsonb, varchar, bigserial, primaryKey } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
 	id: text('id').primaryKey(),
@@ -45,3 +45,76 @@ export const verification = pgTable("verification", {
 	createdAt: timestamp('created_at').$defaultFn(() => /* @__PURE__ */ new Date()),
 	updatedAt: timestamp('updated_at').$defaultFn(() => /* @__PURE__ */ new Date())
 });
+
+export const chat = pgTable("chat", {
+	id: uuid('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+	createdAt: timestamp('created_at', { withTimezone: true }).$defaultFn(() => new Date()).notNull(),
+	title: text('title').notNull(),
+	userId: text('user_id').notNull().references(() => user.id)
+});
+
+export const dietaryOptions = pgTable("dietary_options", {
+	id: uuid('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+	title: text('title').notNull(),
+	description: text('description').notNull(),
+	icon: text('icon').notNull()
+});
+
+export const favorites = pgTable("favorites", {
+	id: bigserial('id', { mode: 'number' }).primaryKey(),
+	createdAt: timestamp('created_at', { withTimezone: true }).$defaultFn(() => new Date()).notNull(),
+	recipeId: bigint('recipe_id', { mode: 'number' }).notNull().references(() => recipes.id),
+	userId: text('user_id').notNull().references(() => user.id)
+});
+
+export const message = pgTable("message", {
+	id: uuid('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+	chatId: uuid('chat_id').notNull().references(() => chat.id),
+	role: varchar('role').notNull(),
+	parts: jsonb('parts').notNull(),
+	createdAt: timestamp('created_at', { withTimezone: true }).$defaultFn(() => new Date()).notNull()
+});
+
+export const preferences = pgTable("preferences", {
+	id: bigserial('id', { mode: 'number' }).primaryKey(),
+	createdAt: timestamp('created_at', { withTimezone: true }).$defaultFn(() => new Date()).notNull(),
+	key: text('key').notNull(),
+	value: text('value').notNull(),
+	updatedAt: timestamp('updated_at', { withTimezone: true }).$defaultFn(() => new Date()).notNull(),
+	userId: text('user_id').notNull().references(() => user.id)
+});
+
+export const recipes = pgTable("recipes", {
+	id: bigserial('id', { mode: 'number' }).primaryKey(),
+	createdAt: timestamp('created_at', { withTimezone: true }).$defaultFn(() => new Date()).notNull(),
+	userId: text('user_id').notNull().references(() => user.id),
+	title: text('title').notNull(),
+	description: text('description'),
+	ingredients: jsonb('ingredients').notNull(),
+	servings: integer('servings').notNull(),
+	prepTime: bigint('prep_time', { mode: 'number' }).notNull(),
+	cookTime: bigint('cook_time', { mode: 'number' }).notNull(),
+	mealType: text('meal_type').notNull(), // USER-DEFINED type converted to text
+	instructions: jsonb('instructions').notNull(),
+	imageUrl: text('image_url'),
+	calories: integer('calories').notNull(),
+	protein: integer('protein').notNull(),
+	carbs: integer('carbs').notNull(),
+	fat: integer('fat').notNull()
+});
+
+export const stream = pgTable("stream", {
+	id: uuid('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+	chatId: uuid('chat_id').notNull().references(() => chat.id),
+	createdAt: timestamp('created_at', { withTimezone: true }).$defaultFn(() => new Date()).notNull()
+});
+
+export const vote = pgTable("vote", {
+	chatId: uuid('chat_id').notNull().references(() => chat.id),
+	messageId: uuid('message_id').notNull().references(() => message.id),
+	isUpvoted: boolean('is_upvoted').notNull()
+}, (table) => [
+	primaryKey({ columns: [table.chatId, table.messageId] })
+]);
+
+
