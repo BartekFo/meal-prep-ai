@@ -16,7 +16,7 @@
 					},
 					{
 						title: 'Recipes',
-						url: routes.recipes
+						url: routes.recipes.base
 					}
 				]
 			}
