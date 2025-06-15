@@ -4,8 +4,31 @@
 	import AppSidebar from '$lib/components/app-sidebar.svelte';
 	import { Separator } from '$lib/components/ui/separator/index';
 	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index';
+	import { page } from '$app/state';
 
 	let { children } = $props();
+
+	function generateBreadcrumbs(pathname: string) {
+		const segments = pathname.split('/').filter(Boolean);
+		const breadcrumbs = [];
+
+		for (let i = 0; i < segments.length; i++) {
+			const segment = segments[i];
+			const href = `/${segments.slice(0, i + 1).join('/')}`;
+			const isLast = i === segments.length - 1;
+
+			let label = segment.replace(/-/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
+
+			if (segment === 'dashboard') label = 'Dashboard';
+			if (segment === 'recipes') label = 'Recipes';
+
+			breadcrumbs.push({ label, href, isLast });
+		}
+
+		return breadcrumbs;
+	}
+
+	const breadcrumbs = $derived(generateBreadcrumbs(page.url.pathname));
 </script>
 
 <SidebarProvider>
@@ -16,13 +39,18 @@
 			<Separator orientation="vertical" class="mr-2 h-4" />
 			<Breadcrumb.Root>
 				<Breadcrumb.List>
-					<Breadcrumb.Item class="hidden md:block">
-						<Breadcrumb.Link href="#">Building Your Application</Breadcrumb.Link>
-					</Breadcrumb.Item>
-					<Breadcrumb.Separator class="hidden md:block" />
-					<Breadcrumb.Item>
-						<Breadcrumb.Page>Data Fetching</Breadcrumb.Page>
-					</Breadcrumb.Item>
+					{#each breadcrumbs as breadcrumb, index (breadcrumb.href)}
+						<Breadcrumb.Item class={index === 0 ? 'hidden md:block' : ''}>
+							{#if breadcrumb.isLast}
+								<Breadcrumb.Page>{breadcrumb.label}</Breadcrumb.Page>
+							{:else}
+								<Breadcrumb.Link href={breadcrumb.href}>{breadcrumb.label}</Breadcrumb.Link>
+							{/if}
+						</Breadcrumb.Item>
+						{#if !breadcrumb.isLast}
+							<Breadcrumb.Separator class={index === 0 ? 'hidden md:block' : ''} />
+						{/if}
+					{/each}
 				</Breadcrumb.List>
 			</Breadcrumb.Root>
 		</header>
