@@ -2,12 +2,13 @@
 	import { routes } from '$lib/constants/routes';
 	import AppLogo from './app-logo.svelte';
 	import { page } from '$app/state';
+	import { authClient } from '$lib/auth/auth-client';
+
+	const { data: session } = await authClient.getSession();
 
 	const data = {
 		navMain: [
 			{
-				title: 'Getting Started',
-				url: '#',
 				items: [
 					{
 						title: 'Dashboard',
@@ -26,11 +27,12 @@
 <script lang="ts">
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import type { ComponentProps } from 'svelte';
+	import NavUser from './nav-user.svelte';
 
 	let { ref = $bindable(null), ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
 </script>
 
-<Sidebar.Root collapsible="icon" {...restProps} bind:ref>
+<Sidebar.Root {...restProps} bind:ref>
 	<Sidebar.Header class="p-5">
 		<a href={routes.dashboard}>
 			<AppLogo />
@@ -38,11 +40,11 @@
 	</Sidebar.Header>
 	<Sidebar.Content>
 		<!-- We create a Sidebar.Group for each parent. -->
-		{#each data.navMain as group (group.title)}
+		{#each data.navMain as group}
 			<Sidebar.Group>
 				<Sidebar.GroupContent>
 					<Sidebar.Menu>
-						{#each group.items as item (item.title)}
+						{#each group.items as item}
 							<Sidebar.MenuItem>
 								<Sidebar.MenuButton isActive={page.url.pathname === item.url}>
 									{#snippet child({ props })}
@@ -57,4 +59,12 @@
 		{/each}
 	</Sidebar.Content>
 	<Sidebar.Rail />
+	<Sidebar.Footer>
+		<NavUser
+			user={{
+				name: session?.user?.name ?? '',
+				email: session?.user?.email ?? ''
+			}}
+		/>
+	</Sidebar.Footer>
 </Sidebar.Root>
