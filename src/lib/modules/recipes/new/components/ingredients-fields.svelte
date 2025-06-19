@@ -1,42 +1,36 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
+	import * as Form from '$lib/components/ui/form/index';
 	import { Plus, Trash2 } from '@lucide/svelte';
 	import RecipeFormCard from './recipe-form-card.svelte';
+	import type { SuperForm } from 'sveltekit-superforms/client';
+	import type { IRecipeFormValues } from '../schema';
 
 	interface Props {
-		form: any; // TODO: Type this with proper superforms types
-		errors: any;
-		constraints: any;
+		form: SuperForm<IRecipeFormValues>;
 	}
 
-	let { form, errors, constraints }: Props = $props();
+	const { form }: Props = $props();
+
+	const { form: formData } = form;
 
 	function addIngredient() {
-		if (!$form.ingredients) {
-			$form.ingredients = [];
+		if (!$formData.ingredients) {
+			$formData.ingredients = [];
 		}
-		$form.ingredients.push('');
+		$formData.ingredients.push('');
 	}
 
 	function removeIngredient(index: number) {
-		if ($form.ingredients.length > 1) {
-			$form.ingredients.splice(index, 1);
-			$form.ingredients = $form.ingredients; // Trigger reactivity
+		if ($formData.ingredients.length > 1) {
+			$formData.ingredients.splice(index, 1);
 		}
 	}
 
 	function updateIngredient(index: number, value: string) {
-		$form.ingredients[index] = value;
+		$formData.ingredients[index] = value;
 	}
-
-	// Initialize with one empty ingredient if none exist
-	$effect(() => {
-		if (!$form.ingredients || $form.ingredients.length === 0) {
-			$form.ingredients = [''];
-		}
-	});
 </script>
 
 <RecipeFormCard>
@@ -48,36 +42,40 @@
 				Add Ingredient
 			</Button>
 		</div>
-		<div class="space-y-4">
-			{#each $form.ingredients as ingredient, i}
-				<div class="flex items-start gap-2">
-					<div class="flex-1 space-y-2">
-						<Label for="ingredient-{i}" class="sr-only">Ingredient {i + 1}</Label>
-						<Input
-							id="ingredient-{i}"
-							name="ingredients[{i}]"
-							placeholder="e.g. 1 cup flour"
-							value={ingredient}
-							oninput={(e) => updateIngredient(i, e.currentTarget.value)}
-							aria-invalid={$errors.ingredients?.[i] ? 'true' : undefined}
-						/>
-						{#if $errors.ingredients?.[i]}
-							<p class="text-destructive text-sm">{$errors.ingredients[i]}</p>
-						{/if}
-					</div>
+		<Form.Field {form} name="ingredients">
+			<Form.Control>
+				{#snippet children({ props })}
+					<div class="space-y-4">
+						{#each $formData.ingredients as ingredient, i}
+							<div class="flex items-start gap-2">
+								<div class="flex-1 space-y-2">
+									<Form.Label for="ingredient-{i}" class="sr-only">Ingredient {i + 1}</Form.Label>
+									<Input
+										{...props}
+										id="ingredient-{i}"
+										name="ingredients[{i}]"
+										placeholder="e.g. 1 cup flour"
+										value={ingredient}
+										oninput={(e) => updateIngredient(i, e.currentTarget.value)}
+									/>
+								</div>
 
-					<Button
-						type="button"
-						variant="ghost"
-						size="icon"
-						onclick={() => removeIngredient(i)}
-						disabled={$form.ingredients.length === 1}
-					>
-						<Trash2 class="h-4 w-4" />
-						<span class="sr-only">Remove ingredient</span>
-					</Button>
-				</div>
-			{/each}
-		</div>
+								<Button
+									type="button"
+									variant="ghost"
+									size="icon"
+									onclick={() => removeIngredient(i)}
+									disabled={$formData.ingredients.length === 1}
+								>
+									<Trash2 class="h-4 w-4" />
+									<span class="sr-only">Remove ingredient</span>
+								</Button>
+							</div>
+						{/each}
+					</div>
+				{/snippet}
+			</Form.Control>
+			<Form.FieldErrors />
+		</Form.Field>
 	{/snippet}
 </RecipeFormCard>

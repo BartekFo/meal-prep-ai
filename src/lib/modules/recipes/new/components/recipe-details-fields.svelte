@@ -24,7 +24,9 @@
 
 <RecipeFormCard>
 	{#snippet children()}
-		<h2 class="prose mb-4 text-xl font-semibold">Recipe Details</h2>
+		<div class="prose">
+			<h2>Recipe Details</h2>
+		</div>
 		<div class="grid gap-6 md:grid-cols-2">
 			<div class="md:col-span-2">
 				<Form.Field {form} name="title">

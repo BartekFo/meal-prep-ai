@@ -1,42 +1,36 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import { Label } from '$lib/components/ui/label';
+	import * as Form from '$lib/components/ui/form/index';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { Plus, Trash2 } from '@lucide/svelte';
 	import RecipeFormCard from './recipe-form-card.svelte';
+	import type { SuperForm } from 'sveltekit-superforms/client';
+	import type { IRecipeFormValues } from '../schema';
 
 	interface Props {
-		form: any; // TODO: Type this with proper superforms types
-		errors: any;
-		constraints: any;
+		form: SuperForm<IRecipeFormValues>;
 	}
 
-	let { form, errors, constraints }: Props = $props();
+	const { form }: Props = $props();
+
+	const { form: formData } = form;
 
 	function addInstruction() {
-		if (!$form.instructions) {
-			$form.instructions = [];
+		if (!$formData.instructions) {
+			$formData.instructions = [];
 		}
-		$form.instructions.push('');
+		$formData.instructions.push('');
 	}
 
 	function removeInstruction(index: number) {
-		if ($form.instructions.length > 1) {
-			$form.instructions.splice(index, 1);
-			$form.instructions = $form.instructions; // Trigger reactivity
+		if ($formData.instructions.length > 1) {
+			$formData.instructions.splice(index, 1);
 		}
 	}
 
 	function updateInstruction(index: number, value: string) {
-		$form.instructions[index] = value;
+		$formData.instructions[index] = value;
 	}
-
-	// Initialize with one empty instruction if none exist
-	$effect(() => {
-		if (!$form.instructions || $form.instructions.length === 0) {
-			$form.instructions = [''];
-		}
-	});
 </script>
 
 <RecipeFormCard>
@@ -48,37 +42,41 @@
 				Add Step
 			</Button>
 		</div>
-		<div class="space-y-4">
-			{#each $form.instructions as instruction, i}
-				<div class="flex items-start gap-2">
-					<div class="flex-1 space-y-2">
-						<Label for="instruction-{i}" class="sr-only">Step {i + 1}</Label>
-						<Textarea
-							id="instruction-{i}"
-							name="instructions[{i}]"
-							placeholder="Describe this step"
-							class="min-h-[80px]"
-							value={instruction}
-							oninput={(e) => updateInstruction(i, e.currentTarget.value)}
-							aria-invalid={$errors.instructions?.[i] ? 'true' : undefined}
-						/>
-						{#if $errors.instructions?.[i]}
-							<p class="text-destructive text-sm">{$errors.instructions[i]}</p>
-						{/if}
-					</div>
+		<Form.Field {form} name="instructions">
+			<Form.Control>
+				{#snippet children({ props })}
+					<div class="space-y-4">
+						{#each $formData.instructions as instruction, i}
+							<div class="flex items-start gap-2">
+								<div class="flex-1 space-y-2">
+									<Form.Label for="instruction-{i}" class="sr-only">Step {i + 1}</Form.Label>
+									<Textarea
+										{...props}
+										id="instruction-{i}"
+										name="instructions[{i}]"
+										placeholder="Describe this step"
+										class="min-h-[80px]"
+										value={instruction}
+										oninput={(e) => updateInstruction(i, e.currentTarget.value)}
+									/>
+								</div>
 
-					<Button
-						type="button"
-						variant="ghost"
-						size="icon"
-						onclick={() => removeInstruction(i)}
-						disabled={$form.instructions.length === 1}
-					>
-						<Trash2 class="h-4 w-4" />
-						<span class="sr-only">Remove step</span>
-					</Button>
-				</div>
-			{/each}
-		</div>
+								<Button
+									type="button"
+									variant="ghost"
+									size="icon"
+									onclick={() => removeInstruction(i)}
+									disabled={$formData.instructions.length === 1}
+								>
+									<Trash2 class="h-4 w-4" />
+									<span class="sr-only">Remove step</span>
+								</Button>
+							</div>
+						{/each}
+					</div>
+				{/snippet}
+			</Form.Control>
+			<Form.FieldErrors />
+		</Form.Field>
 	{/snippet}
 </RecipeFormCard>

@@ -27,8 +27,8 @@
 		</Button>
 	</div>
 
-	<div class="mb-6">
-		<h1 class="text-3xl font-bold">Add New Recipe</h1>
+	<div class="prose mb-6">
+		<h1>Add New Recipe</h1>
 		<p class="text-muted-foreground">
 			Fill out the form below to add a new recipe to your collection.
 		</p>
