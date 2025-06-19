@@ -9,11 +9,11 @@
 
 	interface IImageUploadProps {
 		value: File | undefined;
-		onChange: (file?: File) => void;
+		onchange: (file?: File) => void;
 		name: string;
 	}
 
-	let { value, onChange, name }: IImageUploadProps = $props();
+	let { value, onchange, name }: IImageUploadProps = $props();
 	let error = $state<string | null>(null);
 	let previewUrl = $state<string | null>(null);
 	let isFileVisible = $derived(value && previewUrl);
@@ -46,11 +46,11 @@
 		const url = URL.createObjectURL(file);
 		previewUrl = url;
 
-		onChange(file);
+		onchange(file);
 	}
 
 	function handleRemoveImage() {
-		onChange(undefined);
+		onchange(undefined);
 		input.value = '';
 		clearPreviewUrl();
 		error = null;

@@ -1,4 +1,5 @@
-import { type } from "arktype"
+import { type } from "arktype";
+
 
 export const RecipeFormSchema = type({
   title: "string >= 3",
