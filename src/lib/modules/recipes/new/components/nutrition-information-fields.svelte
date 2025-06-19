@@ -1,88 +1,88 @@
 <script lang="ts">
 	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
+	import * as Form from '$lib/components/ui/form/index';
 	import RecipeFormCard from './recipe-form-card.svelte';
+	import type { SuperForm } from 'sveltekit-superforms/client';
+	import type { IRecipeFormValues } from '../schema';
 
-	// TODO: Replace with actual form handling
-	let nutritionData = $state({
-		calories: '',
-		protein: '',
-		carbs: '',
-		fat: ''
-	});
+	interface Props {
+		form: SuperForm<IRecipeFormValues>;
+	}
 
-	// TODO: Replace with actual form validation
-	let errors = $state({
-		calories: '',
-		protein: '',
-		carbs: '',
-		fat: ''
-	});
+	const { form }: Props = $props();
+
+	const { form: formData } = form;
 </script>
 
 <RecipeFormCard>
 	{#snippet children()}
 		<h2 class="prose mb-4 text-xl font-semibold">Nutrition Information</h2>
 		<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-			<div class="space-y-2">
-				<Label for="calories">Calories</Label>
-				<Input
-					id="calories"
-					name="calories"
-					placeholder="0"
-					type="number"
-					min="0"
-					bind:value={nutritionData.calories}
-				/>
-				{#if errors.calories}
-					<p class="text-destructive text-sm">{errors.calories}</p>
-				{/if}
-			</div>
+			<Form.Field {form} name="calories">
+				<Form.Control>
+					{#snippet children({ props })}
+						<div class="space-y-2">
+							<Form.Label>Calories</Form.Label>
+							<Input
+								{...props}
+								bind:value={$formData.calories}
+								type="number"
+								min="0"
+								placeholder="0"
+							/>
+						</div>
+					{/snippet}
+				</Form.Control>
+				<Form.FieldErrors />
+			</Form.Field>
 
-			<div class="space-y-2">
-				<Label for="protein">Protein (g)</Label>
-				<Input
-					id="protein"
-					name="protein"
-					placeholder="0"
-					type="number"
-					min="0"
-					bind:value={nutritionData.protein}
-				/>
-				{#if errors.protein}
-					<p class="text-destructive text-sm">{errors.protein}</p>
-				{/if}
-			</div>
+			<Form.Field {form} name="protein">
+				<Form.Control>
+					{#snippet children({ props })}
+						<div class="space-y-2">
+							<Form.Label>Protein (g)</Form.Label>
+							<Input
+								{...props}
+								bind:value={$formData.protein}
+								type="number"
+								min="0"
+								placeholder="0"
+							/>
+						</div>
+					{/snippet}
+				</Form.Control>
+				<Form.FieldErrors />
+			</Form.Field>
 
-			<div class="space-y-2">
-				<Label for="carbs">Carbs (g)</Label>
-				<Input
-					id="carbs"
-					name="carbs"
-					type="number"
-					min="0"
-					placeholder="0"
-					bind:value={nutritionData.carbs}
-				/>
-				{#if errors.carbs}
-					<p class="text-destructive text-sm">{errors.carbs}</p>
-				{/if}
-			</div>
+			<Form.Field {form} name="carbs">
+				<Form.Control>
+					{#snippet children({ props })}
+						<div class="space-y-2">
+							<Form.Label>Carbs (g)</Form.Label>
+							<Input
+								{...props}
+								bind:value={$formData.carbs}
+								type="number"
+								min="0"
+								placeholder="0"
+							/>
+						</div>
+					{/snippet}
+				</Form.Control>
+				<Form.FieldErrors />
+			</Form.Field>
 
-			<div class="space-y-2">
-				<Label for="fat">Fat (g)</Label>
-				<Input
-					id="fat"
-					name="fat"
-					type="number"
-					min="0"
-					placeholder="0"
-					bind:value={nutritionData.fat}
-				/>
-				{#if errors.fat}
-					<p class="text-destructive text-sm">{errors.fat}</p>
-				{/if}
-			</div>
+			<Form.Field {form} name="fat">
+				<Form.Control>
+					{#snippet children({ props })}
+						<div class="space-y-2">
+							<Form.Label>Fat (g)</Form.Label>
+							<Input {...props} bind:value={$formData.fat} type="number" min="0" placeholder="0" />
+						</div>
+					{/snippet}
+				</Form.Control>
+				<Form.FieldErrors />
+			</Form.Field>
 		</div>
 	{/snippet}
 </RecipeFormCard>

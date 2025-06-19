@@ -1,15 +1,13 @@
 <script lang="ts">
 	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
 	import * as Form from '$lib/components/ui/form/index';
 	import * as Select from '$lib/components/ui/select/index';
 	import { Textarea } from '$lib/components/ui/textarea';
-	import { MEAL_TYPES, type MealType } from '$lib/constants/meal-types';
-	import type { SuperForm, SuperFormData, SuperFormErrors } from 'sveltekit-superforms/client';
+	import { MEAL_TYPES } from '$lib/constants/meal-types';
+	import type { SuperForm } from 'sveltekit-superforms/client';
 	import RecipeFormCard from './recipe-form-card.svelte';
 	import RecipeImageUpload from './recipe-image-upload.svelte';
 	import type { IRecipeFormValues } from '../schema';
-	import type { InputConstraints } from 'sveltekit-superforms';
 
 	interface Props {
 		form: SuperForm<IRecipeFormValues>;
@@ -17,15 +15,11 @@
 
 	const { form }: Props = $props();
 
-	const { form: formData, errors, constraints } = form;
+	const { form: formData } = form;
 
 	function handleImageChange(file?: File) {
 		$formData.image = file;
 	}
-
-	const triggerContent = $derived(
-		MEAL_TYPES.find((f) => f === $formData.mealType) ?? 'Select a fruit'
-	);
 </script>
 
 <RecipeFormCard>
