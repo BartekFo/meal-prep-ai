@@ -63,7 +63,7 @@
 	<Card class={cn('relative', !isFileVisible && 'hidden')}>
 		<CardContent class="p-0">
 			{#if value && previewUrl}
-				<div class="relative aspect-video w-full overflow-hidden rounded-md">
+				<div class="relative aspect-video w-full overflow-hidden rounded-md px-4">
 					<img src={previewUrl} alt="Preview" class="h-full w-full object-cover" />
 				</div>
 			{/if}
