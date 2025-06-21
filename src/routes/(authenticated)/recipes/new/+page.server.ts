@@ -3,6 +3,8 @@ import { arktype } from 'sveltekit-superforms/adapters';
 import { fail } from '@sveltejs/kit';
 import { RecipeFormSchema } from '$lib/modules/recipes/new/schema';
 import type { Actions } from '@sveltejs/kit';
+import { createStorage } from '$lib/storage';
+import { auth } from '$lib/auth';
 
 const defaults = {
   title: '',
@@ -31,21 +33,29 @@ export const actions: Actions = {
     const form = await superValidate(request, arktype(RecipeFormSchema, { defaults }));
     console.log('Form data received:', form);
 
+    const session = await auth.api.getSession({
+      headers: request.headers
+    });
+
     if (!form.valid) {
       console.log('Form is invalid:', form.errors);
       return fail(400, withFiles({ form }));
     }
 
-    // TODO: Implement database logic
-    // - Save recipe to database using Drizzle ORM
-    // - Handle image upload (store file, get URL)
-    // - Return success response or redirect
-
     try {
-      // TODO: Add database save logic here
-      console.log('Validated form data:', form.data);
+      let imageUrl = null;
 
-      // For now, just simulate success
+      if (form.data.image && form.data.image.size > 0) {
+        const storage = createStorage();
+        const userId = session?.user?.id;
+        const filename = `${Date.now()}-${form.data.image.name}`;
+        const imagePath = `recipes/${userId}/${filename}`;
+
+        imageUrl = await storage.upload(form.data.image, imagePath);
+      }
+
+      console.log('Validated form data:', { ...form.data, imageUrl });
+
       return message(form, 'Recipe created successfully!');
     } catch (error) {
       console.error('Error creating recipe:', error);

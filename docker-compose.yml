@@ -10,5 +10,20 @@ services:
       POSTGRES_DB: local
     volumes:
       - pgdata:/var/lib/postgresql/data
+
+  app:
+    build: .
+    ports:
+      - '5173:5173'
+    environment:
+      - NODE_ENV=development
+      - STORAGE_PROVIDER=local
+    volumes:
+      - recipe_uploads:/app/uploads
+      - ./src:/app/src
+    depends_on:
+      - db
+
 volumes:
   pgdata:
+  recipe_uploads:

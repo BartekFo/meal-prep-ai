@@ -2,9 +2,6 @@
 	import { routes } from '$lib/constants/routes';
 	import AppLogo from './app-logo.svelte';
 	import { page } from '$app/state';
-	import { authClient } from '$lib/auth/auth-client';
-
-	const { data: session } = await authClient.getSession();
 
 	const data = {
 		navMain: [
@@ -28,6 +25,9 @@
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import type { ComponentProps } from 'svelte';
 	import NavUser from './nav-user.svelte';
+	import { authClient } from '$lib/auth/auth-client';
+
+	const session = authClient.useSession();
 
 	let { ref = $bindable(null), ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
 </script>
@@ -62,8 +62,8 @@
 	<Sidebar.Footer>
 		<NavUser
 			user={{
-				name: session?.user?.name ?? '',
-				email: session?.user?.email ?? ''
+				name: $session?.data?.user?.name ?? '',
+				email: $session?.data?.user?.email ?? ''
 			}}
 		/>
 	</Sidebar.Footer>
