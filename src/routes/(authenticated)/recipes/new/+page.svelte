@@ -8,7 +8,6 @@
 		NutritionInformationFields,
 		type IRecipeFormValues
 	} from '$lib/modules/recipes/new';
-	import SuperDebug from 'sveltekit-superforms';
 
 	import { ArrowLeft } from '@lucide/svelte';
 	import { superForm } from 'sveltekit-superforms';
