@@ -34,7 +34,13 @@
 						{#snippet children({ props })}
 							<div class="space-y-2">
 								<Form.Label>Recipe Title</Form.Label>
-								<Input placeholder="Enter recipe title" {...props} bind:value={$formData.title} />
+								<Input
+									minlength={3}
+									required
+									placeholder="Enter recipe title"
+									{...props}
+									bind:value={$formData.title}
+								/>
 							</div>
 						{/snippet}
 					</Form.Control>
@@ -86,8 +92,9 @@
 							<Input
 								{...props}
 								bind:value={$formData.prepTime}
+								min={1}
+								required
 								type="number"
-								min="1"
 								placeholder="15"
 							/>
 						</div>
@@ -103,8 +110,9 @@
 							<Input
 								{...props}
 								bind:value={$formData.cookTime}
+								min={1}
+								required
 								type="number"
-								min="1"
 								placeholder="15"
 							/>
 						</div>
@@ -120,8 +128,9 @@
 							<Input
 								{...props}
 								bind:value={$formData.servings}
+								min={1}
+								required
 								type="number"
-								min="1"
 								placeholder="15"
 							/>
 						</div>

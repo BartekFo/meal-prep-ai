@@ -20,7 +20,6 @@
 			$formData.ingredients = [];
 		}
 		$formData.ingredients = [...$formData.ingredients, ''];
-		console.log($formData.ingredients);
 	}
 
 	function removeIngredient(index: number) {
@@ -57,6 +56,8 @@
 										name={props.name}
 										placeholder="e.g. 1 cup flour"
 										value={ingredient}
+										minlength={2}
+										required
 										oninput={(e) => updateIngredient(i, e.currentTarget.value)}
 									/>
 								</div>

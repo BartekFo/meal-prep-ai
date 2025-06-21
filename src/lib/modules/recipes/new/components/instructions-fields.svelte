@@ -54,6 +54,8 @@
 										{...props}
 										id="instruction-{i}"
 										name={props.name}
+										minlength={2}
+										required
 										placeholder="Describe this step"
 										class="min-h-[80px]"
 										value={instruction}

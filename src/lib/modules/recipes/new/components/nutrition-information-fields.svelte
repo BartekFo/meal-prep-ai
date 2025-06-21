@@ -26,8 +26,9 @@
 							<Input
 								{...props}
 								bind:value={$formData.calories}
+								min={1}
+								required
 								type="number"
-								min="0"
 								placeholder="0"
 							/>
 						</div>
@@ -44,8 +45,9 @@
 							<Input
 								{...props}
 								bind:value={$formData.protein}
+								min={1}
+								required
 								type="number"
-								min="0"
 								placeholder="0"
 							/>
 						</div>
@@ -62,8 +64,9 @@
 							<Input
 								{...props}
 								bind:value={$formData.carbs}
+								min={1}
+								required
 								type="number"
-								min="0"
 								placeholder="0"
 							/>
 						</div>
@@ -77,7 +80,14 @@
 					{#snippet children({ props })}
 						<div class="space-y-2">
 							<Form.Label>Fat (g)</Form.Label>
-							<Input {...props} bind:value={$formData.fat} type="number" min="0" placeholder="0" />
+							<Input
+								{...props}
+								bind:value={$formData.fat}
+								min={1}
+								required
+								type="number"
+								placeholder="0"
+							/>
 						</div>
 					{/snippet}
 				</Form.Control>
