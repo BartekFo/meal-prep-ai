@@ -19,12 +19,12 @@
 		if (!$formData.instructions) {
 			$formData.instructions = [];
 		}
-		$formData.instructions.push('');
+		$formData.instructions = [...$formData.instructions, ''];
 	}
 
 	function removeInstruction(index: number) {
 		if ($formData.instructions.length > 1) {
-			$formData.instructions.splice(index, 1);
+			$formData.instructions = $formData.instructions.filter((_, i) => i !== index);
 		}
 	}
 
@@ -53,7 +53,7 @@
 									<Textarea
 										{...props}
 										id="instruction-{i}"
-										name="instructions[{i}]"
+										name={props.name}
 										placeholder="Describe this step"
 										class="min-h-[80px]"
 										value={instruction}

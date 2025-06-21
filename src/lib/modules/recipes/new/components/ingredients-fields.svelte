@@ -19,12 +19,13 @@
 		if (!$formData.ingredients) {
 			$formData.ingredients = [];
 		}
-		$formData.ingredients.push('');
+		$formData.ingredients = [...$formData.ingredients, ''];
+		console.log($formData.ingredients);
 	}
 
 	function removeIngredient(index: number) {
 		if ($formData.ingredients.length > 1) {
-			$formData.ingredients.splice(index, 1);
+			$formData.ingredients = $formData.ingredients.filter((_, i) => i !== index);
 		}
 	}
 
@@ -53,7 +54,7 @@
 									<Input
 										{...props}
 										id="ingredient-{i}"
-										name="ingredients[{i}]"
+										name={props.name}
 										placeholder="e.g. 1 cup flour"
 										value={ingredient}
 										oninput={(e) => updateIngredient(i, e.currentTarget.value)}

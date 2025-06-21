@@ -8,15 +8,18 @@
 		NutritionInformationFields,
 		type IRecipeFormValues
 	} from '$lib/modules/recipes/new';
+	import SuperDebug from 'sveltekit-superforms';
 
 	import { ArrowLeft } from '@lucide/svelte';
 	import { superForm } from 'sveltekit-superforms';
 
 	let { data }: { data: { form: IRecipeFormValues } } = $props();
 
-	const form = superForm(data.form);
+	const form = superForm(data.form, {
+		clearOnSubmit: 'errors'
+	});
 
-	const { message, enhance, submitting } = form;
+	const { message, enhance, submitting, form: formData } = form;
 </script>
 
 <div class="container mx-auto max-w-5xl p-6">
@@ -34,7 +37,7 @@
 		</p>
 	</div>
 
-	<form method="POST" use:enhance class="space-y-8">
+	<form method="POST" use:enhance class="space-y-8" enctype="multipart/form-data">
 		{#if $message}
 			<div class="rounded-md border border-green-500 bg-green-50 p-4 text-green-700">
 				{$message}

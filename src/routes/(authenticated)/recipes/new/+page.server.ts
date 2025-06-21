@@ -16,8 +16,8 @@ const defaults = {
   protein: 0,
   carbs: 0,
   fat: 0,
-  ingredients: [],
-  instructions: [],
+  ingredients: [''],
+  instructions: [''],
 };
 
 export const load = async () => {
@@ -32,6 +32,7 @@ export const actions: Actions = {
     console.log('Form data received:', form);
 
     if (!form.valid) {
+      console.log('Form is invalid:', form.errors);
       return fail(400, withFiles({ form }));
     }
 
