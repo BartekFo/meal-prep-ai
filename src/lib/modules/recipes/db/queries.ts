@@ -10,7 +10,7 @@ export async function getAllRecipes(userId: string, filters?: RecipeFilters): Pr
     conditions.push(ilike(recipes.title, `%${filters.search}%`));
   }
 
-  if (filters?.type && filters.type === undefined) {
+  if (filters?.type && filters.type !== 'all') {
     conditions.push(eq(recipes.mealType, filters.type));
   }
 

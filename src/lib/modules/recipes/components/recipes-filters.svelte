@@ -40,6 +40,7 @@
 				{recipeType === 'all' ? 'All Types' : recipeType}
 			</SelectTrigger>
 			<SelectContent>
+				<SelectItem value="all">All Types</SelectItem>
 				{#each MEAL_TYPES as type}
 					<SelectItem value={type}>{type}</SelectItem>
 				{/each}

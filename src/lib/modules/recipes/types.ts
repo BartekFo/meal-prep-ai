@@ -5,6 +5,6 @@ export type Recipe = typeof recipes.$inferSelect;
 
 export type RecipeFilters = {
   search?: string;
-  type?: MealType | undefined;
+  type?: MealType | 'all';
   sort?: string;
 }; 
