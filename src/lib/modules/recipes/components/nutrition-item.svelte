@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { cn } from '$lib/utils';
+
 	interface NutritionItemProps {
 		value: number | string;
 		label: string;
@@ -9,14 +11,13 @@
 	let { value, label, unit = '', variant = 'large' }: NutritionItemProps = $props();
 
 	const isLarge = $derived(variant === 'large');
-	const isCompact = $derived(variant === 'compact');
 </script>
 
-<div class={isCompact ? 'prose text-center' : ''}>
+<div class="not-prose text-center">
 	<p class={isLarge ? 'text-2xl font-bold' : 'text-sm font-medium'}>
 		{value}{unit}
 	</p>
-	<p class={isLarge ? 'text-muted-foreground text-sm' : 'text-muted-foreground text-xs'}>
+	<p class={cn('text-muted-foreground', isLarge ? 'text-sm' : 'text-xs')}>
 		{label}
 	</p>
 </div>

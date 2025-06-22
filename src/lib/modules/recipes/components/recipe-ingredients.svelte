@@ -46,7 +46,7 @@
 		<ul class="space-y-2">
 			{#each ingredients as ingredient, index}
 				<li class="flex items-start gap-2">
-					<div class="bg-primary mt-1 h-2 w-2 rounded-full"></div>
+					<div class="bg-primary mt-2 h-2 w-2 rounded-full"></div>
 					<span>{ingredient}</span>
 				</li>
 			{/each}

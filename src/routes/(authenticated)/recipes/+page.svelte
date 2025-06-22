@@ -11,7 +11,7 @@
 <div class="flex h-full flex-col">
 	<div class="flex items-center justify-between border-b px-6 py-4">
 		<h1 class="text-2xl font-semibold">Recipes</h1>
-		<Button href={routes.recipes.new}>
+		<Button size="lg" href={routes.recipes.new}>
 			<Plus class="mr-2 h-4 w-4" />
 			Add Recipe
 		</Button>

@@ -18,10 +18,16 @@
 	$: totalTime = `${recipe.prepTime} prep · ${recipe.cookTime} cook`;
 </script>
 
-<Card class="overflow-hidden transition-all hover:shadow-md">
+<Card class="gap-0 overflow-hidden py-0 transition-all hover:shadow-md">
 	<div class="relative aspect-video">
 		{#if recipe.imageUrl}
-			<img src={recipe.imageUrl} alt={recipe.title} class="h-full w-full object-cover" />
+			<img
+				loading="lazy"
+				decoding="async"
+				src={recipe.imageUrl}
+				alt={recipe.title}
+				class="h-full w-full object-cover"
+			/>
 		{:else}
 			<div class="flex h-full flex-col items-center justify-center gap-2">
 				<CookingPot class="h-12 w-12" />
