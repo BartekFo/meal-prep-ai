@@ -1,40 +1,14 @@
 import { auth } from "$lib/auth";
 import { svelteKitHandler } from "better-auth/svelte-kit";
-import { redirect } from "@sveltejs/kit";
+import { sequence } from "@sveltejs/kit/hooks";
+import type { Handle } from "@sveltejs/kit";
+import { authHandle } from "$lib/hooks/auth-handler";
 
-const protectedRoutes = ['/dashboard'];
-const publicRoutes = ['/login', '/sign-up'];
+const betterAuthHandle: Handle = async ({ event, resolve }) => {
+  return await svelteKitHandler({ event, resolve, auth });
+};
 
-export async function handle({ event, resolve }) {
-  const response = await svelteKitHandler({ event, resolve, auth });
-
-  const isProtectedRoute = protectedRoutes.some(route =>
-    event.url.pathname.startsWith(route)
-  );
-
-  const isPublicRoute = publicRoutes.some(route =>
-    event.url.pathname.startsWith(route)
-  );
-
-  const session = await auth.api.getSession({
-    headers: event.request.headers
-  });
-
-  if (isProtectedRoute && !session?.user) {
-    redirect(302, '/login');
-  }
-
-  if (isPublicRoute && session?.user) {
-    redirect(302, '/dashboard');
-  }
-
-  if (event.url.pathname === '/') {
-    if (session?.user) {
-      redirect(302, '/dashboard');
-    } else {
-      redirect(302, '/login');
-    }
-  }
-
-  return response;
-}
+export const handle = sequence(
+  betterAuthHandle,
+  authHandle
+);

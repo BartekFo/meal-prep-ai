@@ -1,10 +1,11 @@
-import { superValidate, message, withFiles } from 'sveltekit-superforms';
+import { superValidate, withFiles } from 'sveltekit-superforms';
 import { arktype } from 'sveltekit-superforms/adapters';
-import { fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import { RecipeFormSchema } from '$lib/modules/recipes/new/schema';
 import type { Actions } from '@sveltejs/kit';
-import { createStorage } from '$lib/storage';
 import { auth } from '$lib/auth';
+import { createRecipe } from '$lib/modules/recipes/new/actions';
+import { error } from '@sveltejs/kit';
 
 const defaults = {
   title: '',
@@ -31,38 +32,27 @@ export const load = async () => {
 export const actions: Actions = {
   default: async ({ request }) => {
     const form = await superValidate(request, arktype(RecipeFormSchema, { defaults }));
-    console.log('Form data received:', form);
+
+    if (!form.valid) {
+      return fail(400, withFiles({ form }));
+    }
 
     const session = await auth.api.getSession({
       headers: request.headers
     });
 
-    if (!form.valid) {
-      console.log('Form is invalid:', form.errors);
-      return fail(400, withFiles({ form }));
+    if (!session?.user) {
+      throw redirect(303, '/login');
     }
 
-    try {
-      let imageUrl = null;
+    const result = await createRecipe({ formData: form.data, userId: session.user.id });
 
-      if (form.data.image && form.data.image.size > 0) {
-        const storage = createStorage();
-        const userId = session?.user?.id;
-        const filename = `${Date.now()}-${form.data.image.name}`;
-        const imagePath = `recipes/${userId}/${filename}`;
-
-        imageUrl = await storage.upload(form.data.image, imagePath);
-      }
-
-      console.log('Validated form data:', { ...form.data, imageUrl });
-
-      return message(form, 'Recipe created successfully!');
-    } catch (error) {
-      console.error('Error creating recipe:', error);
-      return fail(500, withFiles({
-        form,
-        message: 'An error occurred while creating the recipe'
-      }));
+    if (result.isErr()) {
+      return error(500, {
+        message: result.error.message
+      });
     }
+
+    redirect(303, '/recipes');
   }
 }; 

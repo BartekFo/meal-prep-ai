@@ -4,6 +4,7 @@
 	import { goto, pushState } from '$app/navigation';
 	import { page } from '$app/state';
 	import { Select, SelectContent, SelectItem, SelectTrigger } from '$lib/components/ui/select';
+	import { MEAL_TYPES } from '$lib/constants/meal-types';
 
 	let searchQuery = page.url.searchParams.get('search');
 	let recipeType = page.url.searchParams.get('type') || 'all';
@@ -36,14 +37,12 @@
 	<div class="flex gap-2">
 		<Select type="single" value={recipeType} onValueChange={handleTypeChange}>
 			<SelectTrigger class="w-36 capitalize">
-				{recipeType}
+				{recipeType === 'all' ? 'All Types' : recipeType}
 			</SelectTrigger>
 			<SelectContent>
-				<SelectItem value="all">All Types</SelectItem>
-				<SelectItem value="breakfast">Breakfast</SelectItem>
-				<SelectItem value="lunch">Lunch</SelectItem>
-				<SelectItem value="dinner">Dinner</SelectItem>
-				<SelectItem value="snack">Snack</SelectItem>
+				{#each MEAL_TYPES as type}
+					<SelectItem value={type}>{type}</SelectItem>
+				{/each}
 			</SelectContent>
 		</Select>
 		<Select type="single" value={sortBy} onValueChange={handleSortChange}>

@@ -2,7 +2,10 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Plus } from '@lucide/svelte';
 	import { routes } from '$lib/constants/routes';
-	import RecipesFilters from '$lib/modules/recipes/components/recipes-filters.svelte';
+	import { RecipesFilters, RecipeList } from '$lib/modules/recipes';
+	import type { PageData } from './$types';
+
+	let { data }: { data: PageData } = $props();
 </script>
 
 <div class="flex h-full flex-col">
@@ -15,6 +18,6 @@
 	</div>
 	<div class="flex-1 overflow-auto p-6">
 		<RecipesFilters />
-		<!-- <RecipeList /> -->
+		<RecipeList recipes={data.recipes} />
 	</div>
 </div>

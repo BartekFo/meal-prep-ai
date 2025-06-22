@@ -15,10 +15,13 @@
 	let { data }: { data: { form: IRecipeFormValues } } = $props();
 
 	const form = superForm(data.form, {
-		clearOnSubmit: 'errors'
+		clearOnSubmit: 'errors',
+		onError: ({ result }) => {
+			$message = result.error.message || 'Unknown error';
+		}
 	});
 
-	const { message, enhance, submitting, form: formData } = form;
+	const { message, enhance, submitting } = form;
 </script>
 
 <div class="container mx-auto max-w-5xl p-6">
@@ -38,7 +41,7 @@
 
 	<form method="POST" use:enhance class="space-y-8" enctype="multipart/form-data">
 		{#if $message}
-			<div class="rounded-md border border-green-500 bg-green-50 p-4 text-green-700">
+			<div class="rounded-md border border-red-50 bg-red-50 p-4 text-red-700">
 				{$message}
 			</div>
 		{/if}

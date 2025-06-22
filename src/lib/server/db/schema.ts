@@ -1,4 +1,7 @@
-import { pgTable, text, timestamp, boolean, uuid, bigint, integer, jsonb, varchar, bigserial, primaryKey } from "drizzle-orm/pg-core";
+import { MEAL_TYPES } from "../../constants/meal-types";
+import { pgTable, text, timestamp, boolean, uuid, bigint, integer, jsonb, varchar, bigserial, primaryKey, pgEnum } from "drizzle-orm/pg-core";
+
+export const mealTypeEnum = pgEnum('meal_type', MEAL_TYPES);
 
 export const user = pgTable("user", {
 	id: text('id').primaryKey(),
@@ -90,12 +93,12 @@ export const recipes = pgTable("recipes", {
 	userId: text('user_id').notNull().references(() => user.id),
 	title: text('title').notNull(),
 	description: text('description'),
-	ingredients: jsonb('ingredients').notNull(),
+	ingredients: text('ingredients').array().notNull(),
 	servings: integer('servings').notNull(),
 	prepTime: bigint('prep_time', { mode: 'number' }).notNull(),
 	cookTime: bigint('cook_time', { mode: 'number' }).notNull(),
-	mealType: text('meal_type').notNull(), // USER-DEFINED type converted to text
-	instructions: jsonb('instructions').notNull(),
+	mealType: mealTypeEnum('meal_type').notNull(),
+	instructions: text('instructions').array().notNull(),
 	imageUrl: text('image_url'),
 	calories: integer('calories').notNull(),
 	protein: integer('protein').notNull(),
@@ -116,5 +119,3 @@ export const vote = pgTable("vote", {
 }, (table) => [
 	primaryKey({ columns: [table.chatId, table.messageId] })
 ]);
-
-
