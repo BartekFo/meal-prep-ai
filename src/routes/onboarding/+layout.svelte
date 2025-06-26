@@ -3,6 +3,7 @@
 	import AppLogo from '$lib/components/app-logo.svelte';
 	import { authClient } from '$lib/auth/auth-client';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import ModeToggle from '$lib/components/mode-toggle.svelte';
 	let { children } = $props();
 
 	async function handleLogout() {
@@ -24,4 +25,8 @@
 	</header>
 
 	{@render children()}
+
+	<div class="absolute right-5 bottom-5">
+		<ModeToggle />
+	</div>
 </div>
