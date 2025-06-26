@@ -5,6 +5,7 @@
 	import { Separator } from '$lib/components/ui/separator/index';
 	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index';
 	import { page } from '$app/state';
+	import SiteHeader from '$lib/components/site-header.svelte';
 
 	let { children } = $props();
 
@@ -38,26 +39,7 @@
 <SidebarProvider>
 	<AppSidebar />
 	<SidebarInset>
-		<header class="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-			<Sidebar.Trigger class="-ml-1" />
-			<Separator orientation="vertical" class="mr-2 h-4" />
-			<Breadcrumb.Root>
-				<Breadcrumb.List>
-					{#each breadcrumbs as breadcrumb, index (breadcrumb.href)}
-						<Breadcrumb.Item class={index === 0 ? 'hidden md:block' : ''}>
-							{#if breadcrumb.isLast}
-								<Breadcrumb.Page>{breadcrumb.label}</Breadcrumb.Page>
-							{:else}
-								<Breadcrumb.Link href={breadcrumb.href}>{breadcrumb.label}</Breadcrumb.Link>
-							{/if}
-						</Breadcrumb.Item>
-						{#if !breadcrumb.isLast}
-							<Breadcrumb.Separator class={index === 0 ? 'hidden md:block' : ''} />
-						{/if}
-					{/each}
-				</Breadcrumb.List>
-			</Breadcrumb.Root>
-		</header>
+		<SiteHeader />
 		{@render children()}
 	</SidebarInset>
 </SidebarProvider>

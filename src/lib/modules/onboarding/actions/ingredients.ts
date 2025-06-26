@@ -1,16 +1,12 @@
-import type { SaveDislikedIngredientsData } from '../db/types';
+import { auth } from "$lib/auth";
 
-export async function saveDislikedIngredients(data: any, userId: string) {
+export async function saveDislikedIngredients(data: any) {
   try {
-    const saveData: SaveDislikedIngredientsData = {
-      userId,
-      dislikedIngredients: data.dislikedIngredients || []
-    };
-
-    const result = await dbSaveDislikedIngredients(saveData);
-
-    // Complete onboarding process
-    await completeOnboarding(userId);
+    const result = await auth.api.updateUser({
+      body: {
+        dislikedIngredients: data.dislikedIngredients || []
+      }
+    });
 
     return { success: true, data: result };
   } catch (error) {

@@ -1,14 +1,13 @@
-import type { SaveDietaryPreferencesData } from '../db/types';
+import { auth } from '$lib/auth';
 
-export async function saveDietaryPreferences(data: any, userId: string) {
+export async function saveDietaryPreferences(data: any,) {
   try {
+    const result = await auth.api.updateUser({
+      body: {
+        dietaryPreferences: data.dietaryPreferences || []
+      }
+    });
 
-    const saveData: SaveDietaryPreferencesData = {
-      userId,
-      dietaryPreferences: data.dietaryPreferences || []
-    };
-
-    const result = await dbSaveDietaryPreferences(saveData);
     return { success: true, data: result };
   } catch (error) {
     console.error('Error saving dietary preferences:', error);

@@ -57,6 +57,7 @@
 		"better-auth": "^1.2.9",
 		"drizzle-orm": "^0.40.0",
 		"eslint-plugin-neverthrow": "^1.1.4",
+		"mode-watcher": "^1.0.8",
 		"neverthrow": "^8.2.0",
 		"postgres": "^3.4.5",
 		"sveltekit-superforms": "^2.26.1"

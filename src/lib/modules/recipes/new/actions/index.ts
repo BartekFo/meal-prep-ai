@@ -1,7 +1,7 @@
 import { ResultAsync } from "neverthrow";
 import { createRecipeRecord, type NewRecipe } from "../db/queries";
 import type { IRecipeFormValues } from "../schema";
-import { addImageToStorage } from "./addImageToStorage";
+import { uploadRecipeImage } from "./upload-recipe-image";
 
 interface CreateRecipeProps {
   formData: IRecipeFormValues;
@@ -10,7 +10,7 @@ interface CreateRecipeProps {
 
 export async function createRecipe({ formData, userId }: CreateRecipeProps) {
 
-  const imageUrl = await addImageToStorage(formData.image, userId);
+  const imageUrl = await uploadRecipeImage(formData.image, userId);
 
   const recipe: NewRecipe = {
     ...formData,

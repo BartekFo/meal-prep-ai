@@ -1,7 +1,7 @@
 import { createStorage } from "$lib/storage";
 import { errAsync, ResultAsync } from "neverthrow";
 
-export async function addImageToStorage(file: File | undefined, userId: string) {
+export async function uploadRecipeImage(file: File | undefined, userId: string) {
   if (!file || file.size === 0) {
     return errAsync(new Error('No file provided'));
   }
