@@ -20,19 +20,19 @@
 				<div class="grid grid-cols-2 gap-4">
 					<Button
 						href={routes.onboarding.ai}
-						class="border-muted hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary flex h-auto flex-col items-center justify-between rounded-md border-2 bg-transparent p-4 whitespace-normal"
+						class="border-muted hover:bg-accent hover:text-accent-foreground flex h-auto flex-col items-center justify-between rounded-md border-2 bg-transparent p-4 whitespace-normal text-black dark:text-white"
 					>
-						<BotMessageSquare />
-						AI
+						<BotMessageSquare class="size-8" />
+						<span class="font-medium">AI</span>
 						<span class="text-muted-foreground text-center text-sm">
 							Talk to our recipe assistant that will help you onboard.
 						</span>
 					</Button>
 					<Button
-						href="/onboarding/manual"
-						class="border-muted hover:bg-accent hover:text-accent-foreground flex h-auto flex-col items-center justify-between rounded-md border-2 bg-transparent p-4 whitespace-normal"
+						href="/onboarding/manual/step-1"
+						class="border-muted hover:bg-accent hover:text-accent-foreground flex h-auto flex-col items-center justify-between rounded-md border-2 bg-transparent p-4 whitespace-normal text-black dark:text-white"
 					>
-						<Handshake class="mb-2 h-8 w-8" />
+						<Handshake class="size-8" />
 						<span class="font-medium">Manual Setup</span>
 						<span class="text-muted-foreground text-center text-sm">
 							Manually add your dietary preferences and personal information.

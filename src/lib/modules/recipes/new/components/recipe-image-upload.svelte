@@ -83,7 +83,7 @@
 			</div>
 		</CardContent>
 	</Card>
-	<Card class={cn('border-dashed', isFileVisible && 'hidden')}>
+	<Card class={cn('bg-input border-none', isFileVisible && 'hidden')}>
 		<CardContent class="flex flex-col items-center justify-center p-6">
 			<label
 				for="image"
