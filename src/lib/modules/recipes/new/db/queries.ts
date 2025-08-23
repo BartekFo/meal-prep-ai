@@ -1,8 +1,8 @@
-import { db } from "$lib/server/db";
-import { recipes } from "$lib/server/db/schema";
+import { db } from '$lib/server/db';
+import { recipes } from '$lib/server/db/schema';
 
 export type NewRecipe = typeof recipes.$inferInsert;
 
 export async function createRecipeRecord(recipe: NewRecipe) {
-  return db.insert(recipes).values(recipe)
+	return db.insert(recipes).values(recipe);
 }

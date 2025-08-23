@@ -8,51 +8,51 @@ import { createRecipe } from '$lib/modules/recipes/new/actions';
 import { error } from '@sveltejs/kit';
 
 const defaults = {
-  title: '',
-  description: '',
-  image: undefined,
-  prepTime: 0,
-  cookTime: 0,
-  servings: 0,
-  mealType: 'breakfast' as const,
-  calories: 0,
-  protein: 0,
-  carbs: 0,
-  fat: 0,
-  ingredients: [''],
-  instructions: [''],
+	title: '',
+	description: '',
+	image: undefined,
+	prepTime: 0,
+	cookTime: 0,
+	servings: 0,
+	mealType: 'breakfast' as const,
+	calories: 0,
+	protein: 0,
+	carbs: 0,
+	fat: 0,
+	ingredients: [''],
+	instructions: ['']
 };
 
 export const load = async () => {
-  const form = await superValidate(arktype(RecipeFormSchema, { defaults }));
+	const form = await superValidate(arktype(RecipeFormSchema, { defaults }));
 
-  return { form };
+	return { form };
 };
 
 export const actions: Actions = {
-  default: async ({ request }) => {
-    const form = await superValidate(request, arktype(RecipeFormSchema, { defaults }));
+	default: async ({ request }) => {
+		const form = await superValidate(request, arktype(RecipeFormSchema, { defaults }));
 
-    if (!form.valid) {
-      return fail(400, withFiles({ form }));
-    }
+		if (!form.valid) {
+			return fail(400, withFiles({ form }));
+		}
 
-    const session = await auth.api.getSession({
-      headers: request.headers
-    });
+		const session = await auth.api.getSession({
+			headers: request.headers
+		});
 
-    if (!session?.user) {
-      throw redirect(303, '/login');
-    }
+		if (!session?.user) {
+			throw redirect(303, '/login');
+		}
 
-    const result = await createRecipe({ formData: form.data, userId: session.user.id });
+		const result = await createRecipe({ formData: form.data, userId: session.user.id });
 
-    if (result.isErr()) {
-      return error(500, {
-        message: result.error.message
-      });
-    }
+		if (result.isErr()) {
+			return error(500, {
+				message: result.error.message
+			});
+		}
 
-    redirect(303, '/recipes');
-  }
-}; 
+		redirect(303, '/recipes');
+	}
+};

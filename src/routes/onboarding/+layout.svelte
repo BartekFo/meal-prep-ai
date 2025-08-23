@@ -12,7 +12,7 @@
 </script>
 
 <div class="bg-muted/20 flex min-h-screen flex-col">
-	<header class="bg-background border-b px-4 py-3 shadow-sm">
+	<header class="bg-background sticky top-0 z-10 w-full border-b px-4 py-3 shadow-sm">
 		<div class="mx-auto flex max-w-5xl items-center justify-between">
 			<a href="/onboarding">
 				<AppLogo />
@@ -26,7 +26,7 @@
 
 	{@render children()}
 
-	<div class="absolute right-5 bottom-5">
+	<div class="fixed right-5 bottom-5">
 		<ModeToggle />
 	</div>
 </div>

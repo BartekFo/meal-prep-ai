@@ -1,7 +1,7 @@
 import { type } from 'arktype';
 
 export const dietaryPreferencesSchema = type({
-  dietaryPreferences: 'string[]'
+	dietaryPreferences: 'string[]'
 });
 
-export type DietaryPreferences = typeof dietaryPreferencesSchema.infer; 
+export type DietaryPreferences = typeof dietaryPreferencesSchema.infer;

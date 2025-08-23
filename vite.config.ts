@@ -5,8 +5,7 @@ import { enhancedImages } from '@sveltejs/enhanced-img';
 import devtoolsJson from 'vite-plugin-devtools-json';
 
 export default defineConfig({
-	plugins: [devtoolsJson(),
-	tailwindcss(), enhancedImages(), sveltekit(),],
+	plugins: [devtoolsJson(), tailwindcss(), enhancedImages(), sveltekit()],
 	server: {
 		fs: {
 			allow: ['..']

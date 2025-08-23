@@ -1,49 +1,63 @@
-import { db } from "../server/db";
-import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { db } from '../server/db';
+import { betterAuth } from 'better-auth';
+import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { sveltekitCookies } from 'better-auth/svelte-kit';
+import { getRequestEvent } from '$app/server';
 
 export const auth = betterAuth({
-  database: drizzleAdapter(db, {
-    provider: "pg",
-  }),
-  emailAndPassword: {
-    enabled: true
-  },
-  user: {
-    additionalFields: {
-      dateOfBirth: {
-        type: 'date',
-        required: false
-      },
-      gender: {
-        type: 'string',
-        required: false
-      },
-      activityLevel: {
-        type: 'string',
-        required: false
-      },
-      currentWeight: {
-        type: 'number',
-        required: false
-      },
-      height: {
-        type: 'number',
-        required: false
-      },
-      weightGoal: {
-        type: 'string',
-        required: false
-      },
-      dietaryPreferences: {
-        type: 'string[]',
-        required: false
-      },
-      dislikedIngredients: {
-        type: 'string[]',
-        required: false
-      }
-
-    }
-  }
-})
+	database: drizzleAdapter(db, {
+		provider: 'pg'
+	}),
+	plugins: [sveltekitCookies(getRequestEvent)],
+	emailAndPassword: {
+		enabled: true
+	},
+	user: {
+		additionalFields: {
+			firstName: {
+				type: 'string',
+				required: false
+			},
+			lastName: {
+				type: 'string',
+				required: false
+			},
+			allergies: {
+				type: 'string[]',
+				required: false
+			},
+			weightGoal: {
+				type: 'string',
+				required: false
+			},
+			dietaryType: {
+				type: 'string',
+				required: false
+			},
+			dislikedFoods: {
+				type: 'string',
+				required: false
+			},
+			dateOfBirth: {
+				type: 'date',
+				required: false
+			},
+			gender: {
+				type: 'string',
+				required: false
+			},
+			activityLevel: {
+				type: 'string',
+				required: false
+			},
+			currentWeight: {
+				type: 'number',
+				required: false
+			},
+			height: {
+				type: 'number',
+				required: false
+			}
+		}
+	}
+});
