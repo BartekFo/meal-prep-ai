@@ -3,6 +3,8 @@ import { recipes } from '$lib/server/db/schema';
 import { eq, desc, asc, ilike, and } from 'drizzle-orm';
 import type { Recipe, RecipeFilters } from '../types';
 
+export type NewRecipe = typeof recipes.$inferInsert;
+
 export async function getAllRecipes(userId: string, filters?: RecipeFilters): Promise<Recipe[]> {
 	const conditions = [eq(recipes.userId, userId)];
 
@@ -50,4 +52,10 @@ export async function getRecipeById(id: number, userId: string): Promise<Recipe 
 	}
 
 	return result[0];
+}
+
+export async function updateRecipeRecord(id: number, recipe: NewRecipe, userId: string) {
+	return db.update(recipes)
+		.set(recipe)
+		.where(and(eq(recipes.id, id), eq(recipes.userId, userId)));
 }
