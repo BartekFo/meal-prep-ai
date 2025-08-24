@@ -30,22 +30,18 @@ export const user = pgTable('user', {
 	updatedAt: timestamp('updated_at')
 		.$defaultFn(() => /* @__PURE__ */ new Date())
 		.notNull(),
-	// MVP onboarding fields
 	firstName: text('first_name'),
 	lastName: text('last_name'),
-	weightGoal: text('weight_goal'), // 'lose'|'maintain'|'gain'
-	dietaryType: text('dietary_type'), // 'omnivore'|'vegetarian'|'vegan'
-	allergies: text('allergies').array(),
+	weightGoal: text('weight_goal'),
+	dietaryType: text('dietary_type'),
+	allergies: text('allergies'),
 	dislikedFoods: text('disliked_foods'),
-	preferredMealTypes: text('preferred_meal_types').array(), // 'breakfast'|'lunch'|'dinner'
-	// Legacy fields (can be removed later)
+	preferredMealTypes: text('preferred_meal_types').array(),
 	dateOfBirth: timestamp('date_of_birth'),
 	gender: text('gender'),
 	activityLevel: text('activity_level'),
 	currentWeight: integer('current_weight'),
-	height: integer('height'),
-	dietaryPreferences: text('dietary_preferences').array(),
-	dislikedIngredients: text('disliked_ingredients').array()
+	height: integer('height')
 });
 
 export const session = pgTable('session', {

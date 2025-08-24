@@ -6,11 +6,14 @@
 	import { Card, CardContent } from '$lib/components/ui/card';
 	import { Progress } from '$lib/components/ui/progress';
 	import { ArrowLeft } from '@lucide/svelte';
+	import { DIETARY_TYPES } from '$lib/modules/onboarding/constants';
+
+	let { data } = $props();
 
 	let formData = $state({
-		dietaryType: '',
-		dislikedFoods: '',
-		preferredMealTypes: [] as string[]
+		dietaryType: data.user.dietaryType,
+		dislikedFoods: data.user.dislikedFoods,
+		preferredMealTypes: data.user.preferredMealTypes
 	});
 
 	function toggleMealType(mealType: string) {
@@ -53,36 +56,18 @@
 							<h3 class="mb-4 text-lg font-medium">Dietary Type</h3>
 							<div class="space-y-3">
 								<div class="flex flex-col space-y-2">
-									<label class="flex items-center space-x-3">
-										<input
-											type="radio"
-											name="dietaryType"
-											value="omnivore"
-											required
-											bind:group={formData.dietaryType}
-										/>
-										<span>Omnivore (eats everything)</span>
-									</label>
-									<label class="flex items-center space-x-3">
-										<input
-											type="radio"
-											name="dietaryType"
-											value="vegetarian"
-											required
-											bind:group={formData.dietaryType}
-										/>
-										<span>Vegetarian (no meat)</span>
-									</label>
-									<label class="flex items-center space-x-3">
-										<input
-											type="radio"
-											name="dietaryType"
-											value="vegan"
-											required
-											bind:group={formData.dietaryType}
-										/>
-										<span>Vegan (no animal products)</span>
-									</label>
+									{#each DIETARY_TYPES as dietType}
+										<label class="flex items-center space-x-3">
+											<input
+												type="radio"
+												name="dietaryType"
+												value={dietType.value}
+												required
+												bind:group={formData.dietaryType}
+											/>
+											<span>{dietType.label}</span>
+										</label>
+									{/each}
 								</div>
 							</div>
 						</CardContent>

@@ -23,7 +23,7 @@ export const auth = betterAuth({
 				required: false
 			},
 			allergies: {
-				type: 'string[]',
+				type: 'string',
 				required: false
 			},
 			weightGoal: {
@@ -32,6 +32,10 @@ export const auth = betterAuth({
 			},
 			dietaryType: {
 				type: 'string',
+				required: false
+			},
+			preferredMealTypes: {
+				type: 'string[]',
 				required: false
 			},
 			dislikedFoods: {

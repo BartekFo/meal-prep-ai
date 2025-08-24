@@ -55,7 +55,16 @@
 {/snippet}
 
 {#snippet YearSelect()}
-	<CalendarYearSelect {years} {yearFormat} value={month.year} />
+	<CalendarYearSelect
+		{years}
+		{yearFormat}
+		value={month.year}
+		onchange={(e) => {
+			if (!placeholder) return;
+			const v = Number.parseInt(e.currentTarget.value);
+			placeholder = placeholder.set({ year: v });
+		}}
+	/>
 {/snippet}
 
 {#if captionLayout === 'dropdown'}

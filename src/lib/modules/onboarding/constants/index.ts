@@ -12,6 +12,17 @@ export const WEIGHT_GOALS = [
 	{ value: 'gain', label: 'Gain weight' }
 ] as const;
 
+export type WeightGoal = (typeof WEIGHT_GOALS)[number]['value'];
+
+export const DIETARY_TYPES = [
+	{ value: 'omnivore', label: 'Omnivore (eats everything)' },
+	{ value: 'vegetarian', label: 'Vegetarian (no meat)' },
+	{ value: 'vegan', label: 'Vegan (no animal products)' },
+	{ value: 'lactose-intolerant', label: 'Lactose Intolerant (no dairy)' }
+] as const;
+
+export type DietaryType = (typeof DIETARY_TYPES)[number]['value'];
+
 export const GENDER_OPTIONS = [
 	{ value: 'male', label: 'Male' },
 	{ value: 'female', label: 'Female' },
@@ -20,5 +31,4 @@ export const GENDER_OPTIONS = [
 ] as const;
 
 export type ActivityLevel = (typeof ACTIVITY_LEVELS)[number]['value'];
-export type WeightGoal = (typeof WEIGHT_GOALS)[number]['value'];
 export type Gender = (typeof GENDER_OPTIONS)[number]['value'];

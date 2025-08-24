@@ -36,6 +36,13 @@
 			"when": 1755970352018,
 			"tag": "0004_cooing_paibok",
 			"breakpoints": true
+		},
+		{
+			"idx": 5,
+			"version": "7",
+			"when": 1756020386807,
+			"tag": "0005_past_moonstone",
+			"breakpoints": true
 		}
 	]
 }

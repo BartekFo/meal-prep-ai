@@ -1,27 +1,39 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { saveFoodPreferences } from '$lib/modules/onboarding/actions/food-preferences';
-import type { Actions } from './$types';
+import type { Actions, PageServerLoad } from './$types';
+import { DIETARY_TYPES, type DietaryType } from '$lib/modules/onboarding/constants';
+
+export const load: PageServerLoad = async ({ locals }) => {
+	const user = locals.user;
+
+	return {
+		user: {
+			dietaryType: user?.dietaryType || '',
+			dislikedFoods: user?.dislikedFoods || '',
+			preferredMealTypes: user?.preferredMealTypes || []
+		}
+	};
+};
 
 export const actions: Actions = {
 	default: async ({ request }) => {
 		const data = await request.formData();
 		const dietaryType = data.get('dietaryType')?.toString() || '';
 
-		// Validate dietaryType is one of the allowed values
-		if (!['omnivore', 'vegetarian', 'vegan'].includes(dietaryType)) {
+		const allowedDietaryTypes = DIETARY_TYPES.map((type) => type.value);
+		if (!allowedDietaryTypes.includes(dietaryType as DietaryType)) {
 			return fail(400, {
 				error: 'Invalid dietary type'
 			});
 		}
 
 		const formData = {
-			dietaryType: dietaryType as 'omnivore' | 'vegetarian' | 'vegan',
+			dietaryType: dietaryType as DietaryType,
 			dislikedFoods: data.get('dislikedFoods')?.toString() || '',
 			preferredMealTypes: data.getAll('preferredMealTypes') as string[]
 		};
 
-		// Save the food preferences to database
-		const result = await saveFoodPreferences(formData);
+		const result = await saveFoodPreferences(formData, request);
 
 		if (!result.success) {
 			return fail(400, {
@@ -29,7 +41,6 @@ export const actions: Actions = {
 			});
 		}
 
-		// Redirect to dashboard after completing onboarding
 		redirect(302, '/dashboard');
 	}
 };

@@ -4,10 +4,25 @@ import { arktype } from 'sveltekit-superforms/adapters';
 import { saveEssentialInfo } from '$lib/modules/onboarding/actions/essential-info';
 import type { Actions, PageServerLoad } from './$types';
 import { essentialInfoSchema } from '$lib/modules/onboarding/schema/essential-info';
+import type { WeightGoal } from '$lib/modules/onboarding/constants';
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ locals }) => {
+	const user = locals.user;
+
+	const initialData = {
+		firstName: user?.firstName || '',
+		lastName: user?.lastName || '',
+		allergies: user?.allergies || '',
+		weightGoal: (user?.weightGoal as WeightGoal) || '',
+		dateOfBirth: user?.dateOfBirth?.toISOString().split('T')[0] || '',
+		gender: user?.gender || '',
+		activityLevel: user?.activityLevel || '',
+		currentWeight: user?.currentWeight || 0,
+		height: user?.height || 0
+	};
+
 	return {
-		form: await superValidate(arktype(essentialInfoSchema))
+		form: await superValidate(initialData, arktype(essentialInfoSchema))
 	};
 };
 
@@ -21,7 +36,6 @@ export const actions: Actions = {
 			});
 		}
 
-		// Save the essential info to database
 		const result = await saveEssentialInfo(form.data, request);
 
 		if (!result.success) {
@@ -31,7 +45,6 @@ export const actions: Actions = {
 			});
 		}
 
-		// Redirect to the preferences page
 		redirect(302, '/onboarding/preferences');
 	}
 };

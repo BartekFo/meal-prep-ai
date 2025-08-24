@@ -1,27 +1,21 @@
 import { auth } from '$lib/auth';
+import type { DietaryType } from '../constants';
 
 interface FoodPreferencesData {
-	dietaryType: 'omnivore' | 'vegetarian' | 'vegan';
+	dietaryType: DietaryType;
 	dislikedFoods: string;
 	preferredMealTypes: string[];
 }
 
-export async function saveFoodPreferences(data: FoodPreferencesData) {
+export async function saveFoodPreferences(data: FoodPreferencesData, request: Request) {
 	try {
-		// Basic validation
-		if (!data.dietaryType || !data.preferredMealTypes || data.preferredMealTypes.length === 0) {
-			return {
-				success: false,
-				errors: 'Dietary type and at least one preferred meal type are required'
-			};
-		}
-
 		const result = await auth.api.updateUser({
 			body: {
 				dietaryType: data.dietaryType,
 				dislikedFoods: data.dislikedFoods,
 				preferredMealTypes: data.preferredMealTypes
-			}
+			},
+			headers: request.headers
 		});
 
 		return { success: true, data: result };
