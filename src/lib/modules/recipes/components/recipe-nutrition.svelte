@@ -13,9 +13,16 @@
 		protein: number;
 		carbs: number;
 		fat: number;
+		multiplier: number;
 	}
 
-	let { calories, protein, carbs, fat }: NutritionProps = $props();
+	let { calories, protein, carbs, fat, multiplier }: NutritionProps = $props();
+
+	// Calculate scaled nutrition values
+	const scaledCalories = Math.round(calories * multiplier);
+	const scaledProtein = Math.round(protein * multiplier * 10) / 10;
+	const scaledCarbs = Math.round(carbs * multiplier * 10) / 10;
+	const scaledFat = Math.round(fat * multiplier * 10) / 10;
 </script>
 
 <Card>
@@ -25,10 +32,10 @@
 	</CardHeader>
 	<CardContent>
 		<div class="grid grid-cols-4 gap-4 text-center">
-			<NutritionItem value={calories} label="Calories" />
-			<NutritionItem value={protein} label="Protein" unit="g" />
-			<NutritionItem value={carbs} label="Carbs" unit="g" />
-			<NutritionItem value={fat} label="Fat" unit="g" />
+			<NutritionItem value={scaledCalories} label="Calories" />
+			<NutritionItem value={scaledProtein} label="Protein" unit="g" />
+			<NutritionItem value={scaledCarbs} label="Carbs" unit="g" />
+			<NutritionItem value={scaledFat} label="Fat" unit="g" />
 		</div>
 	</CardContent>
 </Card>

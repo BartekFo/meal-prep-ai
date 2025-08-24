@@ -15,8 +15,14 @@
 	let { data }: { data: PageData } = $props();
 
 	let recipe = $derived(data.recipe);
-	let totalTime = $derived(
-		recipe.cookTime === 0 ? `${recipe.prepTime}` : `${recipe.prepTime + recipe.cookTime}`
+	let currentPortions = $state(recipe.servings);
+	let multiplier = $derived(currentPortions / recipe.servings);
+	
+	// Scaled cooking times (simple linear scaling for MVP)
+	let scaledPrepTime = $derived(Math.round(recipe.prepTime * multiplier));
+	let scaledCookTime = $derived(Math.round(recipe.cookTime * multiplier));
+	let scaledTotalTime = $derived(
+		recipe.cookTime === 0 ? scaledPrepTime : scaledPrepTime + scaledCookTime
 	);
 </script>
 
@@ -54,10 +60,10 @@
 	</div>
 
 	<div class="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
-		<RecipeStatCard icon={Clock} label="Prep Time" value={recipe.prepTime} unit=" min" />
-		<RecipeStatCard icon={Clock} label="Cook Time" value={recipe.cookTime} unit=" min" />
-		<RecipeStatCard icon={Clock} label="Total Time" value={totalTime} unit=" min" />
-		<RecipeStatCard label="Servings" value={recipe.servings} />
+		<RecipeStatCard icon={Clock} label="Prep Time" value={scaledPrepTime} unit=" min" />
+		<RecipeStatCard icon={Clock} label="Cook Time" value={scaledCookTime} unit=" min" />
+		<RecipeStatCard icon={Clock} label="Total Time" value={scaledTotalTime} unit=" min" />
+		<RecipeStatCard label="Servings" value={currentPortions} />
 	</div>
 
 	<RecipeNutrition
@@ -65,13 +71,14 @@
 		protein={recipe.protein}
 		carbs={recipe.carbs}
 		fat={recipe.fat}
+		{multiplier}
 	/>
 
 	<Separator class="my-8" />
 
 	<div class="grid h-fit gap-8 md:grid-cols-2">
 		<div class="h-full">
-			<RecipeIngredients ingredients={recipe.ingredients} defaultServings={recipe.servings} />
+			<RecipeIngredients ingredients={recipe.ingredients} {multiplier} />
 		</div>
 		<div class="h-full">
 			<RecipeInstructions instructions={recipe.instructions} />
