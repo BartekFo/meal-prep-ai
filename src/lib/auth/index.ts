@@ -61,6 +61,14 @@ export const auth = betterAuth({
 			height: {
 				type: 'number',
 				required: false
+			},
+			onboardingStatus: {
+				type: 'string',
+				required: false
+			},
+			onboardingCompletedAt: {
+				type: 'date',
+				required: false
 			}
 		}
 	}

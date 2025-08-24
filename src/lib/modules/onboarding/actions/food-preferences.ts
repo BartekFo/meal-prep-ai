@@ -13,7 +13,9 @@ export async function saveFoodPreferences(data: FoodPreferencesData, request: Re
 			body: {
 				dietaryType: data.dietaryType,
 				dislikedFoods: data.dislikedFoods,
-				preferredMealTypes: data.preferredMealTypes
+				preferredMealTypes: data.preferredMealTypes,
+				onboardingStatus: 'completed',
+				onboardingCompletedAt: new Date()
 			},
 			headers: request.headers
 		});

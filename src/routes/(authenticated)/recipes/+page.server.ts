@@ -4,7 +4,7 @@ import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals, url }) => {
-	if (!locals.session?.user) {
+	if (!locals.user) {
 		error(401, { message: 'User not authenticated' });
 	}
 
@@ -18,7 +18,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		...(sort && { sort })
 	};
 
-	const recipes = await getAllRecipes(locals.session.user.id, filters);
+	const recipes = await getAllRecipes(locals.user.id, filters);
 
 	return {
 		recipes

@@ -5,9 +5,21 @@ import { saveEssentialInfo } from '$lib/modules/onboarding/actions/essential-inf
 import type { Actions, PageServerLoad } from './$types';
 import { essentialInfoSchema } from '$lib/modules/onboarding/schema/essential-info';
 import type { WeightGoal } from '$lib/modules/onboarding/constants';
+import type { OnboardingStatus } from '$lib/types/onboarding';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const user = locals.user;
+	
+	// Redirect users who have already completed onboarding
+	const onboardingStatus = user?.onboardingStatus as OnboardingStatus;
+	if (onboardingStatus === 'completed') {
+		throw redirect(302, '/dashboard');
+	}
+	
+	// Redirect users who completed step 1 to preferences
+	if (onboardingStatus === 'step1_completed') {
+		throw redirect(302, '/onboarding/preferences');
+	}
 
 	const initialData = {
 		firstName: user?.firstName || '',

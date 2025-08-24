@@ -41,8 +41,14 @@ export const user = pgTable('user', {
 	gender: text('gender'),
 	activityLevel: text('activity_level'),
 	currentWeight: integer('current_weight'),
-	height: integer('height')
-});
+	height: integer('height'),
+	onboardingStatus: text('onboarding_status', { 
+		enum: ['not_started', 'step1_completed', 'completed'] 
+	})
+		.$defaultFn(() => 'not_started')
+		.notNull(),
+	onboardingCompletedAt: timestamp('onboarding_completed_at')
+});;
 
 export const session = pgTable('session', {
 	id: text('id').primaryKey(),

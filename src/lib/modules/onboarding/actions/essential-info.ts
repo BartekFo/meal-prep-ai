@@ -13,7 +13,8 @@ export async function saveEssentialInfo(data: EssentialInfo, request: Request) {
 				gender: data.gender,
 				activityLevel: data.activityLevel,
 				currentWeight: data.currentWeight,
-				height: data.height
+				height: data.height,
+				onboardingStatus: 'step1_completed'
 			},
 			headers: request.headers
 		});

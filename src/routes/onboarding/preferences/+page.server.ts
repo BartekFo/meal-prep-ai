@@ -2,9 +2,16 @@ import { fail, redirect } from '@sveltejs/kit';
 import { saveFoodPreferences } from '$lib/modules/onboarding/actions/food-preferences';
 import type { Actions, PageServerLoad } from './$types';
 import { DIETARY_TYPES, type DietaryType } from '$lib/modules/onboarding/constants';
+import type { OnboardingStatus } from '$lib/types/onboarding';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const user = locals.user;
+	
+	// Ensure user has completed step 1 before accessing preferences
+	const onboardingStatus = user?.onboardingStatus as OnboardingStatus;
+	if (!onboardingStatus || onboardingStatus === 'not_started') {
+		throw redirect(302, '/onboarding');
+	}
 
 	return {
 		user: {
