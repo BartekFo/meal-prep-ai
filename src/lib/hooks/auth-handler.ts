@@ -11,7 +11,8 @@ export const authHandle: Handle = async ({ event, resolve }) => {
 		headers: event.request.headers
 	});
 
-	event.locals.session = session;
+	event.locals.session = session?.session || null;
+	event.locals.user = session?.user || null;
 
 	if (!isPublicRoute && !session?.user) {
 		redirect(302, '/login');

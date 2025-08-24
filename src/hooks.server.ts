@@ -12,7 +12,7 @@ export async function handle({ event, resolve }) {
 
 	if (session) {
 		event.locals.session = session.session;
-		event.locals.user = session.user as any;
+		event.locals.user = session.user;
 
 		// Handle onboarding redirect logic for authenticated users
 		const user = session.user;

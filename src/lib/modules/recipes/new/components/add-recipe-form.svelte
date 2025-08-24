@@ -14,7 +14,7 @@
 
 	let { data }: Props = $props();
 
-	const { form, errors, constraints, message, enhance, submitting } = superForm(data.form, {
+	const form = superForm(data.form, {
 		resetForm: false,
 		taintedMessage: false,
 		onUpdated: ({ form }) => {
@@ -23,6 +23,8 @@
 			}
 		}
 	});
+
+	const { message, submitting, enhance } = form;
 
 	function handleCancel() {
 		// TODO: Navigate to recipes page
@@ -37,10 +39,10 @@
 		</div>
 	{/if}
 
-	<RecipeDetailsFields {form} {errors} {constraints} />
-	<NutritionInformationFields {form} {errors} {constraints} />
-	<IngredientsFields {form} {errors} {constraints} />
-	<InstructionsFields {form} {errors} {constraints} />
+	<RecipeDetailsFields {form} />
+	<NutritionInformationFields {form} />
+	<IngredientsFields {form} />
+	<InstructionsFields {form} />
 
 	<div class="flex justify-end gap-4">
 		<Button variant="outline" type="button" onclick={handleCancel}>Cancel</Button>

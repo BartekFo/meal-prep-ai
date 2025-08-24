@@ -10,7 +10,7 @@
 
 <DropdownMenuPrimitive.RadioGroup
 	bind:ref
-	bind:value
+	bind:value={value!}
 	data-slot="dropdown-menu-radio-group"
 	{...restProps}
 />

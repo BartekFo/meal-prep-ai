@@ -18,7 +18,7 @@
 
 	function toggleMealType(mealType: string) {
 		if (formData.preferredMealTypes.includes(mealType)) {
-			formData.preferredMealTypes = formData.preferredMealTypes.filter((type) => type !== mealType);
+			formData.preferredMealTypes = formData.preferredMealTypes.filter((type: string) => type !== mealType);
 		} else {
 			formData.preferredMealTypes = [...formData.preferredMealTypes, mealType];
 		}

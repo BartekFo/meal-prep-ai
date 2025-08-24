@@ -118,3 +118,5 @@ Each feature module follows this structure:
 
 - `DATABASE_URL` - Required for database connection
 - Database runs via Docker Compose for local development
+
+- correct type for load is ServerLoad not PageServerLoad

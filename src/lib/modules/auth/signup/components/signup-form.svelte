@@ -100,9 +100,9 @@
 
 			<div class="mt-6 flex flex-col space-y-4">
 				<div class="relative flex w-full items-center">
-					<div class="flex-grow border-t border-gray-300" />
+					<div class="flex-grow border-t border-gray-300"></div>
 					<span class="mx-4 text-sm text-gray-500">or</span>
-					<div class="flex-grow border-t border-gray-300" />
+					<div class="flex-grow border-t border-gray-300"></div>
 				</div>
 				<div class="text-center text-sm">
 					Already have an account?{' '}

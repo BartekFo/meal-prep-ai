@@ -42,7 +42,7 @@
 
 {#snippet MonthSelect()}
 	<CalendarMonthSelect
-		{months}
+		months={months ?? []}
 		{monthFormat}
 		value={month.month}
 		onchange={(e) => {
@@ -56,7 +56,7 @@
 
 {#snippet YearSelect()}
 	<CalendarYearSelect
-		{years}
+		years={years ?? []}
 		{yearFormat}
 		value={month.year}
 		onchange={(e) => {

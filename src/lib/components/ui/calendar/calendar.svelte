@@ -46,7 +46,7 @@ get along, so we shut typescript up by casting `value` to `never`.
 <CalendarPrimitive.Root
 	bind:value={value as never}
 	bind:ref
-	bind:placeholder
+	bind:placeholder={placeholder!}
 	{weekdayFormat}
 	{disableDaysOutsideMonth}
 	class={cn(
