@@ -43,6 +43,7 @@
 			Back to Recipes
 		</Button>
 		<div class="flex gap-2">
+			<Button href="/recipes/{data.recipe.id}/edit">Edit Recipe</Button>
 			<Button variant="outline" size="sm" onclick={() => window.print()}>
 				<Printer class="mr-2 h-4 w-4" />
 				Print
