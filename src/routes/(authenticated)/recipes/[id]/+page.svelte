@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ArrowLeft, Clock, CookingPot, Printer } from '@lucide/svelte';
+	import { ArrowLeft, Clock, CookingPot, Printer, Minus, Plus } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Separator } from '$lib/components/ui/separator';
@@ -15,7 +15,7 @@
 	let { data }: { data: PageData } = $props();
 
 	let recipe = $derived(data.recipe);
-	let currentPortions = $state(recipe.servings);
+	let currentPortions = $state(data.recipe.servings);
 	let multiplier = $derived(currentPortions / recipe.servings);
 	
 	// Scaled cooking times (simple linear scaling for MVP)
@@ -24,6 +24,16 @@
 	let scaledTotalTime = $derived(
 		recipe.cookTime === 0 ? scaledPrepTime : scaledPrepTime + scaledCookTime
 	);
+
+	function increasePortions() {
+		currentPortions += 1;
+	}
+
+	function decreasePortions() {
+		if (currentPortions > 1) {
+			currentPortions -= 1;
+		}
+	}
 </script>
 
 <div class="container mx-auto max-w-5xl p-6">
@@ -57,6 +67,31 @@
 	<div class="mb-8">
 		<h1 class="mb-2 text-3xl font-bold">{recipe.title}</h1>
 		<p class="text-muted-foreground text-lg">{recipe.description || ''}</p>
+		
+		<!-- Portion Controls -->
+		<div class="mt-4 flex items-center gap-3">
+			<span class="text-sm font-medium">Portions:</span>
+			<div class="flex items-center gap-2">
+				<Button
+					variant="outline"
+					size="icon"
+					class="h-8 w-8"
+					onclick={decreasePortions}
+					disabled={currentPortions <= 1}
+				>
+					<Minus class="h-4 w-4" />
+					<span class="sr-only">Decrease portions</span>
+				</Button>
+				<span class="min-w-8 text-center font-medium">{currentPortions}</span>
+				<Button variant="outline" size="icon" class="h-8 w-8" onclick={increasePortions}>
+					<Plus class="h-4 w-4" />
+					<span class="sr-only">Increase portions</span>
+				</Button>
+			</div>
+			{#if currentPortions !== recipe.servings}
+				<span class="text-muted-foreground text-sm">(Original: {recipe.servings})</span>
+			{/if}
+		</div>
 	</div>
 
 	<div class="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
