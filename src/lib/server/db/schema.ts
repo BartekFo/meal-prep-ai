@@ -174,7 +174,10 @@ export const recipes = pgTable('recipes', {
 	calories: integer('calories').notNull(),
 	protein: integer('protein').notNull(),
 	carbs: integer('carbs').notNull(),
-	fat: integer('fat').notNull()
+	fat: integer('fat').notNull(),
+	imageData: text('image_data'),
+	imageType: varchar('image_type', { length: 50 }),
+	imageSize: integer('image_size')
 });
 
 export const stream = pgTable('stream', {
