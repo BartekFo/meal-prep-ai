@@ -1,42 +1,53 @@
 <script lang="ts">
-	import { authClient } from '$lib/auth/auth-client';
-	import { cn } from '$lib/utils';
-	import { goto } from '$app/navigation';
-	import FormCard from '../../components/form-card.svelte';
-	import { Input } from '$lib/components/ui/input/index';
-	import { Label } from '$lib/components/ui/label/index';
-	import Button from '$lib/components/ui/button/button.svelte';
+import { goto } from '$app/navigation';
+import { authClient } from '$lib/auth/auth-client';
+import Button from '$lib/components/ui/button/button.svelte';
+import { Input } from '$lib/components/ui/input/index';
+import { Label } from '$lib/components/ui/label/index';
+import { cn } from '$lib/utils';
+import FormCard from '../../components/form-card.svelte';
 
-	let { class: className = '', ...restProps }: { class?: string; [key: string]: any } = $props();
+let {
+  class: className = '',
+  ...restProps
+}: { class?: string; [key: string]: unknown } = $props();
 
-	let email = $state('');
-	let password = $state('');
-	let isLoading = $state(false);
-	let error = $state('');
+let email = $state('');
+let password = $state('');
+let isLoading = $state(false);
+let error = $state('');
 
-	async function handleSubmit(event: Event) {
-		event.preventDefault();
-		isLoading = true;
-		error = '';
+async function handleSubmit(event: Event) {
+  event.preventDefault();
+  isLoading = true;
+  error = '';
 
-		try {
-			const result = await authClient.signIn.email({
-				email,
-				password
-			});
+  try {
+    const result = await authClient.signIn.email({
+      email,
+      password,
+    });
 
-			if (result.error) {
-				error = result.error.message || 'Login failed';
-			} else {
-				goto('/dashboard');
-			}
-		} catch (err) {
-			error = 'An unexpected error occurred';
-			console.error('Login error:', err);
-		} finally {
-			isLoading = false;
-		}
-	}
+    if (result.error) {
+      error = result.error.message || 'Login failed';
+    } else {
+      const { data } = await authClient.getSession();
+      const onboardingStatus = data?.user?.onboardingStatus;
+
+      if (!onboardingStatus || onboardingStatus === 'not_started') {
+        goto('/onboarding');
+      } else if (onboardingStatus === 'step1_completed') {
+        goto('/onboarding/preferences');
+      } else {
+        goto('/dashboard');
+      }
+    }
+  } catch (err) {
+    error = 'An unexpected error occurred';
+  } finally {
+    isLoading = false;
+  }
+}
 </script>
 
 <FormCard title="Login" description="Sign in to access your recipes and meal plans">

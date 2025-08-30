@@ -3,39 +3,78 @@
  * Handles basic cases like "2 cups", "1/2 tsp", "3-4 items"
  */
 
-export function scaleIngredient(ingredient: string, multiplier: number): string {
-	if (multiplier <= 0) return ingredient;
-	if (multiplier === 1) return ingredient;
+function roundToTwoDecimals(value: number): number {
+  return Math.round(value * 100) / 100;
+}
 
-	return ingredient.replace(/\b(\d+(?:\.\d+)?(?:\/\d+)?|\d+-\d+)\b/g, (match) => {
-		// Handle ranges like "3-4"
-		if (match.includes('-')) {
-			const [start, end] = match.split('-').map(Number);
-			const scaledStart = Math.round(start * multiplier * 100) / 100;
-			const scaledEnd = Math.round(end * multiplier * 100) / 100;
-			return `${scaledStart}-${scaledEnd}`;
-		}
+function scaleRange(match: string, multiplier: number): string {
+  const parts = match.split('-').map(Number);
+  if (parts.length !== 2 || parts[0] === undefined || parts[1] === undefined) {
+    return match;
+  }
+  const [start, end] = parts;
+  const scaledStart = roundToTwoDecimals(start * multiplier);
+  const scaledEnd = roundToTwoDecimals(end * multiplier);
+  return `${scaledStart}-${scaledEnd}`;
+}
 
-		// Handle fractions like "1/2"
-		if (match.includes('/')) {
-			const [numerator, denominator] = match.split('/').map(Number);
-			const decimal = numerator / denominator;
-			const scaled = decimal * multiplier;
+function convertToCommonFraction(scaled: number): string | null {
+  if (scaled === 0.25) {
+    return '1/4';
+  }
+  if (scaled === 0.33 || Math.abs(scaled - 1 / 3) < 0.01) {
+    return '1/3';
+  }
+  if (scaled === 0.5) {
+    return '1/2';
+  }
+  if (scaled === 0.67 || Math.abs(scaled - 2 / 3) < 0.01) {
+    return '2/3';
+  }
+  if (scaled === 0.75) {
+    return '3/4';
+  }
+  return null;
+}
 
-			// Convert back to fraction if it results in a simple fraction
-			if (scaled === 0.25) return '1/4';
-			if (scaled === 0.33 || Math.abs(scaled - 1 / 3) < 0.01) return '1/3';
-			if (scaled === 0.5) return '1/2';
-			if (scaled === 0.67 || Math.abs(scaled - 2 / 3) < 0.01) return '2/3';
-			if (scaled === 0.75) return '3/4';
+function scaleFraction(match: string, multiplier: number): string {
+  const parts = match.split('/').map(Number);
+  if (parts.length !== 2 || parts[0] === undefined || parts[1] === undefined) {
+    return match;
+  }
+  const [numerator, denominator] = parts;
+  const decimal = numerator / denominator;
+  const scaled = decimal * multiplier;
 
-			// Otherwise return decimal rounded to 2 places
-			return (Math.round(scaled * 100) / 100).toString();
-		}
+  const commonFraction = convertToCommonFraction(scaled);
+  return commonFraction ?? roundToTwoDecimals(scaled).toString();
+}
 
-		// Handle regular numbers
-		const num = parseFloat(match);
-		const scaled = num * multiplier;
-		return (Math.round(scaled * 100) / 100).toString();
-	});
+function scaleNumber(match: string, multiplier: number): string {
+  const num = Number.parseFloat(match);
+  const scaled = num * multiplier;
+  return roundToTwoDecimals(scaled).toString();
+}
+
+function scaleNumericMatch(match: string, multiplier: number): string {
+  if (match.includes('-')) {
+    return scaleRange(match, multiplier);
+  }
+  if (match.includes('/')) {
+    return scaleFraction(match, multiplier);
+  }
+  return scaleNumber(match, multiplier);
+}
+
+export function scaleIngredient(
+  ingredient: string,
+  multiplier: number
+): string {
+  if (multiplier <= 0 || multiplier === 1) {
+    return ingredient;
+  }
+
+  return ingredient.replace(/\b(\d+(?:\.\d+)?(?:\/\d+)?|\d+-\d+)\b/g, (match) =>
+    scaleNumericMatch(match, multiplier)
+  );
 }
