@@ -2,12 +2,10 @@
 import type { Session, User } from '$lib/types/auth';
 
 declare global {
-	namespace App {
-		interface Locals {
-			session?: Session['session'] | null;
-			user?: Session['user'] | null;
-		}
-	}
+  namespace App {
+    interface Locals {
+      session?: Session['session'] | null;
+      user?: Session['user'] | null;
+    }
+  }
 }
-
-export { };

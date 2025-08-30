@@ -7,7 +7,7 @@ import { Label } from '$lib/components/ui/label/index';
 import { cn } from '$lib/utils';
 import FormCard from '../../components/form-card.svelte';
 
-let {
+const {
   class: className = '',
   ...restProps
 }: { class?: string; [key: string]: unknown } = $props();

@@ -1,36 +1,36 @@
 <script lang="ts">
-	import { Button } from '$lib/components/ui/button';
-	import { Input } from '$lib/components/ui/input';
-	import * as Form from '$lib/components/ui/form/index';
-	import { Plus, Trash2 } from '@lucide/svelte';
-	import RecipeFormCard from './recipe-form-card.svelte';
-	import type { SuperForm } from 'sveltekit-superforms/client';
-	import type { IRecipeFormValues } from '../schema';
+import { Plus, Trash2 } from '@lucide/svelte';
+import type { SuperForm } from 'sveltekit-superforms/client';
+import { Button } from '$lib/components/ui/button';
+import * as Form from '$lib/components/ui/form/index';
+import { Input } from '$lib/components/ui/input';
+import type { IRecipeFormValues } from '../schema';
+import RecipeFormCard from './recipe-form-card.svelte';
 
-	interface Props {
-		form: SuperForm<IRecipeFormValues>;
-	}
+type Props = {
+  form: SuperForm<IRecipeFormValues>;
+};
 
-	const { form }: Props = $props();
+const { form }: Props = $props();
 
-	const { form: formData } = form;
+const { form: formData } = form;
 
-	function addIngredient() {
-		if (!$formData.ingredients) {
-			$formData.ingredients = [];
-		}
-		$formData.ingredients = [...$formData.ingredients, ''];
-	}
+function addIngredient() {
+  if (!$formData.ingredients) {
+    $formData.ingredients = [];
+  }
+  $formData.ingredients = [...$formData.ingredients, ''];
+}
 
-	function removeIngredient(index: number) {
-		if ($formData.ingredients.length > 1) {
-			$formData.ingredients = $formData.ingredients.filter((_, i) => i !== index);
-		}
-	}
+function removeIngredient(index: number) {
+  if ($formData.ingredients.length > 1) {
+    $formData.ingredients = $formData.ingredients.filter((_, i) => i !== index);
+  }
+}
 
-	function updateIngredient(index: number, value: string) {
-		$formData.ingredients[index] = value;
-	}
+function updateIngredient(index: number, value: string) {
+  $formData.ingredients[index] = value;
+}
 </script>
 
 <RecipeFormCard>

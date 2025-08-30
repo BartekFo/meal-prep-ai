@@ -1,22 +1,46 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.2.2/schema.json",
   "extends": ["ultracite"],
+  "files": {
+    "includes": [
+      "src/**",
+      "!src/app.css",
+      "!src/app.d.ts",
+      "!src/lib/components"
+    ]
+  },
   "overrides": [
     {
-      "includes": ["**/*.svelte", "**/*.astro", "**/*.vue"],
-
+      "includes": [
+        "src/**",
+        "!src/app.css",
+        "!src/app.d.ts",
+        "!src/lib/components"
+      ],
       "linter": {
         "rules": {
+          "performance": {
+            "noBarrelFile": "off",
+            "noNamespaceImport": "off"
+          },
           "style": {
             "useConst": "off",
-
-            "useImportType": "off"
+            "useImportType": "off",
+            "noMagicNumbers": "off",
+            "useFilenamingConvention": "off",
+            "noExportedImports": "off"
           },
-
           "correctness": {
+            "useHookAtTopLevel": "off",
+            "useExhaustiveDependencies": "off",
             "noUnusedVariables": "off",
-
+            "noUndeclaredVariables": "off",
             "noUnusedImports": "off"
+          },
+          "suspicious": {
+            "noUnknownAtRules": "off",
+            "noConsole": "off",
+            "noUnassignedVariables": "off"
           }
         }
       }

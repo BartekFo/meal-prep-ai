@@ -1,28 +1,30 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import { Button } from '$lib/components/ui/button';
-	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
-	import { Card, CardContent } from '$lib/components/ui/card';
-	import { Progress } from '$lib/components/ui/progress';
-	import { ArrowLeft } from '@lucide/svelte';
-	import { DIETARY_TYPES } from '$lib/modules/onboarding/constants';
+import { ArrowLeft } from '@lucide/svelte';
+import { enhance } from '$app/forms';
+import { Button } from '$lib/components/ui/button';
+import { Card, CardContent } from '$lib/components/ui/card';
+import { Input } from '$lib/components/ui/input';
+import { Label } from '$lib/components/ui/label';
+import { Progress } from '$lib/components/ui/progress';
+import { DIETARY_TYPES } from '$lib/modules/onboarding/constants';
 
-	let { data } = $props();
+const { data } = $props();
 
-	let formData = $state({
-		dietaryType: data.user.dietaryType,
-		dislikedFoods: data.user.dislikedFoods,
-		preferredMealTypes: data.user.preferredMealTypes
-	});
+const formData = $state({
+  dietaryType: data.user.dietaryType,
+  dislikedFoods: data.user.dislikedFoods,
+  preferredMealTypes: data.user.preferredMealTypes,
+});
 
-	function toggleMealType(mealType: string) {
-		if (formData.preferredMealTypes.includes(mealType)) {
-			formData.preferredMealTypes = formData.preferredMealTypes.filter((type: string) => type !== mealType);
-		} else {
-			formData.preferredMealTypes = [...formData.preferredMealTypes, mealType];
-		}
-	}
+function toggleMealType(mealType: string) {
+  if (formData.preferredMealTypes.includes(mealType)) {
+    formData.preferredMealTypes = formData.preferredMealTypes.filter(
+      (type: string) => type !== mealType
+    );
+  } else {
+    formData.preferredMealTypes = [...formData.preferredMealTypes, mealType];
+  }
+}
 </script>
 
 <main class="flex-1 px-4 py-8">

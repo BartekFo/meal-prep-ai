@@ -1,26 +1,27 @@
 <script lang="ts">
-	import { Button } from '$lib/components/ui/button';
-	import {
-		RecipeDetailsFields,
-		IngredientsFields,
-		InstructionsFields,
-		NutritionInformationFields,
-		type IRecipeFormValues
-	} from '$lib/modules/recipes/new';
+import { ArrowLeft } from '@lucide/svelte';
+import { superForm } from 'sveltekit-superforms';
+import { Button } from '$lib/components/ui/button';
+import {
+  IngredientsFields,
+  InstructionsFields,
+  type IRecipeFormValues,
+  NutritionInformationFields,
+  RecipeDetailsFields,
+} from '$lib/modules/recipes/new';
+import type { Recipe } from '$lib/modules/recipes/types';
 
-	import { ArrowLeft } from '@lucide/svelte';
-	import { superForm } from 'sveltekit-superforms';
+const { data }: { data: { form: IRecipeFormValues; recipe: Recipe } } =
+  $props();
 
-	let { data }: { data: { form: IRecipeFormValues; recipe: any } } = $props();
+const form = superForm(data.form, {
+  clearOnSubmit: 'errors',
+  onError: ({ result }) => {
+    $message = result.error.message || 'Unknown error';
+  },
+});
 
-	const form = superForm(data.form, {
-		clearOnSubmit: 'errors',
-		onError: ({ result }) => {
-			$message = result.error.message || 'Unknown error';
-		}
-	});
-
-	const { message, enhance, submitting } = form;
+const { message, enhance, submitting } = form;
 </script>
 
 <div class="container mx-auto max-w-5xl p-6">

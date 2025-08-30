@@ -1,35 +1,36 @@
 <script lang="ts">
-	import { superForm } from 'sveltekit-superforms';
-	import { Button } from '$lib/components/ui/button';
-	import IngredientsFields from './ingredients-fields.svelte';
-	import InstructionsFields from './instructions-fields.svelte';
-	import NutritionInformationFields from './nutrition-information-fields.svelte';
-	import RecipeDetailsFields from './recipe-details-fields.svelte';
+import { superForm } from 'sveltekit-superforms';
+import { Button } from '$lib/components/ui/button';
+import type { IRecipeFormValues } from '../schema';
+import IngredientsFields from './ingredients-fields.svelte';
+import InstructionsFields from './instructions-fields.svelte';
+import NutritionInformationFields from './nutrition-information-fields.svelte';
+import RecipeDetailsFields from './recipe-details-fields.svelte';
 
-	interface Props {
-		data: {
-			form: any; // TODO: Type this properly when form types are generated
-		};
-	}
+type Props = {
+  data: {
+    form: IRecipeFormValues;
+  };
+};
 
-	let { data }: Props = $props();
+const { data }: Props = $props();
 
-	const form = superForm(data.form, {
-		resetForm: false,
-		taintedMessage: false,
-		onUpdated: ({ form }) => {
-			if (form.message) {
-				console.log('Form submitted successfully:', form.message);
-			}
-		}
-	});
+const form = superForm(data.form, {
+  resetForm: false,
+  taintedMessage: false,
+  onUpdated: ({ form: updatedForm }) => {
+    if (updatedForm.message) {
+      console.log('Form submitted successfully:', updatedForm.message);
+    }
+  },
+});
 
-	const { message, submitting, enhance } = form;
+const { message, submitting, enhance } = form;
 
-	function handleCancel() {
-		// TODO: Navigate to recipes page
-		console.log('Cancel navigation not implemented yet');
-	}
+function handleCancel() {
+  // TODO: Navigate to recipes page
+  console.log('Cancel navigation not implemented yet');
+}
 </script>
 
 <form method="POST" use:enhance class="space-y-8">

@@ -1,25 +1,25 @@
 <script lang="ts">
-	import { Input } from '$lib/components/ui/input';
-	import * as Form from '$lib/components/ui/form/index';
-	import * as Select from '$lib/components/ui/select/index';
-	import { Textarea } from '$lib/components/ui/textarea';
-	import { MEAL_TYPES } from '$lib/constants/meal-types';
-	import type { SuperForm } from 'sveltekit-superforms/client';
-	import RecipeFormCard from './recipe-form-card.svelte';
-	import RecipeImageUpload from './recipe-image-upload.svelte';
-	import type { IRecipeFormValues } from '../schema';
+import type { SuperForm } from 'sveltekit-superforms/client';
+import * as Form from '$lib/components/ui/form/index';
+import { Input } from '$lib/components/ui/input';
+import * as Select from '$lib/components/ui/select/index';
+import { Textarea } from '$lib/components/ui/textarea';
+import { MEAL_TYPES } from '$lib/constants/meal-types';
+import type { IRecipeFormValues } from '../schema';
+import RecipeFormCard from './recipe-form-card.svelte';
+import RecipeImageUpload from './recipe-image-upload.svelte';
 
-	interface Props {
-		form: SuperForm<IRecipeFormValues>;
-	}
+type Props = {
+  form: SuperForm<IRecipeFormValues>;
+};
 
-	const { form }: Props = $props();
+const { form }: Props = $props();
 
-	const { form: formData } = form;
+const { form: formData } = form;
 
-	function handleImageChange(file?: File) {
-		$formData.image = file;
-	}
+function handleImageChange(file?: File) {
+  $formData.image = file;
+}
 </script>
 
 <RecipeFormCard>

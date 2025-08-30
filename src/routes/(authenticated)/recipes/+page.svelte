@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { Button } from '$lib/components/ui/button';
-	import { Plus } from '@lucide/svelte';
-	import { routes } from '$lib/constants/routes';
-	import { RecipesFilters, RecipeList } from '$lib/modules/recipes';
-	import type { PageData } from './$types';
+import { Plus } from '@lucide/svelte';
+import { Button } from '$lib/components/ui/button';
+import { routes } from '$lib/constants/routes';
+import { RecipeList, RecipesFilters } from '$lib/modules/recipes';
+import type { PageData } from './$types';
 
-	let { data }: { data: PageData } = $props();
+const { data }: { data: PageData } = $props();
 </script>
 
 <div class="flex h-full flex-col">

@@ -1,17 +1,17 @@
 <script lang="ts">
-	import { Input } from '$lib/components/ui/input';
-	import * as Form from '$lib/components/ui/form/index';
-	import RecipeFormCard from './recipe-form-card.svelte';
-	import type { SuperForm } from 'sveltekit-superforms/client';
-	import type { IRecipeFormValues } from '../schema';
+import type { SuperForm } from 'sveltekit-superforms/client';
+import * as Form from '$lib/components/ui/form/index';
+import { Input } from '$lib/components/ui/input';
+import type { IRecipeFormValues } from '../schema';
+import RecipeFormCard from './recipe-form-card.svelte';
 
-	interface Props {
-		form: SuperForm<IRecipeFormValues>;
-	}
+type Props = {
+  form: SuperForm<IRecipeFormValues>;
+};
 
-	const { form }: Props = $props();
+const { form }: Props = $props();
 
-	const { form: formData } = form;
+const { form: formData } = form;
 </script>
 
 <RecipeFormCard>

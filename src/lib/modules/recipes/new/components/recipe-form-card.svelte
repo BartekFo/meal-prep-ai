@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { Card, CardContent } from '$lib/components/ui/card';
+import type { Snippet } from 'svelte';
+import { Card, CardContent } from '$lib/components/ui/card';
 
-	interface Props {
-		children: any;
-	}
+type Props = {
+  children: Snippet;
+};
 
-	let { children }: Props = $props();
+const { children }: Props = $props();
 </script>
 
 <Card>

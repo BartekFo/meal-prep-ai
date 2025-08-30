@@ -1,21 +1,21 @@
 <script lang="ts">
-	import { Clock, CookingPot } from '@lucide/svelte';
-	import { Badge } from '$lib/components/ui/badge';
-	import { Button } from '$lib/components/ui/button';
-	import {
-		Card,
-		CardContent,
-		CardDescription,
-		CardFooter,
-		CardHeader,
-		CardTitle
-	} from '$lib/components/ui/card';
-	import type { Recipe } from '../types';
-	import NutritionItem from './nutrition-item.svelte';
+import { Clock, CookingPot } from '@lucide/svelte';
+import { Badge } from '$lib/components/ui/badge';
+import { Button } from '$lib/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '$lib/components/ui/card';
+import type { Recipe } from '../types';
+import NutritionItem from './nutrition-item.svelte';
 
-	export let recipe: Recipe;
+let { recipe }: { recipe: Recipe } = $props();
 
-	$: totalTime = `${recipe.prepTime} prep · ${recipe.cookTime} cook`;
+let totalTime = $derived(`${recipe.prepTime} prep · ${recipe.cookTime} cook`);
 </script>
 
 <Card class="gap-0 overflow-hidden py-0 transition-all hover:shadow-md">

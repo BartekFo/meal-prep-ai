@@ -1,7 +1,7 @@
-import { auth } from '$lib/auth';
+import { redirect } from '@sveltejs/kit';
 import { svelteKitHandler } from 'better-auth/svelte-kit';
 import { building } from '$app/environment';
-import { redirect } from '@sveltejs/kit';
+import { auth } from '$lib/auth';
 import type { OnboardingStatus } from '$lib/types/onboarding';
 import {
   getOnboardingRedirectPath,
@@ -26,7 +26,6 @@ export async function handle({ event, resolve }) {
     if (!isAllowedRoute(pathname)) {
       const redirectPath = getOnboardingRedirectPath(onboardingStatus);
       if (redirectPath && redirectPath !== pathname) {
-        // biome-ignore lint/style/noMagicNumbers: this is status code
         throw redirect(302, redirectPath);
       }
     }

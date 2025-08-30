@@ -1,44 +1,47 @@
 <script lang="ts">
-	import { authClient } from '$lib/auth/auth-client';
-	import { cn } from '$lib/utils';
-	import { goto } from '$app/navigation';
-	import FormCard from '../../components/form-card.svelte';
-	import { Input } from '$lib/components/ui/input/index';
-	import { Label } from '$lib/components/ui/label/index';
-	import Button from '$lib/components/ui/button/button.svelte';
+import { goto } from '$app/navigation';
+import { authClient } from '$lib/auth/auth-client';
+import Button from '$lib/components/ui/button/button.svelte';
+import { Input } from '$lib/components/ui/input/index';
+import { Label } from '$lib/components/ui/label/index';
+import { cn } from '$lib/utils';
+import FormCard from '../../components/form-card.svelte';
 
-	let { class: className = '', ...restProps }: { class?: string; [key: string]: any } = $props();
+const {
+  class: className = '',
+  ...restProps
+}: { class?: string; [key: string]: unknown } = $props();
 
-	let email = $state('');
-	let name = $state('');
-	let password = $state('');
-	let isLoading = $state(false);
-	let error = $state('');
+let email = $state('');
+let name = $state('');
+let password = $state('');
+let isLoading = $state(false);
+let error = $state('');
 
-	async function handleSubmit(event: Event) {
-		event.preventDefault();
-		isLoading = true;
-		error = '';
+async function handleSubmit(event: Event) {
+  event.preventDefault();
+  isLoading = true;
+  error = '';
 
-		try {
-			const result = await authClient.signUp.email({
-				email,
-				password,
-				name: name
-			});
+  try {
+    const result = await authClient.signUp.email({
+      email,
+      password,
+      name,
+    });
 
-			if (result.error) {
-				error = result.error.message || 'Sign up failed';
-			} else {
-				goto('/dashboard');
-			}
-		} catch (err) {
-			error = 'An unexpected error occurred';
-			console.error('Signup error:', err);
-		} finally {
-			isLoading = false;
-		}
-	}
+    if (result.error) {
+      error = result.error.message || 'Sign up failed';
+    } else {
+      goto('/dashboard');
+    }
+  } catch (err) {
+    error = 'An unexpected error occurred';
+    console.error('Signup error:', err);
+  } finally {
+    isLoading = false;
+  }
+}
 </script>
 
 <FormCard title="Create an account" description="Enter your email below to create an account">

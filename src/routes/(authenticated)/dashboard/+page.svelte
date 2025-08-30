@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { authClient } from '$lib/auth/auth-client';
+import { authClient } from '$lib/auth/auth-client';
 
-	const session = authClient.useSession();
+const session = authClient.useSession();
 </script>
 
 <svelte:head>

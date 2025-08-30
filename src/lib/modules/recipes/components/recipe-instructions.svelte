@@ -1,7 +1,12 @@
 <script lang="ts">
-	import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '$lib/components/ui/card';
 
-	export let instructions: string[];
+export let instructions: string[];
 </script>
 
 <Card>

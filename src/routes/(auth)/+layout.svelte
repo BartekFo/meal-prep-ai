@@ -1,6 +1,7 @@
 <script lang="ts">
-	let { children } = $props();
-	import authBackgroundFoodBoxes from '$lib/assets/auth-background-food-boxes.jpg?enhanced';
+const { children } = $props();
+
+import authBackgroundFoodBoxes from '$lib/assets/auth-background-food-boxes.jpg?enhanced';
 </script>
 
 <div class="bg-background grid min-h-screen grid-cols-1 gap-4 p-4 md:grid-cols-2">
