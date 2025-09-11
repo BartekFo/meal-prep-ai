@@ -3,6 +3,9 @@
  * Handles basic cases like "2 cups", "1/2 tsp", "3-4 items"
  */
 
+// Hoisted regex to top-level per lint rule for performance
+const NUMERIC_QUANTITY_REGEX = /\b(\d+(?:\.\d+)?(?:\/\d+)?|\d+-\d+)\b/g;
+
 function roundToTwoDecimals(value: number): number {
   return Math.round(value * 100) / 100;
 }
@@ -74,7 +77,7 @@ export function scaleIngredient(
     return ingredient;
   }
 
-  return ingredient.replace(/\b(\d+(?:\.\d+)?(?:\/\d+)?|\d+-\d+)\b/g, (match) =>
+  return ingredient.replace(NUMERIC_QUANTITY_REGEX, (match) =>
     scaleNumericMatch(match, multiplier)
   );
 }

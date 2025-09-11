@@ -1,40 +1,58 @@
 <script lang="ts">
-	import SidebarIcon from '@lucide/svelte/icons/sidebar';
-	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
-	import { Button } from '$lib/components/ui/button/index.js';
-	import { Separator } from '$lib/components/ui/separator/index.js';
-	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import ModeToggle from './mode-toggle.svelte';
+import SidebarIcon from '@lucide/svelte/icons/sidebar';
+import { page } from '$app/state';
+import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
+import { Button } from '$lib/components/ui/button/index.js';
+import { Separator } from '$lib/components/ui/separator/index.js';
+import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+import ModeToggle from './mode-toggle.svelte';
 
-	import { page } from '$app/state';
+const DASH_TO_SPACE_REGEX = /-/g;
+const WORD_BOUNDARY_UPPERCASE_REGEX = /\b\w/g;
+const DIGITS_ONLY_REGEX = /^\d+$/;
 
-	function generateBreadcrumbs(pathname: string, pageData: any) {
-		const segments = pathname.split('/').filter(Boolean);
-		const breadcrumbs = [];
+type PageData = {
+  recipe?: { title?: string } | undefined;
+};
 
-		for (let i = 0; i < segments.length; i++) {
-			const segment = segments[i];
-			const href = `/${segments.slice(0, i + 1).join('/')}`;
-			const isLast = i === segments.length - 1;
+type Crumb = { label: string; href: string; isLast: boolean };
 
-			let label = segment.replace(/-/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
+function generateBreadcrumbs(pathname: string, pageData: PageData) {
+  const segments = pathname.split('/').filter(Boolean);
+  const breadcrumbs: Crumb[] = [];
 
-			if (segment === 'dashboard') label = 'Dashboard';
-			if (segment === 'recipes') label = 'Recipes';
+  for (const [i, segment] of segments.entries()) {
+    const href = `/${segments.slice(0, i + 1).join('/')}`;
+    const isLast = i === segments.length - 1;
 
-			if (segments[i - 1] === 'recipes' && /^\d+$/.test(segment) && pageData?.recipe?.title) {
-				label = pageData.recipe.title;
-			}
+    let label = segment
+      .replace(DASH_TO_SPACE_REGEX, ' ')
+      .replace(WORD_BOUNDARY_UPPERCASE_REGEX, (char) => char.toUpperCase());
 
-			breadcrumbs.push({ label, href, isLast });
-		}
+    if (segment === 'dashboard') {
+      label = 'Dashboard';
+    }
+    if (segment === 'recipes') {
+      label = 'Recipes';
+    }
 
-		return breadcrumbs;
-	}
+    if (
+      (i > 0 ? segments[i - 1] : undefined) === 'recipes' &&
+      DIGITS_ONLY_REGEX.test(segment) &&
+      pageData?.recipe?.title
+    ) {
+      label = pageData.recipe.title ?? label;
+    }
 
-	const breadcrumbs = $derived(generateBreadcrumbs(page.url.pathname, page.data));
+    breadcrumbs.push({ label, href, isLast });
+  }
 
-	const sidebar = Sidebar.useSidebar();
+  return breadcrumbs;
+}
+
+const breadcrumbs = $derived(generateBreadcrumbs(page.url.pathname, page.data));
+
+const sidebar = Sidebar.useSidebar();
 </script>
 
 <header class="bg-background sticky top-0 z-50 flex h-16 w-full items-center gap-2 border-b px-4">
