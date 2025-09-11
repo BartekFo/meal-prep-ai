@@ -21,17 +21,20 @@ export const load: PageServerLoad = async ({ locals }) => {
     throw redirect(302, '/onboarding/preferences');
   }
 
-  const initialData = {
-    firstName: user?.firstName || '',
-    lastName: user?.lastName || '',
-    allergies: user?.allergies || '',
-    weightGoal: (user?.weightGoal as WeightGoal) || '',
-    dateOfBirth: user?.dateOfBirth?.toISOString().split('T')[0] || '',
-    gender: user?.gender || '',
-    activityLevel: user?.activityLevel || '',
-    currentWeight: user?.currentWeight || 0,
-    height: user?.height || 0,
-  };
+  const initialData =
+    onboardingStatus === 'not_started'
+      ? null
+      : {
+          firstName: user?.firstName || '',
+          lastName: user?.lastName || '',
+          allergies: user?.allergies || '',
+          weightGoal: (user?.weightGoal as WeightGoal) || '',
+          dateOfBirth: user?.dateOfBirth?.toISOString().split('T')[0] || '',
+          gender: user?.gender || '',
+          activityLevel: user?.activityLevel || '',
+          currentWeight: user?.currentWeight || 0,
+          height: user?.height || 0,
+        };
 
   return {
     form: await superValidate(initialData, arktype(essentialInfoSchema)),

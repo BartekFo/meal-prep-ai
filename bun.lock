@@ -19,7 +19,7 @@
         "@eslint/compat": "1.3.2",
         "@eslint/js": "9.34.0",
         "@internationalized/date": "3.9.0",
-        "@lucide/svelte": "0.542.0",
+        "@lucide/svelte": "^0.515.0",
         "@sveltejs/adapter-node": "5.3.1",
         "@sveltejs/kit": "2.37.0",
         "@sveltejs/vite-plugin-svelte": "6.1.3",
@@ -41,7 +41,7 @@
         "svelte": "5.38.6",
         "svelte-check": "4.3.1",
         "tailwind-merge": "3.3.1",
-        "tailwind-variants": "3.1.0",
+        "tailwind-variants": "^1.0.0",
         "tailwindcss": "4.1.12",
         "tw-animate-css": "1.3.7",
         "typescript": "5.9.2",
@@ -247,7 +247,7 @@
 
     "@levischuck/tiny-cbor": ["@levischuck/tiny-cbor@0.2.11", "", {}, "sha512-llBRm4dT4Z89aRsm6u2oEZ8tfwL/2l6BwpZ7JcyieouniDECM5AqNgr/y08zalEIvW3RSK4upYyybDcmjXqAow=="],
 
-    "@lucide/svelte": ["@lucide/svelte@0.542.0", "", { "peerDependencies": { "svelte": "^5" } }, "sha512-NuWttxTVfMSURpOxcKiKvoCtma3JtEpcJWzF/0cO69saZfXlv6G8NYAvEEGLmk75YPl+I+ROe+F97WhddM8r2A=="],
+    "@lucide/svelte": ["@lucide/svelte@0.515.0", "", { "peerDependencies": { "svelte": "^5" } }, "sha512-CEAyqcZmNBfYzVgaRmK2RFJP5tnbXxekRyDk0XX/eZQRfsJmkDvmQwXNX8C869BgNeryzmrRyjHhUL6g9ZOHNA=="],
 
     "@noble/ciphers": ["@noble/ciphers@0.6.0", "", {}, "sha512-mIbq/R9QXk5/cTfESb1OKtyFnk7oc1Om/8onA1158K9/OZUQFDEVy55jVTato+xmp3XX6F6Qh0zz0Nc1AxAlRQ=="],
 
@@ -925,7 +925,7 @@
 
     "tailwind-merge": ["tailwind-merge@3.3.1", "", {}, "sha512-gBXpgUm/3rp1lMZZrM/w7D8GKqshif0zAymAhbCyIt8KMe+0v9DQ7cdYLR4FHH/cKpdTXb+A/tKKU3eolfsI+g=="],
 
-    "tailwind-variants": ["tailwind-variants@3.1.0", "", { "peerDependencies": { "tailwind-merge": ">=3.0.0", "tailwindcss": "*" }, "optionalPeers": ["tailwind-merge"] }, "sha512-ieiYaEfUr+sNhw/k++dosmZfVA4VIG5bV+G1eGdJSC4FcflqQv0iSIlOLj/RbzRuTu/VrIiNSlwh1esBM3BXUg=="],
+    "tailwind-variants": ["tailwind-variants@1.0.0", "", { "dependencies": { "tailwind-merge": "3.0.2" }, "peerDependencies": { "tailwindcss": "*" } }, "sha512-2WSbv4ulEEyuBKomOunut65D8UZwxrHoRfYnxGcQNnHqlSCp2+B7Yz2W+yrNDrxRodOXtGD/1oCcKGNBnUqMqA=="],
 
     "tailwindcss": ["tailwindcss@4.1.12", "", {}, "sha512-DzFtxOi+7NsFf7DBtI3BJsynR+0Yp6etH+nRPTbpWnS2pZBaSksv/JGctNwSWzbFjp0vxSqknaUylseZqMDGrA=="],
 
@@ -1078,6 +1078,8 @@
     "sveltekit-superforms/devalue": ["devalue@5.1.1", "", {}, "sha512-maua5KUiapvEwiEAe+XnlZ3Rh0GD+qI1J/nb9vrJc3muPXvcF/8gXYTWF76+5DAqHyDUtOIImEuo0YKE9mshVw=="],
 
     "sveltekit-superforms/zod": ["zod@3.25.64", "", {}, "sha512-hbP9FpSZf7pkS7hRVUrOjhwKJNyampPgtXKc3AN6DsWtoHsg2Sb4SQaS4Tcay380zSwd2VPo9G9180emBACp5g=="],
+
+    "tailwind-variants/tailwind-merge": ["tailwind-merge@3.0.2", "", {}, "sha512-l7z+OYZ7mu3DTqrL88RiKrKIqO3NcpEO8V/Od04bNpvk0kiIFndGEoqfuzvj4yuhRkHKjRkII2z+KS2HfPcSxw=="],
 
     "tinyglobby/picomatch": ["picomatch@4.0.2", "", {}, "sha512-M7BAV6Rlcy5u+m6oPhAPFgJTzAioX/6B0DxyvDlo9l8+T3nLKbrczg2WLUyzd45L8RqfUMyGPzekbMvX2Ldkwg=="],
 
