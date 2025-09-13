@@ -1,40 +1,25 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { arktype } from 'sveltekit-superforms/adapters';
-import { saveEssentialInfo } from '$lib/modules/onboarding/actions/essential-info';
-import type { WeightGoal } from '$lib/modules/onboarding/constants';
 import { essentialInfoSchema } from '$lib/modules/onboarding/schema/essential-info';
-import type { OnboardingStatus } from '$lib/types/onboarding';
+import {
+  checkOnboardingStatus,
+  loadEssentialInfoData,
+  saveEssentialInfo,
+} from '$lib/modules/onboarding/server';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
   const user = locals.user;
 
-  // Redirect users who have already completed onboarding
-  const onboardingStatus = user?.onboardingStatus as OnboardingStatus;
-  if (onboardingStatus === 'completed') {
-    throw redirect(302, '/dashboard');
+  // Check onboarding status and redirect if needed
+  const statusCheck = checkOnboardingStatus(user);
+  if (statusCheck.shouldRedirect && statusCheck.redirectPath) {
+    throw redirect(302, statusCheck.redirectPath);
   }
 
-  // Redirect users who completed step 1 to preferences
-  if (onboardingStatus === 'step1_completed') {
-    throw redirect(302, '/onboarding/preferences');
-  }
-
-  const initialData =
-    onboardingStatus === 'not_started'
-      ? null
-      : {
-          firstName: user?.firstName || '',
-          lastName: user?.lastName || '',
-          allergies: user?.allergies || '',
-          weightGoal: (user?.weightGoal as WeightGoal) || '',
-          dateOfBirth: user?.dateOfBirth?.toISOString().split('T')[0] || '',
-          gender: user?.gender || '',
-          activityLevel: user?.activityLevel || '',
-          currentWeight: user?.currentWeight || 0,
-          height: user?.height || 0,
-        };
+  // Load initial form data
+  const initialData = loadEssentialInfoData(user);
 
   return {
     form: await superValidate(initialData, arktype(essentialInfoSchema)),

@@ -1,25 +1,24 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { arktype } from 'sveltekit-superforms/adapters';
-import { saveFoodPreferences } from '$lib/modules/onboarding/actions/food-preferences';
-import type { DietaryType } from '$lib/modules/onboarding/constants';
 import { foodPreferencesSchema } from '$lib/modules/onboarding/schema/food-preferences';
-import type { OnboardingStatus } from '$lib/types/onboarding';
+import {
+  canAccessPreferences,
+  loadFoodPreferencesData,
+  saveFoodPreferences,
+} from '$lib/modules/onboarding/server';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
   const user = locals.user;
 
-  const onboardingStatus = user?.onboardingStatus as OnboardingStatus;
-  if (!onboardingStatus || onboardingStatus === 'not_started') {
+  // Check if user can access preferences step
+  if (!canAccessPreferences(user)) {
     throw redirect(302, '/onboarding');
   }
 
-  const initialData = {
-    dietaryType: (user?.dietaryType as DietaryType) || '',
-    dislikedFoods: user?.dislikedFoods || '',
-    preferredMealTypes: user?.preferredMealTypes || [],
-  };
+  // Load initial form data
+  const initialData = loadFoodPreferencesData(user);
 
   return {
     form: await superValidate(initialData, arktype(foodPreferencesSchema)),
