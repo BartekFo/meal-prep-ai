@@ -12,14 +12,14 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   app:
-    build: 
+    build:
       context: .
       args:
         - DATABASE_URL=${DATABASE_URL}
         - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
         - BETTER_AUTH_URL=${BETTER_AUTH_URL}
     ports:
-      - '5173:5173'
+      - "5173:5173"
     env_file:
       - .env.docker
     volumes:

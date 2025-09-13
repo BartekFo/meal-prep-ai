@@ -23,6 +23,7 @@ This document outlines the migration from file-based image storage to database-b
 ### Phase 1: Database Schema Updates
 
 1. **Add image columns to recipes table**
+
    ```sql
    ALTER TABLE recipes ADD COLUMN image_data BYTEA;
    ALTER TABLE recipes ADD COLUMN image_type VARCHAR(50);
@@ -30,6 +31,7 @@ This document outlines the migration from file-based image storage to database-b
    ```
 
 2. **Generate migration file**
+
    ```bash
    bun run db:generate
    ```
@@ -115,7 +117,7 @@ class DatabaseStorage implements StorageProvider {
     // Store in database with metadata
     // Return recipe ID or image identifier
   }
-  
+
   async delete(path: string): Promise<void> {
     // Remove image from database
   }
