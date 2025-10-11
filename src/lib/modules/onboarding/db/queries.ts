@@ -44,7 +44,7 @@ export function loadFoodPreferencesData(user: User | null | undefined) {
   }
 
   return {
-    dietaryType: (user.dietaryType as DietaryType) || '',
+    dietaryType: (user.dietaryType as DietaryType) || 'omnivore',
     dislikedFoods: user.dislikedFoods || '',
     preferredMealTypes: user.preferredMealTypes || [],
   };

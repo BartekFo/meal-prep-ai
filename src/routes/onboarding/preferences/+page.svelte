@@ -108,7 +108,7 @@ function toggleMealType(mealType: string) {
 									<Form.Control>
 										{#snippet children({ props })}
 											<div class="space-y-3">
-												<Form.Label>Preferred Meal Types <span class="text-destructive">*</span></Form.Label>
+												<Form.Label>Preferred Meal Types<span class="text-destructive">*</span></Form.Label>
 												<Form.Description>
 													Select which meals you'd like help planning (choose at least one)
 												</Form.Description>

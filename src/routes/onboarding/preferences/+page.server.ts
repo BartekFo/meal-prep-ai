@@ -1,23 +1,21 @@
-import { fail, redirect } from '@sveltejs/kit';
-import { superValidate } from 'sveltekit-superforms';
-import { arktype } from 'sveltekit-superforms/adapters';
 import { foodPreferencesSchema } from '$lib/modules/onboarding/schema/food-preferences';
 import {
   canAccessPreferences,
   loadFoodPreferencesData,
   saveFoodPreferences,
 } from '$lib/modules/onboarding/server';
+import { fail, redirect } from '@sveltejs/kit';
+import { superValidate } from 'sveltekit-superforms';
+import { arktype } from 'sveltekit-superforms/adapters';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
   const user = locals.user;
 
-  // Check if user can access preferences step
   if (!canAccessPreferences(user)) {
     throw redirect(302, '/onboarding');
   }
 
-  // Load initial form data
   const initialData = loadFoodPreferencesData(user);
 
   return {

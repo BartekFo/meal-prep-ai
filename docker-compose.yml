@@ -1,9 +1,9 @@
 services:
-  db:
+  meal-prep-db:
     image: postgres
     restart: always
     ports:
-      - 5433:5432
+      - 5434:5432
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: mysecretpassword
@@ -11,23 +11,5 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
-  app:
-    build:
-      context: .
-      args:
-        - DATABASE_URL=${DATABASE_URL}
-        - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
-        - BETTER_AUTH_URL=${BETTER_AUTH_URL}
-    ports:
-      - "5173:5173"
-    env_file:
-      - .env.docker
-    volumes:
-      - recipe_uploads:/app/uploads
-      - ./src:/app/src
-    depends_on:
-      - db
-
 volumes:
   pgdata:
-  recipe_uploads:
