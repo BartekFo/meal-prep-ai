@@ -1,0 +1,62 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1749846902477,
+      "tag": "0000_odd_cannonball",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1750012866518,
+      "tag": "0001_misty_luke_cage",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1750588561479,
+      "tag": "0002_bouncy_amazoness",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1750609583394,
+      "tag": "0003_shiny_spirit",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1755970352018,
+      "tag": "0004_cooing_paibok",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1756020386807,
+      "tag": "0005_past_moonstone",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1756021802928,
+      "tag": "0006_puzzling_human_robot",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1756547754394,
+      "tag": "0007_bizarre_mastermind",
+      "breakpoints": true
+    }
+  ]
+}
