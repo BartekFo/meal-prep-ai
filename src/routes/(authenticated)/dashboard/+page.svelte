@@ -20,6 +20,17 @@ const session = authClient.useSession();
 
 	<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
 		<div class="bg-card rounded-lg border p-6 shadow-sm">
+			<h3 class="text-card-foreground text-lg font-semibold">AI Chef</h3>
+			<p class="text-muted-foreground mt-2">Chat with your personal AI chef for meal ideas and recipes</p>
+			<a
+				href="/chef"
+				class="text-primary mt-4 inline-flex items-center text-sm font-medium hover:underline"
+			>
+				Start chatting →
+			</a>
+		</div>
+
+		<div class="bg-card rounded-lg border p-6 shadow-sm">
 			<h3 class="text-card-foreground text-lg font-semibold">My Recipes</h3>
 			<p class="text-muted-foreground mt-2">Manage and organize your favorite recipes</p>
 			<a

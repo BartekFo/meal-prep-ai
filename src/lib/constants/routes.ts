@@ -1,5 +1,6 @@
 export const routes = {
   dashboard: '/dashboard',
+  chef: '/chef',
   recipes: {
     base: '/recipes',
     new: '/recipes/new',
