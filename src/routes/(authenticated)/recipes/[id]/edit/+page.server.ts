@@ -1,26 +1,26 @@
-import type { Actions, ServerLoad } from '@sveltejs/kit';
-import { error, fail, redirect } from '@sveltejs/kit';
-import { superValidate, withFiles } from 'sveltekit-superforms';
-import { arktype } from 'sveltekit-superforms/adapters';
-import { auth } from '$lib/auth';
-import { getRecipeById } from '$lib/modules/recipes/db/queries';
-import { updateRecipe } from '$lib/modules/recipes/edit/actions';
-import { RecipeFormSchema } from '$lib/modules/recipes/new/schema';
+import type { Actions, ServerLoad } from "@sveltejs/kit";
+import { error, fail, redirect } from "@sveltejs/kit";
+import { superValidate, withFiles } from "sveltekit-superforms";
+import { arktype } from "sveltekit-superforms/adapters";
+import { auth } from "$lib/auth";
+import { getRecipeById } from "$lib/modules/recipes/db/queries";
+import { updateRecipe } from "$lib/modules/recipes/edit/actions";
+import { RecipeFormSchema } from "$lib/modules/recipes/new/schema";
 
 const defaults = {
-  title: '',
-  description: '',
+  title: "",
+  description: "",
   image: undefined,
   prepTime: 0,
   cookTime: 0,
   servings: 0,
-  mealType: 'breakfast' as const,
+  mealType: "breakfast" as const,
   calories: 0,
   protein: 0,
   carbs: 0,
   fat: 0,
-  ingredients: [''],
-  instructions: [''],
+  ingredients: [""],
+  instructions: [""],
 };
 
 export const load: ServerLoad = async ({ params, request }) => {
@@ -29,21 +29,21 @@ export const load: ServerLoad = async ({ params, request }) => {
   });
 
   if (!session?.user) {
-    throw redirect(303, '/login');
+    throw redirect(303, "/login");
   }
 
   if (!params.id) {
-    throw error(404, 'Recipe not found');
+    throw error(404, "Recipe not found");
   }
 
   const recipeId = Number.parseInt(params.id, 10);
   if (Number.isNaN(recipeId)) {
-    throw error(404, 'Recipe not found');
+    throw error(404, "Recipe not found");
   }
 
   const existingRecipe = await getRecipeById(recipeId, session.user.id);
   if (!existingRecipe) {
-    throw error(404, 'Recipe not found');
+    throw error(404, "Recipe not found");
   }
 
   const recipeData = {
@@ -75,16 +75,16 @@ export const actions: Actions = {
     });
 
     if (!session?.user) {
-      throw redirect(303, '/login');
+      throw redirect(303, "/login");
     }
 
     if (!params.id) {
-      throw error(404, 'Recipe not found');
+      throw error(404, "Recipe not found");
     }
 
     const recipeId = Number.parseInt(params.id, 10);
     if (Number.isNaN(recipeId)) {
-      throw error(404, 'Recipe not found');
+      throw error(404, "Recipe not found");
     }
 
     const result = await updateRecipe({

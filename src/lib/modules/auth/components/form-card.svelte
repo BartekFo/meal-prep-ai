@@ -1,19 +1,19 @@
 <script lang="ts">
-import { UtensilsCrossed } from '@lucide/svelte';
-import type { Snippet } from 'svelte';
-import { cn } from '$lib/utils';
+  import { UtensilsCrossed } from "@lucide/svelte";
+  import type { Snippet } from "svelte";
+  import { cn } from "$lib/utils";
 
-const {
-  title,
-  description,
-  children,
-  class: className = '',
-}: {
-  title: string;
-  description: string;
-  children: Snippet;
-  class?: string;
-} = $props();
+  const {
+    title,
+    description,
+    children,
+    class: className = "",
+  }: {
+    title: string;
+    description: string;
+    children: Snippet;
+    class?: string;
+  } = $props();
 </script>
 
 <div class={cn('bg-card text-card-foreground prose w-full rounded-lg border shadow-xl', className)}>

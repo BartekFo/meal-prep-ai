@@ -1,62 +1,62 @@
 <script lang="ts">
-import { ImagePlus, X } from '@lucide/svelte';
+  import { ImagePlus, X } from "@lucide/svelte";
 
-import { Button } from '$lib/components/ui/button';
-import { Card, CardContent } from '$lib/components/ui/card';
-import { cn } from '$lib/utils';
+  import { Button } from "$lib/components/ui/button";
+  import { Card, CardContent } from "$lib/components/ui/card";
+  import { cn } from "$lib/utils";
 
-const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+  const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
-type IImageUploadProps = {
-  value: File | undefined;
-  onchange: (file?: File) => void;
-  name: string;
-};
+  type IImageUploadProps = {
+    value: File | undefined;
+    onchange: (file?: File) => void;
+    name: string;
+  };
 
-const { value, onchange, name }: IImageUploadProps = $props();
-let error = $state<string | null>(null);
-let previewUrl = $state<string | null>(null);
-const isFileVisible = $derived(value && previewUrl);
-let input: HTMLInputElement;
+  const { value, onchange, name }: IImageUploadProps = $props();
+  let error = $state<string | null>(null);
+  let previewUrl = $state<string | null>(null);
+  const isFileVisible = $derived(value && previewUrl);
+  let input: HTMLInputElement;
 
-function clearPreviewUrl() {
-  if (previewUrl) {
-    URL.revokeObjectURL(previewUrl);
-  }
-  previewUrl = null;
-}
-
-function handleImageUpload(e: Event) {
-  const target = e.target as HTMLInputElement;
-  const file = target.files?.[0];
-  error = null;
-
-  if (!file) {
-    return;
+  function clearPreviewUrl() {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    previewUrl = null;
   }
 
-  if (!file.type.startsWith('image/')) {
-    error = 'File must be an image';
-    return;
+  function handleImageUpload(e: Event) {
+    const target = e.target as HTMLInputElement;
+    const file = target.files?.[0];
+    error = null;
+
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      error = "File must be an image";
+      return;
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      error = "File size must be less than 2MB";
+      return;
+    }
+
+    const url = URL.createObjectURL(file);
+    previewUrl = url;
+
+    onchange(file);
   }
 
-  if (file.size > MAX_FILE_SIZE) {
-    error = 'File size must be less than 2MB';
-    return;
+  function handleRemoveImage() {
+    onchange(undefined);
+    input.value = "";
+    clearPreviewUrl();
+    error = null;
   }
-
-  const url = URL.createObjectURL(file);
-  previewUrl = url;
-
-  onchange(file);
-}
-
-function handleRemoveImage() {
-  onchange(undefined);
-  input.value = '';
-  clearPreviewUrl();
-  error = null;
-}
 </script>
 
 <div>

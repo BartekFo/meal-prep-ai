@@ -1,13 +1,13 @@
-import { fail, redirect } from '@sveltejs/kit';
-import { superValidate } from 'sveltekit-superforms';
-import { arktype } from 'sveltekit-superforms/adapters';
-import { essentialInfoSchema } from '$lib/modules/onboarding/schema/essential-info';
+import { fail, redirect } from "@sveltejs/kit";
+import { superValidate } from "sveltekit-superforms";
+import { arktype } from "sveltekit-superforms/adapters";
+import { essentialInfoSchema } from "$lib/modules/onboarding/schema/essential-info";
 import {
   checkOnboardingStatus,
   loadEssentialInfoData,
   saveEssentialInfo,
-} from '$lib/modules/onboarding/server';
-import type { Actions, PageServerLoad } from './$types';
+} from "$lib/modules/onboarding/server";
+import type { Actions, PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ locals }) => {
   const user = locals.user;
@@ -41,10 +41,10 @@ export const actions: Actions = {
     if (!result.success) {
       return fail(400, {
         form,
-        error: result.errors || 'Failed to save essential information',
+        error: result.errors || "Failed to save essential information",
       });
     }
 
-    redirect(302, '/onboarding/preferences');
+    redirect(302, "/onboarding/preferences");
   },
 };

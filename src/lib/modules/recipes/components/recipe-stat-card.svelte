@@ -1,20 +1,20 @@
 <script lang="ts">
-import type { Component } from 'svelte';
-import { Card } from '$lib/components/ui/card';
+  import type { Component } from "svelte";
+  import { Card } from "$lib/components/ui/card";
 
-const {
-  icon,
-  label,
-  value,
-  unit = '',
-}: {
-  icon?: Component;
-  label: string;
-  value: string | number;
-  unit?: string;
-} = $props();
+  const {
+    icon,
+    label,
+    value,
+    unit = "",
+  }: {
+    icon?: Component;
+    label: string;
+    value: string | number;
+    unit?: string;
+  } = $props();
 
-const Icon = icon;
+  const Icon = icon;
 </script>
 
 <Card class="prose gap-0 p-4 text-center">

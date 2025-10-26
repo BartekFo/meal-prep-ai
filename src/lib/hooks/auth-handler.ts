@@ -1,8 +1,8 @@
-import type { Handle } from '@sveltejs/kit';
-import { redirect } from '@sveltejs/kit';
-import { auth } from '$lib/auth';
+import type { Handle } from "@sveltejs/kit";
+import { redirect } from "@sveltejs/kit";
+import { auth } from "$lib/auth";
 
-const publicRoutes = ['/login', '/sign-up'];
+const publicRoutes = ["/login", "/sign-up"];
 
 export const authHandle: Handle = async ({ event, resolve }) => {
   const isPublicRoute = publicRoutes.some((route) =>
@@ -17,18 +17,18 @@ export const authHandle: Handle = async ({ event, resolve }) => {
   event.locals.user = session?.user || null;
 
   if (!(isPublicRoute || session?.user)) {
-    redirect(302, '/login');
+    redirect(302, "/login");
   }
 
   if (isPublicRoute && session?.user) {
-    redirect(302, '/dashboard');
+    redirect(302, "/dashboard");
   }
 
-  if (event.url.pathname === '/') {
+  if (event.url.pathname === "/") {
     if (session?.user) {
-      redirect(302, '/dashboard');
+      redirect(302, "/dashboard");
     } else {
-      redirect(302, '/login');
+      redirect(302, "/login");
     }
   }
 

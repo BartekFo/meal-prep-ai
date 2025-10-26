@@ -1,43 +1,43 @@
 <script lang="ts">
-import {
-  CalendarDate,
-  DateFormatter,
-  type DateValue,
-  getLocalTimeZone,
-  parseDate,
-  today,
-} from '@internationalized/date';
-import { CalendarIcon, NotebookPen } from '@lucide/svelte';
-import { superForm } from 'sveltekit-superforms';
-import { Button, buttonVariants } from '$lib/components/ui/button';
-import { Calendar } from '$lib/components/ui/calendar';
-import { Card, CardContent } from '$lib/components/ui/card';
-import * as Form from '$lib/components/ui/form';
-import { Input } from '$lib/components/ui/input';
-import * as Popover from '$lib/components/ui/popover';
-import { Progress } from '$lib/components/ui/progress';
-import * as RadioGroup from '$lib/components/ui/radio-group';
-import * as Select from '$lib/components/ui/select';
-import {
-  ACTIVITY_LEVELS,
-  GENDER_OPTIONS,
-  WEIGHT_GOALS,
-} from '$lib/modules/onboarding/constants';
-import { cn } from '$lib/utils';
+  import {
+    CalendarDate,
+    DateFormatter,
+    type DateValue,
+    getLocalTimeZone,
+    parseDate,
+    today,
+  } from "@internationalized/date";
+  import { CalendarIcon, NotebookPen } from "@lucide/svelte";
+  import { superForm } from "sveltekit-superforms";
+  import { Button, buttonVariants } from "$lib/components/ui/button";
+  import { Calendar } from "$lib/components/ui/calendar";
+  import { Card, CardContent } from "$lib/components/ui/card";
+  import * as Form from "$lib/components/ui/form";
+  import { Input } from "$lib/components/ui/input";
+  import * as Popover from "$lib/components/ui/popover";
+  import { Progress } from "$lib/components/ui/progress";
+  import * as RadioGroup from "$lib/components/ui/radio-group";
+  import * as Select from "$lib/components/ui/select";
+  import {
+    ACTIVITY_LEVELS,
+    GENDER_OPTIONS,
+    WEIGHT_GOALS,
+  } from "$lib/modules/onboarding/constants";
+  import { cn } from "$lib/utils";
 
-const { data } = $props();
+  const { data } = $props();
 
-const form = superForm(data.form);
-const { form: formData, enhance } = form;
+  const form = superForm(data.form);
+  const { form: formData, enhance } = form;
 
-const df = new DateFormatter('en-US', {
-  dateStyle: 'long',
-});
+  const df = new DateFormatter("en-US", {
+    dateStyle: "long",
+  });
 
-const value = $derived(
-  $formData.dateOfBirth ? parseDate($formData.dateOfBirth) : undefined
-);
-let placeholder = $state<DateValue>(today(getLocalTimeZone()));
+  const value = $derived(
+    $formData.dateOfBirth ? parseDate($formData.dateOfBirth) : undefined
+  );
+  let placeholder = $state<DateValue>(today(getLocalTimeZone()));
 </script>
 
 <main class="flex-1 px-4 py-8">

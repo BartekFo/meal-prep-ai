@@ -1,19 +1,19 @@
-import { fail, redirect } from '@sveltejs/kit';
-import { superValidate } from 'sveltekit-superforms';
-import { arktype } from 'sveltekit-superforms/adapters';
-import { foodPreferencesSchema } from '$lib/modules/onboarding/schema/food-preferences';
+import { fail, redirect } from "@sveltejs/kit";
+import { superValidate } from "sveltekit-superforms";
+import { arktype } from "sveltekit-superforms/adapters";
+import { foodPreferencesSchema } from "$lib/modules/onboarding/schema/food-preferences";
 import {
   canAccessPreferences,
   loadFoodPreferencesData,
   saveFoodPreferences,
-} from '$lib/modules/onboarding/server';
-import type { Actions, PageServerLoad } from './$types';
+} from "$lib/modules/onboarding/server";
+import type { Actions, PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ locals }) => {
   const user = locals.user;
 
   if (!canAccessPreferences(user)) {
-    throw redirect(302, '/onboarding');
+    throw redirect(302, "/onboarding");
   }
 
   const initialData = loadFoodPreferencesData(user);
@@ -38,10 +38,10 @@ export const actions: Actions = {
     if (!result.success) {
       return fail(400, {
         form,
-        error: result.errors || 'Failed to save food preferences',
+        error: result.errors || "Failed to save food preferences",
       });
     }
 
-    redirect(302, '/dashboard');
+    redirect(302, "/dashboard");
   },
 };

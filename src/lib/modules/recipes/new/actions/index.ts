@@ -1,7 +1,7 @@
-import { ResultAsync } from 'neverthrow';
-import { createRecipeRecord, type NewRecipe } from '../db/queries';
-import type { IRecipeFormValues } from '../schema';
-import { uploadRecipeImage } from './upload-recipe-image';
+import { ResultAsync } from "neverthrow";
+import { createRecipeRecord, type NewRecipe } from "../db/queries";
+import type { IRecipeFormValues } from "../schema";
+import { uploadRecipeImage } from "./upload-recipe-image";
 
 type CreateRecipeProps = {
   formData: IRecipeFormValues;
@@ -19,6 +19,6 @@ export async function createRecipe({ formData, userId }: CreateRecipeProps) {
 
   return ResultAsync.fromPromise(
     createRecipeRecord(recipe),
-    () => new Error('Failed to create recipe')
+    () => new Error("Failed to create recipe")
   );
 }

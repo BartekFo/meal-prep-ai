@@ -11,7 +11,7 @@ function roundToTwoDecimals(value: number): number {
 }
 
 function scaleRange(match: string, multiplier: number): string {
-  const parts = match.split('-').map(Number);
+  const parts = match.split("-").map(Number);
   if (parts.length !== 2 || parts[0] === undefined || parts[1] === undefined) {
     return match;
   }
@@ -23,25 +23,25 @@ function scaleRange(match: string, multiplier: number): string {
 
 function convertToCommonFraction(scaled: number): string | null {
   if (scaled === 0.25) {
-    return '1/4';
+    return "1/4";
   }
   if (scaled === 0.33 || Math.abs(scaled - 1 / 3) < 0.01) {
-    return '1/3';
+    return "1/3";
   }
   if (scaled === 0.5) {
-    return '1/2';
+    return "1/2";
   }
   if (scaled === 0.67 || Math.abs(scaled - 2 / 3) < 0.01) {
-    return '2/3';
+    return "2/3";
   }
   if (scaled === 0.75) {
-    return '3/4';
+    return "3/4";
   }
   return null;
 }
 
 function scaleFraction(match: string, multiplier: number): string {
-  const parts = match.split('/').map(Number);
+  const parts = match.split("/").map(Number);
   if (parts.length !== 2 || parts[0] === undefined || parts[1] === undefined) {
     return match;
   }
@@ -60,10 +60,10 @@ function scaleNumber(match: string, multiplier: number): string {
 }
 
 function scaleNumericMatch(match: string, multiplier: number): string {
-  if (match.includes('-')) {
+  if (match.includes("-")) {
     return scaleRange(match, multiplier);
   }
-  if (match.includes('/')) {
+  if (match.includes("/")) {
     return scaleFraction(match, multiplier);
   }
   return scaleNumber(match, multiplier);

@@ -1,5 +1,5 @@
-import { auth } from '$lib/auth';
-import type { DietaryType } from '../constants';
+import { auth } from "$lib/auth";
+import type { DietaryType } from "../constants";
 
 type FoodPreferencesData = {
   dietaryType: DietaryType;
@@ -17,7 +17,7 @@ export async function saveFoodPreferences(
         dietaryType: data.dietaryType,
         dislikedFoods: data.dislikedFoods,
         preferredMealTypes: data.preferredMealTypes,
-        onboardingStatus: 'completed',
+        onboardingStatus: "completed",
         onboardingCompletedAt: new Date(),
       },
       headers: request.headers,
@@ -25,7 +25,6 @@ export async function saveFoodPreferences(
 
     return { success: true, data: result };
   } catch (error) {
-    console.error('Error saving food preferences:', error);
-    return { success: false, errors: 'Failed to save food preferences' };
+    return { success: false, errors: "Failed to save food preferences" };
   }
 }

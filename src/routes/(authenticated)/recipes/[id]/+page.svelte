@@ -1,46 +1,46 @@
 <script lang="ts">
-import {
-  ArrowLeft,
-  Clock,
-  CookingPot,
-  Minus,
-  Plus,
-  Printer,
-} from '@lucide/svelte';
-import { Badge } from '$lib/components/ui/badge';
-import { Button } from '$lib/components/ui/button';
-import { Separator } from '$lib/components/ui/separator';
-import { routes } from '$lib/constants/routes';
-import {
-  RecipeIngredients,
-  RecipeInstructions,
-  RecipeNutrition,
-  RecipeStatCard,
-} from '$lib/modules/recipes';
-import type { PageData } from './$types';
+  import {
+    ArrowLeft,
+    Clock,
+    CookingPot,
+    Minus,
+    Plus,
+    Printer,
+  } from "@lucide/svelte";
+  import { Badge } from "$lib/components/ui/badge";
+  import { Button } from "$lib/components/ui/button";
+  import { Separator } from "$lib/components/ui/separator";
+  import { routes } from "$lib/constants/routes";
+  import {
+    RecipeIngredients,
+    RecipeInstructions,
+    RecipeNutrition,
+    RecipeStatCard,
+  } from "$lib/modules/recipes";
+  import type { PageData } from "./$types";
 
-const { data }: { data: PageData } = $props();
+  const { data }: { data: PageData } = $props();
 
-const recipe = $derived(data.recipe);
-let currentPortions = $state(data.recipe.servings);
-const multiplier = $derived(currentPortions / recipe.servings);
+  const recipe = $derived(data.recipe);
+  let currentPortions = $state(data.recipe.servings);
+  const multiplier = $derived(currentPortions / recipe.servings);
 
-// Scaled cooking times (simple linear scaling for MVP)
-const scaledPrepTime = $derived(Math.round(recipe.prepTime * multiplier));
-const scaledCookTime = $derived(Math.round(recipe.cookTime * multiplier));
-const scaledTotalTime = $derived(
-  recipe.cookTime === 0 ? scaledPrepTime : scaledPrepTime + scaledCookTime
-);
+  // Scaled cooking times (simple linear scaling for MVP)
+  const scaledPrepTime = $derived(Math.round(recipe.prepTime * multiplier));
+  const scaledCookTime = $derived(Math.round(recipe.cookTime * multiplier));
+  const scaledTotalTime = $derived(
+    recipe.cookTime === 0 ? scaledPrepTime : scaledPrepTime + scaledCookTime
+  );
 
-function increasePortions() {
-  currentPortions += 1;
-}
-
-function decreasePortions() {
-  if (currentPortions > 1) {
-    currentPortions -= 1;
+  function increasePortions() {
+    currentPortions += 1;
   }
-}
+
+  function decreasePortions() {
+    if (currentPortions > 1) {
+      currentPortions -= 1;
+    }
+  }
 </script>
 
 <div class="container mx-auto max-w-5xl p-6">

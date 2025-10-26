@@ -1,32 +1,32 @@
 <script lang="ts">
-import { Search } from '@lucide/svelte';
-import { goto, pushState } from '$app/navigation';
-import { page } from '$app/state';
-import { Input } from '$lib/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-} from '$lib/components/ui/select';
-import { MEAL_TYPES } from '$lib/constants/meal-types';
+  import { Search } from "@lucide/svelte";
+  import { goto, pushState } from "$app/navigation";
+  import { page } from "$app/state";
+  import { Input } from "$lib/components/ui/input";
+  import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+  } from "$lib/components/ui/select";
+  import { MEAL_TYPES } from "$lib/constants/meal-types";
 
-const searchQuery = page.url.searchParams.get('search');
-const recipeType = page.url.searchParams.get('type') || 'all';
-const sortBy = page.url.searchParams.get('sort') || 'newest';
+  const searchQuery = page.url.searchParams.get("search");
+  const recipeType = page.url.searchParams.get("type") || "all";
+  const sortBy = page.url.searchParams.get("sort") || "newest";
 
-function handleSearchInput(e: Event) {
-  const target = e.target as HTMLInputElement;
-  goto(`?search=${target.value}`);
-}
+  function handleSearchInput(e: Event) {
+    const target = e.target as HTMLInputElement;
+    goto(`?search=${target.value}`);
+  }
 
-function handleTypeChange(value: string) {
-  goto(`?type=${value}`);
-}
+  function handleTypeChange(value: string) {
+    goto(`?type=${value}`);
+  }
 
-function handleSortChange(value: string) {
-  goto(`?sort=${value}`);
-}
+  function handleSortChange(value: string) {
+    goto(`?sort=${value}`);
+  }
 </script>
 
 <div class="mb-6 flex flex-col gap-4 sm:flex-row">

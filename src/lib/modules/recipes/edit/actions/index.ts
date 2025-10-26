@@ -1,11 +1,11 @@
-import { ResultAsync } from 'neverthrow';
+import { ResultAsync } from "neverthrow";
 import {
   getRecipeById,
   type NewRecipe,
   updateRecipeRecord,
-} from '../../db/queries';
-import { uploadRecipeImage } from '../../new/actions/upload-recipe-image';
-import type { IRecipeFormValues } from '../../new/schema';
+} from "../../db/queries";
+import { uploadRecipeImage } from "../../new/actions/upload-recipe-image";
+import type { IRecipeFormValues } from "../../new/schema";
 
 type UpdateRecipeProps = {
   id: number;
@@ -22,8 +22,8 @@ export async function updateRecipe({
   const existingRecipe = await getRecipeById(id, userId);
   if (!existingRecipe) {
     return ResultAsync.fromPromise(
-      Promise.reject(new Error('Recipe not found')),
-      () => new Error('Recipe not found')
+      Promise.reject(new Error("Recipe not found")),
+      () => new Error("Recipe not found")
     );
   }
 
@@ -46,6 +46,6 @@ export async function updateRecipe({
 
   return ResultAsync.fromPromise(
     updateRecipeRecord(id, recipe, userId),
-    () => new Error('Failed to update recipe')
+    () => new Error("Failed to update recipe")
   );
 }

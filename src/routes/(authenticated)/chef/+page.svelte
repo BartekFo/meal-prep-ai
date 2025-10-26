@@ -1,40 +1,40 @@
 <script lang="ts">
-import { Chat } from '@ai-sdk/svelte';
-import { ArrowUp, ChefHat, MessageSquare, Plus } from '@lucide/svelte';
-import { authClient } from '$lib/auth/auth-client';
-import { Avatar, AvatarFallback } from '$lib/components/ui/avatar';
-import { Card } from '$lib/components/ui/card';
-import * as InputGroup from '$lib/components/ui/input-group';
+  import { Chat } from "@ai-sdk/svelte";
+  import { ArrowUp, ChefHat, MessageSquare, Plus } from "@lucide/svelte";
+  import { authClient } from "$lib/auth/auth-client";
+  import { Avatar, AvatarFallback } from "$lib/components/ui/avatar";
+  import { Card } from "$lib/components/ui/card";
+  import * as InputGroup from "$lib/components/ui/input-group";
 
-let input = '';
-const chat = new Chat({});
+  let input = "";
+  const chat = new Chat({});
 
-function handleSubmit(event: SubmitEvent) {
-  event.preventDefault();
-  chat.sendMessage({ text: input });
-  input = '';
-}
+  function handleSubmit(event: SubmitEvent) {
+    event.preventDefault();
+    chat.sendMessage({ text: input });
+    input = "";
+  }
 
-const session = authClient.useSession();
+  const session = authClient.useSession();
 
-const suggestedPrompts = [
-  'Create a weekly meal plan for weight loss',
-  'Suggest a quick dinner recipe with chicken',
-  'What can I make with eggs and vegetables?',
-  'Plan high-protein meals for muscle gain',
-];
+  const suggestedPrompts = [
+    "Create a weekly meal plan for weight loss",
+    "Suggest a quick dinner recipe with chicken",
+    "What can I make with eggs and vegetables?",
+    "Plan high-protein meals for muscle gain",
+  ];
 
-function handlePromptClick(prompt: string) {
-  input = prompt;
-}
+  function handlePromptClick(prompt: string) {
+    input = prompt;
+  }
 
-function formatTime(date: Date) {
-  return date.toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  });
-}
+  function formatTime(date: Date) {
+    return date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+  }
 </script>
 
 <svelte:head>

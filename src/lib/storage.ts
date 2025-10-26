@@ -1,5 +1,5 @@
-import { mkdir, unlink, writeFile } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
+import { mkdir, unlink, writeFile } from "node:fs/promises";
+import { dirname, join } from "node:path";
 
 type StorageProvider = {
   upload(file: File, path: string): Promise<string>;
@@ -7,7 +7,7 @@ type StorageProvider = {
 };
 
 export class LocalStorage implements StorageProvider {
-  private readonly uploadsDir = 'uploads/';
+  private readonly uploadsDir = "uploads/";
 
   async upload(file: File, path: string): Promise<string> {
     const fullPath = join(this.uploadsDir, path);

@@ -1,11 +1,11 @@
 <script lang="ts">
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from '$lib/components/ui/card';
-import { Skeleton } from '$lib/components/ui/skeleton';
+  import {
+    Card,
+    CardContent,
+    CardFooter,
+    CardHeader,
+  } from "$lib/components/ui/card";
+  import { Skeleton } from "$lib/components/ui/skeleton";
 </script>
 
 <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

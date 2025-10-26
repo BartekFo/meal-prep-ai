@@ -1,7 +1,7 @@
-import { and, asc, desc, eq, ilike, type SQL } from 'drizzle-orm';
-import { db } from '$lib/server/db';
-import { recipes } from '$lib/server/db/schema';
-import type { Recipe, RecipeFilters } from '../types';
+import { and, asc, desc, eq, ilike, type SQL } from "drizzle-orm";
+import { db } from "$lib/server/db";
+import { recipes } from "$lib/server/db/schema";
+import type { Recipe, RecipeFilters } from "../types";
 
 export type NewRecipe = typeof recipes.$inferInsert;
 
@@ -15,19 +15,19 @@ export async function getAllRecipes(
     conditions.push(ilike(recipes.title, `%${filters.search}%`));
   }
 
-  if (filters?.type && filters.type !== 'all') {
+  if (filters?.type && filters.type !== "all") {
     conditions.push(eq(recipes.mealType, filters.type));
   }
 
   let orderBy: SQL;
   switch (filters?.sort) {
-    case 'oldest':
+    case "oldest":
       orderBy = asc(recipes.createdAt);
       break;
-    case 'a-z':
+    case "a-z":
       orderBy = asc(recipes.title);
       break;
-    case 'z-a':
+    case "z-a":
       orderBy = desc(recipes.title);
       break;
     default:

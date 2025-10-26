@@ -1,28 +1,29 @@
 <script lang="ts">
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '$lib/components/ui/card';
-import NutritionItem from './nutrition-item.svelte';
+  import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+  } from "$lib/components/ui/card";
+  import NutritionItem from "./nutrition-item.svelte";
 
-type NutritionProps = {
-  calories: number;
-  protein: number;
-  carbs: number;
-  fat: number;
-  multiplier: number;
-};
+  type NutritionProps = {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+    multiplier: number;
+  };
 
-const { calories, protein, carbs, fat, multiplier }: NutritionProps = $props();
+  const { calories, protein, carbs, fat, multiplier }: NutritionProps =
+    $props();
 
-// Calculate scaled nutrition values
-const scaledCalories = Math.round(calories * multiplier);
-const scaledProtein = Math.round(protein * multiplier * 10) / 10;
-const scaledCarbs = Math.round(carbs * multiplier * 10) / 10;
-const scaledFat = Math.round(fat * multiplier * 10) / 10;
+  // Calculate scaled nutrition values
+  const scaledCalories = Math.round(calories * multiplier);
+  const scaledProtein = Math.round(protein * multiplier * 10) / 10;
+  const scaledCarbs = Math.round(carbs * multiplier * 10) / 10;
+  const scaledFat = Math.round(fat * multiplier * 10) / 10;
 </script>
 
 <Card>

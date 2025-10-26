@@ -4,5 +4,5 @@ export {
   NutritionInformationFields,
   RecipeDetailsFields,
   RecipeImageUpload,
-} from './components';
-export * from './schema';
+} from "./components";
+export * from "./schema";

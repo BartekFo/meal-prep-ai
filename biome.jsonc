@@ -1,6 +1,6 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.2.2/schema.json",
-  "extends": ["ultracite"],
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": ["ultracite/core", "ultracite/svelte"],
   "files": {
     "includes": [
       "src/**",
@@ -9,38 +9,43 @@
       "!src/lib/components"
     ]
   },
+  "html": {
+    "experimentalFullSupportEnabled": false,
+    "formatter": {
+      "indentScriptAndStyle": true
+    }
+  },
+  "linter": {
+    "rules": {
+      "correctness": {
+        "noUnusedVariables": "off",
+        "noUnusedImports": "off",
+        "noUndeclaredVariables": "off"
+      },
+      "performance": {
+        "noNamespaceImport": "off",
+        "noBarrelFile": "off"
+      },
+      "style": {
+        "useConst": "off",
+        "useImportType": "off",
+        "noNamespace": "warn",
+        "noMagicNumbers": "off",
+        "noExportedImports": "off"
+      },
+      "suspicious": {
+        "noConsole": "off",
+        "noUnassignedVariables": "off"
+      }
+    }
+  },
   "overrides": [
     {
-      "includes": [
-        "src/**",
-        "!src/app.css",
-        "!src/app.d.ts",
-        "!src/lib/components"
-      ],
-      "linter": {
-        "rules": {
-          "performance": {
-            "noBarrelFile": "off",
-            "noNamespaceImport": "off"
-          },
-          "style": {
-            "useConst": "off",
-            "useImportType": "off",
-            "noMagicNumbers": "off",
-            "useFilenamingConvention": "off",
-            "noExportedImports": "off"
-          },
-          "correctness": {
-            "useHookAtTopLevel": "off",
-            "useExhaustiveDependencies": "off",
-            "noUnusedVariables": "off",
-            "noUndeclaredVariables": "off",
-            "noUnusedImports": "off"
-          },
-          "suspicious": {
-            "noUnknownAtRules": "off",
-            "noConsole": "off",
-            "noUnassignedVariables": "off"
+      "includes": ["src/*.svelte"],
+      "assist": {
+        "actions": {
+          "source": {
+            "organizeImports": "off"
           }
         }
       }

@@ -1,25 +1,25 @@
-import type { Actions } from '@sveltejs/kit';
-import { error, fail, redirect } from '@sveltejs/kit';
-import { superValidate, withFiles } from 'sveltekit-superforms';
-import { arktype } from 'sveltekit-superforms/adapters';
-import { auth } from '$lib/auth';
-import { createRecipe } from '$lib/modules/recipes/new/actions';
-import { RecipeFormSchema } from '$lib/modules/recipes/new/schema';
+import type { Actions } from "@sveltejs/kit";
+import { error, fail, redirect } from "@sveltejs/kit";
+import { superValidate, withFiles } from "sveltekit-superforms";
+import { arktype } from "sveltekit-superforms/adapters";
+import { auth } from "$lib/auth";
+import { createRecipe } from "$lib/modules/recipes/new/actions";
+import { RecipeFormSchema } from "$lib/modules/recipes/new/schema";
 
 const defaults = {
-  title: '',
-  description: '',
+  title: "",
+  description: "",
   image: undefined,
   prepTime: 0,
   cookTime: 0,
   servings: 0,
-  mealType: 'breakfast' as const,
+  mealType: "breakfast" as const,
   calories: 0,
   protein: 0,
   carbs: 0,
   fat: 0,
-  ingredients: [''],
-  instructions: [''],
+  ingredients: [""],
+  instructions: [""],
 };
 
 export const load = async () => {
@@ -44,7 +44,7 @@ export const actions: Actions = {
     });
 
     if (!session?.user) {
-      throw redirect(303, '/login');
+      throw redirect(303, "/login");
     }
 
     const result = await createRecipe({
@@ -58,6 +58,6 @@ export const actions: Actions = {
       });
     }
 
-    redirect(303, '/recipes');
+    redirect(303, "/recipes");
   },
 };

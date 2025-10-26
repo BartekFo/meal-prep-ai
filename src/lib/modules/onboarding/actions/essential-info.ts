@@ -1,5 +1,5 @@
-import { auth } from '$lib/auth';
-import type { EssentialInfo } from '../schema/essential-info';
+import { auth } from "$lib/auth";
+import type { EssentialInfo } from "../schema/essential-info";
 
 export async function saveEssentialInfo(data: EssentialInfo, request: Request) {
   try {
@@ -14,14 +14,13 @@ export async function saveEssentialInfo(data: EssentialInfo, request: Request) {
         activityLevel: data.activityLevel,
         currentWeight: data.currentWeight,
         height: data.height,
-        onboardingStatus: 'step1_completed',
+        onboardingStatus: "step1_completed",
       },
       headers: request.headers,
     });
 
     return { success: true, data: result };
   } catch (error) {
-    console.error('Error saving essential info:', error);
-    return { success: false, errors: 'Failed to save essential information' };
+    return { success: false, errors: "Failed to save essential information" };
   }
 }

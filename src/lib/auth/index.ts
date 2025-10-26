@@ -1,12 +1,12 @@
-import { betterAuth } from 'better-auth';
-import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { sveltekitCookies } from 'better-auth/svelte-kit';
-import { getRequestEvent } from '$app/server';
-import { db } from '../server/db';
+import { betterAuth } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { sveltekitCookies } from "better-auth/svelte-kit";
+import { getRequestEvent } from "$app/server";
+import { db } from "../server/db";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
-    provider: 'pg',
+    provider: "pg",
   }),
   plugins: [sveltekitCookies(getRequestEvent)],
   emailAndPassword: {
@@ -15,59 +15,59 @@ export const auth = betterAuth({
   user: {
     additionalFields: {
       firstName: {
-        type: 'string',
+        type: "string",
         required: false,
       },
       lastName: {
-        type: 'string',
+        type: "string",
         required: false,
       },
       allergies: {
-        type: 'string',
+        type: "string",
         required: false,
       },
       weightGoal: {
-        type: 'string',
+        type: "string",
         required: false,
       },
       dietaryType: {
-        type: 'string',
+        type: "string",
         required: false,
       },
       preferredMealTypes: {
-        type: 'string[]',
+        type: "string[]",
         required: false,
       },
       dislikedFoods: {
-        type: 'string',
+        type: "string",
         required: false,
       },
       dateOfBirth: {
-        type: 'date',
+        type: "date",
         required: false,
       },
       gender: {
-        type: 'string',
+        type: "string",
         required: false,
       },
       activityLevel: {
-        type: 'string',
+        type: "string",
         required: false,
       },
       currentWeight: {
-        type: 'number',
+        type: "number",
         required: false,
       },
       height: {
-        type: 'number',
+        type: "number",
         required: false,
       },
       onboardingStatus: {
-        type: 'string',
+        type: "string",
         required: false,
       },
       onboardingCompletedAt: {
-        type: 'date',
+        type: "date",
         required: false,
       },
     },
