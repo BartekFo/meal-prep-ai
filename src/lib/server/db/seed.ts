@@ -1,8 +1,8 @@
+import { hashPassword } from 'better-auth/crypto';
+import { eq } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
-import { user, recipes, account } from './schema';
-import { eq } from 'drizzle-orm';
-import { hashPassword } from 'better-auth/crypto';
+import { account, recipes, user } from './schema';
 
 // Get DATABASE_URL from environment
 const DATABASE_URL = process.env.DATABASE_URL;
@@ -42,7 +42,8 @@ const SEED_RECIPES = [
   {
     userId: SEED_USER.id,
     title: 'Classic Avocado Toast',
-    description: 'A simple and nutritious breakfast with creamy avocado on toasted whole grain bread',
+    description:
+      'A simple and nutritious breakfast with creamy avocado on toasted whole grain bread',
     ingredients: [
       '2 slices whole grain bread',
       '1 ripe avocado',
@@ -70,7 +71,8 @@ const SEED_RECIPES = [
   {
     userId: SEED_USER.id,
     title: 'Mediterranean Quinoa Bowl',
-    description: 'A protein-packed lunch bowl with quinoa, fresh vegetables, and feta cheese',
+    description:
+      'A protein-packed lunch bowl with quinoa, fresh vegetables, and feta cheese',
     ingredients: [
       '1 cup cooked quinoa',
       '1/2 cup cherry tomatoes, halved',
@@ -103,7 +105,8 @@ const SEED_RECIPES = [
   {
     userId: SEED_USER.id,
     title: 'Grilled Chicken with Roasted Vegetables',
-    description: 'A healthy dinner featuring tender grilled chicken breast with colorful roasted vegetables',
+    description:
+      'A healthy dinner featuring tender grilled chicken breast with colorful roasted vegetables',
     ingredients: [
       '2 chicken breasts (about 6 oz each)',
       '2 bell peppers, cut into chunks',
@@ -136,7 +139,8 @@ const SEED_RECIPES = [
   {
     userId: SEED_USER.id,
     title: 'Energy Protein Balls',
-    description: 'No-bake energy balls packed with oats, peanut butter, and dark chocolate chips',
+    description:
+      'No-bake energy balls packed with oats, peanut butter, and dark chocolate chips',
     ingredients: [
       '1 cup rolled oats',
       '1/2 cup natural peanut butter',
@@ -165,7 +169,8 @@ const SEED_RECIPES = [
   {
     userId: SEED_USER.id,
     title: 'Greek Yogurt Parfait',
-    description: 'Layered breakfast parfait with Greek yogurt, fresh berries, and granola',
+    description:
+      'Layered breakfast parfait with Greek yogurt, fresh berries, and granola',
     ingredients: [
       '1 cup Greek yogurt (plain or vanilla)',
       '1/2 cup mixed berries (strawberries, blueberries, raspberries)',
@@ -228,7 +233,8 @@ const SEED_RECIPES = [
   {
     userId: SEED_USER.id,
     title: 'Baked Salmon with Asparagus',
-    description: 'Oven-baked salmon fillet with garlic butter asparagus and lemon',
+    description:
+      'Oven-baked salmon fillet with garlic butter asparagus and lemon',
     ingredients: [
       '2 salmon fillets (6 oz each)',
       '1 bunch asparagus, trimmed',
@@ -305,15 +311,12 @@ async function seed() {
 
     if (existingUser.length > 0) {
       console.log('⚠️  User already exists, using existing user');
-      userId = existingUser[0].id;
+      userId = existingUser[0]?.id ?? '';
     } else {
       // Create user
       console.log('👤 Creating demo user...');
-      const [newUser] = await db
-        .insert(user)
-        .values(SEED_USER)
-        .returning();
-      userId = newUser.id;
+      const [newUser] = await db.insert(user).values(SEED_USER).returning();
+      userId = newUser?.id ?? '';
 
       // Hash the password using Better Auth's crypto
       console.log('🔒 Hashing password...');
@@ -344,7 +347,9 @@ async function seed() {
       console.log(`   Found ${existingRecipes.length} existing recipes`);
 
       const response = await new Promise<string>((resolve) => {
-        process.stdout.write('   Do you want to delete and re-seed recipes? (y/n): ');
+        process.stdout.write(
+          '   Do you want to delete and re-seed recipes? (y/n): '
+        );
         process.stdin.once('data', (data) => {
           resolve(data.toString().trim().toLowerCase());
         });
@@ -371,9 +376,9 @@ async function seed() {
     await db.insert(recipes).values(recipesWithUserId);
 
     console.log('✅ Created recipes:');
-    SEED_RECIPES.forEach((recipe) => {
+    for (const recipe of SEED_RECIPES) {
       console.log(`   - ${recipe.title} (${recipe.mealType})`);
-    });
+    }
 
     console.log('\n✨ Seed completed successfully!');
     console.log('\n📋 Demo Account Credentials:');
