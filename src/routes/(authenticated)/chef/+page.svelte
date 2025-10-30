@@ -1,10 +1,11 @@
 <script lang="ts">
-  import { Chat } from "@ai-sdk/svelte";
-  import { ArrowUp, ChefHat, MessageSquare, Plus } from "@lucide/svelte";
   import { authClient } from "$lib/auth/auth-client";
   import { Avatar, AvatarFallback } from "$lib/components/ui/avatar";
   import { Card } from "$lib/components/ui/card";
   import * as InputGroup from "$lib/components/ui/input-group";
+  import { Chat } from "@ai-sdk/svelte";
+  import { ArrowUp, ChefHat, MessageSquare, Plus } from "@lucide/svelte";
+  import { marked } from "marked";
 
   let input = "";
   const chat = new Chat({});
@@ -99,7 +100,7 @@
 						<Card class="p-2 {message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-card'}">
 							{#each message.parts as part, partIndex (partIndex)}
             {#if part.type === 'text'}
-							<p class="text-sm leading-relaxed">{part.text}</p>
+							<p class="text-sm leading-relaxed">{@html marked(part.text)}</p>
 						{/if}
 					{/each}
 						</Card>
