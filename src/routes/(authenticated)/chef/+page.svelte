@@ -5,6 +5,7 @@
     ChatInput,
     ChatMessage,
     SuggestedPrompts,
+    ThinkingIndicator,
   } from "$lib/modules/chef/components";
   import { Chat } from "@ai-sdk/svelte";
 
@@ -55,6 +56,11 @@
 			{#each chat.messages as message, messageIndex (messageIndex)}
 				<ChatMessage {message} {userInitial} />
 			{/each}
+
+			<!-- Thinking Indicator -->
+			{#if chat.status === 'streaming' || chat.status === 'submitted'}
+				<ThinkingIndicator />
+			{/if}
 		</div>
 	</div>
 

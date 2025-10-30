@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { Avatar, AvatarFallback } from "$lib/components/ui/avatar";
-  import { Card } from "$lib/components/ui/card";
   import type { UIMessage } from "@ai-sdk/svelte";
   import { ChefHat } from "@lucide/svelte";
   import { marked } from "marked";
+  import { Avatar, AvatarFallback } from "$lib/components/ui/avatar";
+  import { Card } from "$lib/components/ui/card";
 
   type Props = {
     message: UIMessage;
@@ -23,7 +23,7 @@
   {/if}
 
   <div class="flex max-w-[80%] flex-col gap-1">
-    <Card class="p-2 {message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-card'}">
+    <Card class="p-4 {message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-card'}">
       {#each message.parts as part, partIndex (partIndex)}
         {#if part.type === 'text'}
           <p class="text-sm leading-relaxed">{@html marked(part.text)}</p>
