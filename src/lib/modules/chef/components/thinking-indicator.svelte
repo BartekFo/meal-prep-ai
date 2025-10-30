@@ -1,7 +1,7 @@
 <script lang="ts">
+  import { Loader2 } from "@lucide/svelte";
   import { Avatar, AvatarFallback } from "$lib/components/ui/avatar";
   import { Card } from "$lib/components/ui/card";
-  import { Loader2 } from "@lucide/svelte";
 </script>
 
 <div class="flex gap-3 justify-start">

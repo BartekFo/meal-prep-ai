@@ -70,3 +70,9 @@ export function updateRecipeRecord(
     .set(recipe)
     .where(and(eq(recipes.id, id), eq(recipes.userId, userId)));
 }
+
+export function deleteRecipeRecord(id: number, userId: string) {
+  return db
+    .delete(recipes)
+    .where(and(eq(recipes.id, id), eq(recipes.userId, userId)));
+}

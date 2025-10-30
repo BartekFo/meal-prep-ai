@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { Chat } from "@ai-sdk/svelte";
   import { authClient } from "$lib/auth/auth-client";
   import {
     ChatHeader,
@@ -7,7 +8,6 @@
     SuggestedPrompts,
     ThinkingIndicator,
   } from "$lib/modules/chef/components";
-  import { Chat } from "@ai-sdk/svelte";
 
   let input = $state("");
   const chat = new Chat({});

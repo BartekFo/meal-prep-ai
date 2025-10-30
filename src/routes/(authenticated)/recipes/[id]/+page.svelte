@@ -6,9 +6,20 @@
     Minus,
     Plus,
     Printer,
+    Trash2,
   } from "@lucide/svelte";
+  import { enhance } from "$app/forms";
   import { Badge } from "$lib/components/ui/badge";
   import { Button } from "$lib/components/ui/button";
+  import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+  } from "$lib/components/ui/dialog";
   import { Separator } from "$lib/components/ui/separator";
   import { routes } from "$lib/constants/routes";
   import {
@@ -20,6 +31,9 @@
   import type { PageData } from "./$types";
 
   const { data }: { data: PageData } = $props();
+
+  let dialogOpen = $state(false);
+  let isDeleting = $state(false);
 
   const recipe = $derived(data.recipe);
   let currentPortions = $state(data.recipe.servings);
@@ -55,6 +69,46 @@
 				<Printer class="mr-2 h-4 w-4" />
 				Print
 			</Button>
+			<Dialog bind:open={dialogOpen}>
+				<DialogTrigger>
+					<Button variant="destructive" size="sm">
+						<Trash2 class="mr-2 h-4 w-4" />
+						Delete
+					</Button>
+				</DialogTrigger>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>Delete Recipe</DialogTitle>
+						<DialogDescription>
+							Are you sure you want to delete "{recipe.title}"? This action cannot be undone.
+						</DialogDescription>
+					</DialogHeader>
+					<DialogFooter>
+						<Button
+							variant="outline"
+							onclick={() => (dialogOpen = false)}
+							disabled={isDeleting}
+						>
+							Cancel
+						</Button>
+						<form method="POST" action="?/delete" use:enhance={() => {
+							isDeleting = true;
+							return async ({ update }) => {
+								await update();
+								isDeleting = false;
+							};
+						}}>
+							<Button
+								type="submit"
+								variant="destructive"
+								disabled={isDeleting}
+							>
+								{isDeleting ? 'Deleting...' : 'Delete Recipe'}
+							</Button>
+						</form>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 		</div>
 	</div>
 
