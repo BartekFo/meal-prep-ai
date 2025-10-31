@@ -1,9 +1,9 @@
 <script lang="ts">
+  import { AlertCircle, ArrowLeft, Home } from "@lucide/svelte";
   import { goto } from "$app/navigation";
   import { page } from "$app/state";
   import { Button } from "$lib/components/ui/button";
   import { routes } from "$lib/constants/routes";
-  import { AlertCircle, ArrowLeft, Home } from "@lucide/svelte";
 
   const status = $derived(page.status);
   const message = $derived(page.error?.message ?? "An error occurred");
