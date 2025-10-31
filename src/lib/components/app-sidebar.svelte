@@ -12,6 +12,10 @@
 						url: routes.dashboard
 					},
 					{
+						title: 'Chef',
+						url: routes.chef
+					},
+					{
 						title: 'Recipes',
 						url: routes.recipes.base
 					}
