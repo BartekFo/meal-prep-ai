@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { Chat } from "@ai-sdk/svelte";
   import { authClient } from "$lib/auth/auth-client";
   import {
     ChatHeader,
@@ -8,9 +7,9 @@
     SuggestedPrompts,
     ThinkingIndicator,
   } from "$lib/modules/chef/components";
-  import { addChatRecipe } from "$lib/modules/recipes/chat/actions/add-chat-recipe";
   import type { RecipeToolOutput } from "$lib/modules/recipes/components/generated-recipe-card.svelte";
   import GeneratedRecipeCard from "$lib/modules/recipes/components/generated-recipe-card.svelte";
+  import { Chat } from "@ai-sdk/svelte";
 
   let input = $state("");
   const chat = new Chat({});
@@ -44,21 +43,10 @@
     toolCallId: string,
     recipe: RecipeToolOutput
   ): Promise<void> {
-    const userId = $session.data?.user?.id;
-    if (!userId) {
-      throw new Error("User not authenticated");
-    }
-
-    const result = await addChatRecipe(recipe, userId);
-
-    if (result.isErr()) {
-      throw result.error;
-    }
-
     await chat.addToolResult({
       toolCallId,
-      tool: "generateRecipe",
-      output: { success: true },
+      tool: "confirmAddRecipe",
+      output: recipe,
     });
   }
 </script>
