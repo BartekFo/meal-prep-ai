@@ -8,6 +8,9 @@
     SuggestedPrompts,
     ThinkingIndicator,
   } from "$lib/modules/chef/components";
+  import { addChatRecipe } from "$lib/modules/recipes/chat/actions/add-chat-recipe";
+  import type { RecipeToolOutput } from "$lib/modules/recipes/components/generated-recipe-card.svelte";
+  import GeneratedRecipeCard from "$lib/modules/recipes/components/generated-recipe-card.svelte";
 
   let input = $state("");
   const chat = new Chat({});
@@ -36,6 +39,28 @@
       $session.data?.user?.email?.charAt(0).toUpperCase() ||
       "U"
   );
+
+  async function handleAddRecipe(
+    toolCallId: string,
+    recipe: RecipeToolOutput
+  ): Promise<void> {
+    const userId = $session.data?.user?.id;
+    if (!userId) {
+      throw new Error("User not authenticated");
+    }
+
+    const result = await addChatRecipe(recipe, userId);
+
+    if (result.isErr()) {
+      throw result.error;
+    }
+
+    await chat.addToolResult({
+      toolCallId,
+      tool: "generateRecipe",
+      output: { success: true },
+    });
+  }
 </script>
 
 <svelte:head>
@@ -54,7 +79,24 @@
 
 			<!-- Messages -->
 			{#each chat.messages as message, messageIndex (messageIndex)}
-				<ChatMessage {message} {userInitial} />
+				{#if message.role === 'assistant'}
+					{#each message.parts as part, partIndex (partIndex)}
+						{#if part.type === 'tool-generateRecipe' && part.state === 'output-available' && part.output}
+							<GeneratedRecipeCard
+								recipe={part.output as RecipeToolOutput}
+								toolCallId={part.toolCallId}
+								toolState={part.state}
+								onAddRecipe={handleAddRecipe}
+							/>
+						{/if}
+					{/each}
+					{@const textParts = message.parts.filter((p) => p.type === 'text')}
+					{#if textParts.length > 0}
+						<ChatMessage message={{ ...message, parts: textParts }} {userInitial} />
+					{/if}
+				{:else}
+					<ChatMessage {message} {userInitial} />
+				{/if}
 			{/each}
 
 			<!-- Thinking Indicator -->
