@@ -8,7 +8,7 @@
     SuggestedPrompts,
     ThinkingIndicator,
   } from "$lib/modules/chef/components";
-  import type { RecipeToolOutput } from "$lib/modules/recipes/components/generated-recipe-card.svelte";
+  import type { RecipeToolOutput } from "$lib/modules/recipes/chat/types";
   import GeneratedRecipeCard from "$lib/modules/recipes/components/generated-recipe-card.svelte";
 
   let input = $state("");
@@ -68,18 +68,25 @@
 			<!-- Messages -->
 			{#each chat.messages as message, messageIndex (messageIndex)}
 				{#if message.role === 'assistant'}
+					{@const hasRecipeCard = message.parts.some(
+						(p) => p.type === 'tool-generateRecipe' && p.state === 'output-available' && p.output
+					)}
 					{#each message.parts as part, partIndex (partIndex)}
-						{#if part.type === 'tool-generateRecipe' && part.state === 'output-available' && part.output}
-							<GeneratedRecipeCard
-								recipe={part.output as RecipeToolOutput}
-								toolCallId={part.toolCallId}
-								toolState={part.state}
-								onAddRecipe={handleAddRecipe}
-							/>
+						{#if part.type === 'tool-generateRecipe'}
+							{#if part.state === 'output-available' && part.output}
+								<GeneratedRecipeCard
+									recipe={part.output as RecipeToolOutput}
+									toolCallId={part.toolCallId}
+									toolState={part.state}
+									onAddRecipe={handleAddRecipe}
+								/>
+							{:else if part.state === 'input-streaming' || part.state === 'input-available'}
+								<div class="text-sm text-muted-foreground">Generating recipe...</div>
+							{/if}
 						{/if}
 					{/each}
 					{@const textParts = message.parts.filter((p) => p.type === 'text')}
-					{#if textParts.length > 0}
+					{#if textParts.length > 0 && !hasRecipeCard}
 						<ChatMessage message={{ ...message, parts: textParts }} {userInitial} />
 					{/if}
 				{:else}

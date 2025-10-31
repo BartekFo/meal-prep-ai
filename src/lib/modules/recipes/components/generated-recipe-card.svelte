@@ -1,5 +1,11 @@
 <script lang="ts">
-  import { CheckCircle2, Clock, Loader2, Users, XCircle } from "@lucide/svelte";
+  import {
+    CircleCheckBig,
+    CircleX,
+    Clock,
+    LoaderCircle,
+    Users,
+  } from "@lucide/svelte";
   import { Badge } from "$lib/components/ui/badge";
   import { Button } from "$lib/components/ui/button";
   import {
@@ -10,10 +16,7 @@
     CardHeader,
     CardTitle,
   } from "$lib/components/ui/card";
-  import type {
-    GeneratedRecipeCardProps,
-    RecipeToolOutput,
-  } from "../chat/types";
+  import type { GeneratedRecipeCardProps } from "../chat/types";
   import RecipeIngredients from "./recipe-ingredients.svelte";
   import RecipeInstructions from "./recipe-instructions.svelte";
   import RecipeNutrition from "./recipe-nutrition.svelte";
@@ -67,7 +70,7 @@
       <RecipeStatCard
         icon={Clock}
         label="Total Time"
-        value={recipe.prepTime + recipe.cookTime}
+        value={totalTime}
         unit=" min"
       />
       <RecipeStatCard
@@ -102,7 +105,7 @@
         <div
           class="flex w-full items-center gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive"
         >
-          <XCircle class="h-4 w-4 shrink-0" />
+          <CircleX class="h-4 w-4 shrink-0" />
           <span>{error}</span>
         </div>
       {/if}
@@ -111,7 +114,7 @@
         <div
           class="flex w-full items-center gap-2 rounded-md bg-green-500/10 p-3 text-sm text-green-600 dark:text-green-400"
         >
-          <CheckCircle2 class="h-4 w-4 shrink-0" />
+          <CircleCheckBig class="h-4 w-4 shrink-0" />
           <span>Recipe added successfully!</span>
         </div>
       {:else}
@@ -122,7 +125,7 @@
           type="button"
         >
           {#if isLoading}
-            <Loader2 class="mr-2 h-4 w-4 animate-spin" />
+            <LoaderCircle class="mr-2 h-4 w-4 animate-spin" />
             Adding...
           {:else}
             Add to My Recipes

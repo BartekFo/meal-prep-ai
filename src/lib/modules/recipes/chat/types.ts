@@ -18,6 +18,10 @@ export type RecipeToolOutput = {
 export type GeneratedRecipeCardProps = {
   recipe: RecipeToolOutput;
   toolCallId: string;
-  toolState: "pending" | "output-available";
+  toolState:
+    | "input-streaming"
+    | "input-available"
+    | "output-available"
+    | "output-error";
   onAddRecipe?: (toolCallId: string, recipe: RecipeToolOutput) => Promise<void>;
 };
