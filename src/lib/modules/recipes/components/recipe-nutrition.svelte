@@ -19,11 +19,10 @@
   const { calories, protein, carbs, fat, multiplier }: NutritionProps =
     $props();
 
-  // Calculate scaled nutrition values
-  const scaledCalories = Math.round(calories * multiplier);
-  const scaledProtein = Math.round(protein * multiplier * 10) / 10;
-  const scaledCarbs = Math.round(carbs * multiplier * 10) / 10;
-  const scaledFat = Math.round(fat * multiplier * 10) / 10;
+  const scaledCalories = $derived(Math.round(calories * multiplier));
+  const scaledProtein = $derived(Math.round(protein * multiplier * 10) / 10);
+  const scaledCarbs = $derived(Math.round(carbs * multiplier * 10) / 10);
+  const scaledFat = $derived(Math.round(fat * multiplier * 10) / 10);
 </script>
 
 <Card>
