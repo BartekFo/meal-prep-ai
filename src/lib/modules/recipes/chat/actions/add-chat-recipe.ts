@@ -4,21 +4,7 @@ import {
   createRecipeRecord,
   type NewRecipe,
 } from "$lib/modules/recipes/new/db/queries";
-
-export type RecipeToolOutput = {
-  title: string;
-  description?: string;
-  ingredients: string[];
-  servings: number;
-  prepTime: number;
-  cookTime: number;
-  mealType: "breakfast" | "lunch" | "dinner" | "snack";
-  instructions: string[];
-  calories: number;
-  protein: number;
-  carbs: number;
-  fat: number;
-};
+import type { RecipeToolOutput } from "../types";
 
 const RecipeToolOutputSchema = type({
   title: "string >= 3",

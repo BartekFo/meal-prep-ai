@@ -10,36 +10,16 @@
     CardHeader,
     CardTitle,
   } from "$lib/components/ui/card";
-  import type { MealType } from "$lib/constants/meal-types";
+  import type {
+    GeneratedRecipeCardProps,
+    RecipeToolOutput,
+  } from "../chat/types";
   import RecipeIngredients from "./recipe-ingredients.svelte";
   import RecipeInstructions from "./recipe-instructions.svelte";
   import RecipeNutrition from "./recipe-nutrition.svelte";
   import RecipeStatCard from "./recipe-stat-card.svelte";
 
-  export type RecipeToolOutput = {
-    title: string;
-    description?: string;
-    ingredients: string[];
-    servings: number;
-    prepTime: number;
-    cookTime: number;
-    mealType: MealType;
-    instructions: string[];
-    calories: number;
-    protein: number;
-    carbs: number;
-    fat: number;
-  };
-
-  type Props = {
-    recipe: RecipeToolOutput;
-    toolCallId: string;
-    toolState: "pending" | "output-available";
-    onAddRecipe?: (
-      toolCallId: string,
-      recipe: RecipeToolOutput
-    ) => Promise<void>;
-  };
+  type Props = GeneratedRecipeCardProps;
 
   let { recipe, toolCallId, toolState, onAddRecipe }: Props = $props();
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { Chat } from "@ai-sdk/svelte";
   import { authClient } from "$lib/auth/auth-client";
   import {
     ChatHeader,
@@ -9,7 +10,6 @@
   } from "$lib/modules/chef/components";
   import type { RecipeToolOutput } from "$lib/modules/recipes/components/generated-recipe-card.svelte";
   import GeneratedRecipeCard from "$lib/modules/recipes/components/generated-recipe-card.svelte";
-  import { Chat } from "@ai-sdk/svelte";
 
   let input = $state("");
   const chat = new Chat({});
