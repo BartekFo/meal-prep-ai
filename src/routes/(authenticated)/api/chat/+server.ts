@@ -8,8 +8,24 @@ import {
 } from "ai";
 import z from "zod";
 import { GEMINI_API_KEY } from "$env/static/private";
+import type { MealType } from "$lib/constants/meal-types";
 import { getAllRecipes } from "$lib/modules/recipes/db/queries";
 import type { RecipeFilters } from "$lib/modules/recipes/types";
+
+export type RecipeToolOutput = {
+  title: string;
+  description?: string;
+  ingredients: string[];
+  servings: number;
+  prepTime: number;
+  cookTime: number;
+  mealType: MealType;
+  instructions: string[];
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+};
 
 const google = createGoogleGenerativeAI({
   apiKey: GEMINI_API_KEY,
