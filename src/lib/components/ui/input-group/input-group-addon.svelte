@@ -23,10 +23,6 @@
 	let { class: className, align, children, ...restProps }: Props = $props();
 </script>
 
-<div
-	data-slot="input-group-addon"
-	class={cn(addonVariants({ align }), className)}
-	{...restProps}
->
+<div data-slot="input-group-addon" class={cn(addonVariants({ align }), className)} {...restProps}>
 	{@render children?.()}
 </div>

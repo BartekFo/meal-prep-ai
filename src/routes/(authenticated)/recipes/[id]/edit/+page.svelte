@@ -1,27 +1,26 @@
 <script lang="ts">
-  import { ArrowLeft } from "@lucide/svelte";
-  import { superForm } from "sveltekit-superforms";
-  import { Button } from "$lib/components/ui/button";
-  import {
-    IngredientsFields,
-    InstructionsFields,
-    type IRecipeFormValues,
-    NutritionInformationFields,
-    RecipeDetailsFields,
-  } from "$lib/modules/recipes/new";
-  import type { Recipe } from "$lib/modules/recipes/types";
+	import { ArrowLeft } from '@lucide/svelte';
+	import { superForm } from 'sveltekit-superforms';
+	import { Button } from '$lib/components/ui/button';
+	import {
+		IngredientsFields,
+		InstructionsFields,
+		type IRecipeFormValues,
+		NutritionInformationFields,
+		RecipeDetailsFields
+	} from '$lib/modules/recipes/new';
+	import type { Recipe } from '$lib/modules/recipes/types';
 
-  const { data }: { data: { form: IRecipeFormValues; recipe: Recipe } } =
-    $props();
+	const { data }: { data: { form: IRecipeFormValues; recipe: Recipe } } = $props();
 
-  const form = superForm(data.form, {
-    clearOnSubmit: "errors",
-    onError: ({ result }) => {
-      $message = result.error.message || "Unknown error";
-    },
-  });
+	const form = superForm(data.form, {
+		clearOnSubmit: 'errors',
+		onError: ({ result }) => {
+			$message = result.error.message || 'Unknown error';
+		}
+	});
 
-  const { message, enhance, submitting } = form;
+	const { message, enhance, submitting } = form;
 </script>
 
 <div class="container mx-auto max-w-5xl p-6">

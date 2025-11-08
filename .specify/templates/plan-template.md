@@ -29,7 +29,7 @@
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 Verify compliance with `.specify/memory/constitution.md`:
 
@@ -42,6 +42,7 @@ Verify compliance with `.specify/memory/constitution.md`:
 - [ ] **Technology Constraints**: Does this feature use only approved technologies (Bun, SvelteKit, Drizzle, arktype, Better Auth, sveltekit-superforms, neverthrow, bits-ui, Tailwind)?
 
 **Complexity Justification Required If**:
+
 - Creating a new module that duplicates functionality
 - Bypassing validation or Result patterns
 - Introducing new technology not in constitution
@@ -62,6 +63,7 @@ specs/[###-feature]/
 ```
 
 ### Source Code (repository root)
+
 <!--
   ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
   for this feature. Delete unused options and expand the chosen structure with
@@ -110,10 +112,9 @@ directories captured above]
 
 ## Complexity Tracking
 
-*Fill ONLY if Constitution Check has violations that must be justified*
+_Fill ONLY if Constitution Check has violations that must be justified_
 
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
-
+| Violation                  | Why Needed         | Simpler Alternative Rejected Because |
+| -------------------------- | ------------------ | ------------------------------------ |
+| [e.g., 4th project]        | [current need]     | [why 3 projects insufficient]        |
+| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient]  |

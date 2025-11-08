@@ -1,8 +1,8 @@
 export {
-  IngredientsFields,
-  InstructionsFields,
-  NutritionInformationFields,
-  RecipeDetailsFields,
-  RecipeImageUpload,
-} from "./components";
-export * from "./schema";
+	IngredientsFields,
+	InstructionsFields,
+	NutritionInformationFields,
+	RecipeDetailsFields,
+	RecipeImageUpload
+} from './components';
+export * from './schema';

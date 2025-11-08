@@ -1,31 +1,28 @@
 <script lang="ts">
-  import { ArrowLeft } from "@lucide/svelte";
-  import { superForm } from "sveltekit-superforms";
-  import { Button } from "$lib/components/ui/button";
-  import { Card, CardContent } from "$lib/components/ui/card";
-  import * as Form from "$lib/components/ui/form";
-  import { Input } from "$lib/components/ui/input";
-  import { Progress } from "$lib/components/ui/progress";
-  import * as RadioGroup from "$lib/components/ui/radio-group";
-  import { DIETARY_TYPES } from "$lib/modules/onboarding/constants";
+	import { ArrowLeft } from '@lucide/svelte';
+	import { superForm } from 'sveltekit-superforms';
+	import { Button } from '$lib/components/ui/button';
+	import { Card, CardContent } from '$lib/components/ui/card';
+	import * as Form from '$lib/components/ui/form';
+	import { Input } from '$lib/components/ui/input';
+	import { Progress } from '$lib/components/ui/progress';
+	import * as RadioGroup from '$lib/components/ui/radio-group';
+	import { DIETARY_TYPES } from '$lib/modules/onboarding/constants';
 
-  const { data } = $props();
+	const { data } = $props();
 
-  const form = superForm(data.form);
-  const { form: formData, enhance } = form;
+	const form = superForm(data.form);
+	const { form: formData, enhance } = form;
 
-  function toggleMealType(mealType: string) {
-    if ($formData.preferredMealTypes.includes(mealType)) {
-      $formData.preferredMealTypes = $formData.preferredMealTypes.filter(
-        (type: string) => type !== mealType
-      );
-    } else {
-      $formData.preferredMealTypes = [
-        ...$formData.preferredMealTypes,
-        mealType,
-      ];
-    }
-  }
+	function toggleMealType(mealType: string) {
+		if ($formData.preferredMealTypes.includes(mealType)) {
+			$formData.preferredMealTypes = $formData.preferredMealTypes.filter(
+				(type: string) => type !== mealType
+			);
+		} else {
+			$formData.preferredMealTypes = [...$formData.preferredMealTypes, mealType];
+		}
+	}
 </script>
 
 <main class="flex-1 px-4 py-8">
@@ -63,7 +60,7 @@
 												bind:value={$formData.dietaryType}
 												class="flex flex-col space-y-2"
 											>
-												{#each DIETARY_TYPES as dietType}
+												{#each DIETARY_TYPES as dietType (dietType.value)}
 													<div class="flex items-center space-x-3">
 														<RadioGroup.Item value={dietType.value} id="diet-{dietType.value}" />
 														<label
@@ -109,46 +106,46 @@
 
 								<Form.Field {form} name="preferredMealTypes">
 									<Form.Control>
-										{#snippet children({ props })}
-											<div class="space-y-3">
-												<Form.Label>Preferred Meal Types<span class="text-destructive">*</span></Form.Label>
-												<Form.Description>
-													Select which meals you'd like help planning (choose at least one)
-												</Form.Description>
-												<div class="flex flex-col space-y-2">
-													<label class="flex items-center space-x-3">
-														<input
-															type="checkbox"
-															name="preferredMealTypes"
-															value="breakfast"
-															checked={$formData.preferredMealTypes.includes('breakfast')}
-															onchange={() => toggleMealType('breakfast')}
-														/>
-														<span>Breakfast</span>
-													</label>
-													<label class="flex items-center space-x-3">
-														<input
-															type="checkbox"
-															name="preferredMealTypes"
-															value="lunch"
-															checked={$formData.preferredMealTypes.includes('lunch')}
-															onchange={() => toggleMealType('lunch')}
-														/>
-														<span>Lunch</span>
-													</label>
-													<label class="flex items-center space-x-3">
-														<input
-															type="checkbox"
-															name="preferredMealTypes"
-															value="dinner"
-															checked={$formData.preferredMealTypes.includes('dinner')}
-															onchange={() => toggleMealType('dinner')}
-														/>
-														<span>Dinner</span>
-													</label>
-												</div>
+										<div class="space-y-3">
+											<Form.Label
+												>Preferred Meal Types<span class="text-destructive">*</span></Form.Label
+											>
+											<Form.Description>
+												Select which meals you'd like help planning (choose at least one)
+											</Form.Description>
+											<div class="flex flex-col space-y-2">
+												<label class="flex items-center space-x-3">
+													<input
+														type="checkbox"
+														name="preferredMealTypes"
+														value="breakfast"
+														checked={$formData.preferredMealTypes.includes('breakfast')}
+														onchange={() => toggleMealType('breakfast')}
+													/>
+													<span>Breakfast</span>
+												</label>
+												<label class="flex items-center space-x-3">
+													<input
+														type="checkbox"
+														name="preferredMealTypes"
+														value="lunch"
+														checked={$formData.preferredMealTypes.includes('lunch')}
+														onchange={() => toggleMealType('lunch')}
+													/>
+													<span>Lunch</span>
+												</label>
+												<label class="flex items-center space-x-3">
+													<input
+														type="checkbox"
+														name="preferredMealTypes"
+														value="dinner"
+														checked={$formData.preferredMealTypes.includes('dinner')}
+														onchange={() => toggleMealType('dinner')}
+													/>
+													<span>Dinner</span>
+												</label>
 											</div>
-										{/snippet}
+										</div>
 									</Form.Control>
 									<Form.FieldErrors />
 								</Form.Field>

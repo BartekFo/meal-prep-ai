@@ -1,8 +1,8 @@
 <script lang="ts">
-  import type { Recipe } from "../types";
-  import RecipeCard from "./recipe-card.svelte";
+	import type { Recipe } from '../types';
+	import RecipeCard from './recipe-card.svelte';
 
-  const { recipes }: { recipes: Recipe[] } = $props();
+	const { recipes }: { recipes: Recipe[] } = $props();
 </script>
 
 {#if recipes.length === 0}

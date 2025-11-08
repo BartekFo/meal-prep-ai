@@ -7,6 +7,7 @@
 	import * as Sidebar from '$lib/components/ui/sidebar/index';
 	import { authClient } from '$lib/auth/auth-client';
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 
 	let {
 		user
@@ -52,7 +53,7 @@
 						class="flex items-center gap-2"
 						onclick={async () => {
 							await authClient.signOut();
-							goto('/login');
+							goto(resolve('/login'));
 						}}
 					>
 						<LogOutIcon />

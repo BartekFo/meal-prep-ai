@@ -1,60 +1,60 @@
 <script lang="ts">
-  import {
-    ArrowLeft,
-    Clock,
-    CookingPot,
-    Minus,
-    Plus,
-    Printer,
-    Trash2,
-  } from "@lucide/svelte";
-  import { enhance } from "$app/forms";
-  import { Badge } from "$lib/components/ui/badge";
-  import { Button } from "$lib/components/ui/button";
-  import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-  } from "$lib/components/ui/dialog";
-  import { Separator } from "$lib/components/ui/separator";
-  import { routes } from "$lib/constants/routes";
-  import {
-    RecipeIngredients,
-    RecipeInstructions,
-    RecipeNutrition,
-    RecipeStatCard,
-  } from "$lib/modules/recipes";
-  import type { PageData } from "./$types";
+	import {
+		ArrowLeft,
+		Clock,
+		CookingPot,
+		Minus,
+		Plus,
+		Printer,
+		Trash2
+	} from '@lucide/svelte';
+	import { enhance } from '$app/forms';
+	import { Badge } from '$lib/components/ui/badge';
+	import { Button } from '$lib/components/ui/button';
+	import {
+		Dialog,
+		DialogContent,
+		DialogDescription,
+		DialogFooter,
+		DialogHeader,
+		DialogTitle,
+		DialogTrigger
+	} from '$lib/components/ui/dialog';
+	import { Separator } from '$lib/components/ui/separator';
+	import { routes } from '$lib/constants/routes';
+	import {
+		RecipeIngredients,
+		RecipeInstructions,
+		RecipeNutrition,
+		RecipeStatCard
+	} from '$lib/modules/recipes';
+	import type { PageData } from './$types';
 
-  const { data }: { data: PageData } = $props();
+	const { data }: { data: PageData } = $props();
 
-  let dialogOpen = $state(false);
-  let isDeleting = $state(false);
+	let dialogOpen = $state(false);
+	let isDeleting = $state(false);
 
-  const recipe = $derived(data.recipe);
-  let currentPortions = $state(data.recipe.servings);
-  const multiplier = $derived(currentPortions / recipe.servings);
+	const recipe = $derived(data.recipe);
+	let currentPortions = $state(data.recipe.servings);
+	const multiplier = $derived(currentPortions / recipe.servings);
 
-  // Scaled cooking times (simple linear scaling for MVP)
-  const scaledPrepTime = $derived(Math.round(recipe.prepTime * multiplier));
-  const scaledCookTime = $derived(Math.round(recipe.cookTime * multiplier));
-  const scaledTotalTime = $derived(
-    recipe.cookTime === 0 ? scaledPrepTime : scaledPrepTime + scaledCookTime
-  );
+	// Scaled cooking times (simple linear scaling for MVP)
+	const scaledPrepTime = $derived(Math.round(recipe.prepTime * multiplier));
+	const scaledCookTime = $derived(Math.round(recipe.cookTime * multiplier));
+	const scaledTotalTime = $derived(
+		recipe.cookTime === 0 ? scaledPrepTime : scaledPrepTime + scaledCookTime
+	);
 
-  function increasePortions() {
-    currentPortions += 1;
-  }
+	function increasePortions() {
+		currentPortions += 1;
+	}
 
-  function decreasePortions() {
-    if (currentPortions > 1) {
-      currentPortions -= 1;
-    }
-  }
+	function decreasePortions() {
+		if (currentPortions > 1) {
+			currentPortions -= 1;
+		}
+	}
 </script>
 
 <div class="container mx-auto max-w-5xl p-6">
@@ -129,7 +129,7 @@
 	<div class="mb-8">
 		<h1 class="mb-2 text-3xl font-bold">{recipe.title}</h1>
 		<p class="text-muted-foreground text-lg">{recipe.description || ''}</p>
-		
+
 		<!-- Portion Controls -->
 		<div class="mt-4 flex items-center gap-3">
 			<span class="text-sm font-medium">Portions:</span>

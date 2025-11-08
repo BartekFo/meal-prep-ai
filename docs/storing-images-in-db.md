@@ -112,15 +112,15 @@ This document outlines the migration from file-based image storage to database-b
 
 ```typescript
 class DatabaseStorage implements StorageProvider {
-  async upload(file: File, path: string): Promise<string> {
-    // Convert file to buffer
-    // Store in database with metadata
-    // Return recipe ID or image identifier
-  }
+	async upload(file: File, path: string): Promise<string> {
+		// Convert file to buffer
+		// Store in database with metadata
+		// Return recipe ID or image identifier
+	}
 
-  async delete(path: string): Promise<void> {
-    // Remove image from database
-  }
+	async delete(path: string): Promise<void> {
+		// Remove image from database
+	}
 }
 ```
 
@@ -129,8 +129,8 @@ class DatabaseStorage implements StorageProvider {
 ```typescript
 // src/routes/api/images/[id]/+server.ts
 export async function GET({ params }) {
-  // Fetch image data from database
-  // Return with proper headers and caching
+	// Fetch image data from database
+	// Return with proper headers and caching
 }
 ```
 

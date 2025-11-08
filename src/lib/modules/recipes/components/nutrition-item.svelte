@@ -1,21 +1,16 @@
 <script lang="ts">
-  import { cn } from "$lib/utils";
+	import { cn } from '$lib/utils';
 
-  type NutritionItemProps = {
-    value: number | string;
-    label: string;
-    unit?: string;
-    variant?: "large" | "compact";
-  };
+	type NutritionItemProps = {
+		value: number | string;
+		label: string;
+		unit?: string;
+		variant?: 'large' | 'compact';
+	};
 
-  const {
-    value,
-    label,
-    unit = "",
-    variant = "large",
-  }: NutritionItemProps = $props();
+	const { value, label, unit = '', variant = 'large' }: NutritionItemProps = $props();
 
-  const isLarge = $derived(variant === "large");
+	const isLarge = $derived(variant === 'large');
 </script>
 
 <div class="not-prose text-center">

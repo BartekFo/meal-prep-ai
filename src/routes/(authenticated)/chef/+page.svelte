@@ -1,54 +1,54 @@
 <script lang="ts">
-  import { Chat } from "@ai-sdk/svelte";
-  import { authClient } from "$lib/auth/auth-client";
-  import {
-    ChatHeader,
-    ChatInput,
-    ChatMessage,
-    SuggestedPrompts,
-    ThinkingIndicator,
-  } from "$lib/modules/chef/components";
-  import type { RecipeToolOutput } from "$lib/modules/recipes/chat/types";
-  import GeneratedRecipeCard from "$lib/modules/recipes/components/generated-recipe-card.svelte";
+	import { Chat } from '@ai-sdk/svelte';
+	import { authClient } from '$lib/auth/auth-client';
+	import {
+		ChatHeader,
+		ChatInput,
+		ChatMessage,
+		SuggestedPrompts,
+		ThinkingIndicator
+	} from '$lib/modules/chef/components';
+	import type { RecipeToolOutput } from '$lib/modules/recipes/chat/types';
+	import GeneratedRecipeCard from '$lib/modules/recipes/components/generated-recipe-card.svelte';
 
-  let input = $state("");
-  const chat = new Chat({});
+	let input = $state('');
+	const chat = new Chat({});
 
-  function handleSubmit(event: SubmitEvent) {
-    event.preventDefault();
-    chat.sendMessage({ text: input });
-    input = "";
-  }
+	function handleSubmit(event: SubmitEvent) {
+		event.preventDefault();
+		chat.sendMessage({ text: input });
+		input = '';
+	}
 
-  const session = authClient.useSession();
+	const session = authClient.useSession();
 
-  const suggestedPrompts = [
-    "Create a weekly meal plan for weight loss",
-    "Suggest a quick dinner recipe with chicken",
-    "What can I make with eggs and vegetables?",
-    "Plan high-protein meals for muscle gain",
-  ];
+	const suggestedPrompts = [
+		'Create a weekly meal plan for weight loss',
+		'Suggest a quick dinner recipe with chicken',
+		'What can I make with eggs and vegetables?',
+		'Plan high-protein meals for muscle gain'
+	];
 
-  function handlePromptClick(prompt: string) {
-    input = prompt;
-  }
+	function handlePromptClick(prompt: string) {
+		input = prompt;
+	}
 
-  const userInitial = $derived(
-    $session.data?.user?.name?.charAt(0).toUpperCase() ||
-      $session.data?.user?.email?.charAt(0).toUpperCase() ||
-      "U"
-  );
+	const userInitial = $derived(
+		$session.data?.user?.name?.charAt(0).toUpperCase() ||
+			$session.data?.user?.email?.charAt(0).toUpperCase() ||
+			'U'
+	);
 
-  async function handleAddRecipe(
-    toolCallId: string,
-    recipe: RecipeToolOutput
-  ): Promise<void> {
-    await chat.addToolResult({
-      toolCallId,
-      tool: "confirmAddRecipe",
-      output: recipe,
-    });
-  }
+	async function handleAddRecipe(
+		toolCallId: string,
+		recipe: RecipeToolOutput
+	): Promise<void> {
+		await chat.addToolResult({
+			toolCallId,
+			tool: 'confirmAddRecipe',
+			output: recipe
+		});
+	}
 </script>
 
 <svelte:head>
