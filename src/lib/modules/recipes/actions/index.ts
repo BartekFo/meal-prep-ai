@@ -1,1 +1,1 @@
-export { deleteRecipe } from "./delete-recipe";
+export { deleteRecipe } from './delete-recipe';

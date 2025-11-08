@@ -1,1 +1,1 @@
-export type { RecipeToolOutput } from "$lib/modules/recipes/chat/types";
+export type { RecipeToolOutput } from '$lib/modules/recipes/chat/types';

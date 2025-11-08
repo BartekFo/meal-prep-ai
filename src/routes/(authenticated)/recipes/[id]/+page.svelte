@@ -1,13 +1,5 @@
 <script lang="ts">
-	import {
-		ArrowLeft,
-		Clock,
-		CookingPot,
-		Minus,
-		Plus,
-		Printer,
-		Trash2
-	} from '@lucide/svelte';
+	import { ArrowLeft, Clock, CookingPot, Minus, Plus, Printer, Trash2 } from '@lucide/svelte';
 	import { enhance } from '$app/forms';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
@@ -84,25 +76,21 @@
 						</DialogDescription>
 					</DialogHeader>
 					<DialogFooter>
-						<Button
-							variant="outline"
-							onclick={() => (dialogOpen = false)}
-							disabled={isDeleting}
-						>
+						<Button variant="outline" onclick={() => (dialogOpen = false)} disabled={isDeleting}>
 							Cancel
 						</Button>
-						<form method="POST" action="?/delete" use:enhance={() => {
-							isDeleting = true;
-							return async ({ update }) => {
-								await update();
-								isDeleting = false;
-							};
-						}}>
-							<Button
-								type="submit"
-								variant="destructive"
-								disabled={isDeleting}
-							>
+						<form
+							method="POST"
+							action="?/delete"
+							use:enhance={() => {
+								isDeleting = true;
+								return async ({ update }) => {
+									await update();
+									isDeleting = false;
+								};
+							}}
+						>
+							<Button type="submit" variant="destructive" disabled={isDeleting}>
 								{isDeleting ? 'Deleting...' : 'Delete Recipe'}
 							</Button>
 						</form>

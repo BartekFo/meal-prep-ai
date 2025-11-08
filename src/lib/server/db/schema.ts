@@ -1,15 +1,10 @@
-import {
-	integer,
-	primaryKey,
-	sqliteTable,
-	text
-} from 'drizzle-orm/sqlite-core';
+import { integer, primaryKey, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 export const user = sqliteTable('user', {
 	id: text('id').primaryKey(),
 	name: text('name').notNull(),
 	email: text('email').notNull().unique(),
-	emailVerified: boolean('email_verified')
+	emailVerified: integer('email_verified', { mode: 'boolean' })
 		.$defaultFn(() => false)
 		.notNull(),
 	image: text('image'),

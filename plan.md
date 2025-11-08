@@ -5,6 +5,7 @@
 **Recommendation: Keep Drizzle ORM with bun:sqlite driver**
 
 ### Why Keep Drizzle:
+
 - **Type Safety**: Your codebase relies heavily on type inference (`typeof recipes.$inferInsert`, typed queries)
 - **Migration Safety**: Drizzle generates and tracks schema changes systematically
 - **Query Compatibility**: Most queries (filters, joins, transactions) work identically across dialects
@@ -18,6 +19,7 @@
 ### 1. Update schema.ts - Convert PostgreSQL types to SQLite equivalents
 
 **Import changes:**
+
 ```typescript
 // FROM:
 import { pgTable, pgEnum, bigserial, jsonb, ... } from 'drizzle-orm/pg-core';
@@ -27,6 +29,7 @@ import { sqliteTable, integer, text, blob, ... } from 'drizzle-orm/sqlite-core';
 ```
 
 **Type conversions:**
+
 - `pgTable` → `sqliteTable`
 - `pgEnum('meal_type', [...])` → Remove (use text with check constraint instead)
 - `bigserial('id', { mode: 'number' })` → `integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true })`
@@ -39,12 +42,14 @@ import { sqliteTable, integer, text, blob, ... } from 'drizzle-orm/sqlite-core';
 **Specific schema changes needed:**
 
 1. **mealTypeEnum** - Remove enum, use text with validation:
+
 ```typescript
 // Remove: export const mealTypeEnum = pgEnum('meal_type', MEAL_TYPES);
 // In recipes table: mealType: text('meal_type').notNull()
 ```
 
 2. **Arrays** - Convert to JSON storage:
+
 ```typescript
 // user.preferredMealTypes
 preferredMealTypes: text('preferred_meal_types', { mode: 'json' }).$type<string[]>(),
@@ -55,12 +60,14 @@ instructions: text('instructions', { mode: 'json' }).$type<string[]>().notNull()
 ```
 
 3. **Auto-increment IDs**:
+
 ```typescript
 // recipes, favorites, preferences tables
 id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
 ```
 
 4. **UUIDs**:
+
 ```typescript
 // chat, message, stream, dietary_options tables
 id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
@@ -126,7 +133,7 @@ export default defineConfig({
 export const auth = betterAuth({
 	database: drizzleAdapter(db, {
 		provider: 'sqlite' // Changed from 'pg'
-	}),
+	})
 	// ... rest stays the same
 });
 ```
@@ -183,7 +190,7 @@ async function migrateData() {
 		}
 
 		// Transform data for SQLite
-		const transformedData = pgData.map(row => {
+		const transformedData = pgData.map((row) => {
 			const transformed = { ...row };
 
 			// Convert arrays to JSON strings
@@ -212,6 +219,7 @@ migrateData().catch(console.error);
 ```
 
 **Run migration:**
+
 ```bash
 # Set environment variables
 export PG_DATABASE_URL="postgresql://root:mysecretpassword@localhost:5434/local"
@@ -226,6 +234,7 @@ bun run src/lib/server/db/migrate-pg-to-sqlite.ts
 ### 6. SQLite optimization setup
 
 **Production PRAGMA settings** (already in db/index.ts):
+
 - `PRAGMA journal_mode = WAL` - Write-Ahead Logging for concurrent reads during writes
 - `PRAGMA synchronous = NORMAL` - Balance between safety and performance (safe with WAL)
 - `PRAGMA temp_store = MEMORY` - Store temp tables in memory
@@ -249,6 +258,7 @@ setInterval(() => {
 **VPS/Cloud VM Setup:**
 
 1. **Database file location:**
+
 ```bash
 # Create data directory
 mkdir -p /var/lib/meal-prep-ai
@@ -256,11 +266,13 @@ chown -R app-user:app-user /var/lib/meal-prep-ai
 ```
 
 2. **Environment variable:**
+
 ```env
 DATABASE_URL=file:/var/lib/meal-prep-ai/db.sqlite
 ```
 
 3. **Backup strategy:**
+
 ```bash
 #!/bin/bash
 # backup-sqlite.sh
@@ -282,12 +294,14 @@ echo "Backup completed: $BACKUP_DIR/db_backup_$TIMESTAMP.sqlite"
 ```
 
 Add to crontab:
+
 ```bash
 # Daily backup at 2 AM
 0 2 * * * /usr/local/bin/backup-sqlite.sh
 ```
 
 4. **systemd service** (if using systemd):
+
 ```ini
 [Unit]
 Description=Meal Prep AI
@@ -311,6 +325,7 @@ WantedBy=multi-user.target
 ### 8. Verification testing
 
 Create test script (test-sqlite-migration.ts):
+
 ```typescript
 import { db } from '$lib/server/db';
 import * as schema from '$lib/server/db/schema';
@@ -348,6 +363,7 @@ runTests().catch(console.error);
 ```
 
 **Manual testing checklist:**
+
 - [ ] User login/logout works
 - [ ] Recipe creation with ingredients array
 - [ ] Recipe filtering and search
@@ -359,16 +375,19 @@ runTests().catch(console.error);
 ### 9. Remove PostgreSQL dependencies
 
 **Update package.json:**
+
 ```bash
 bun remove postgres
 ```
 
 **Remove docker-compose.yml:**
+
 ```bash
 rm docker-compose.yml
 ```
 
 **Update package.json scripts:**
+
 ```json
 {
 	"scripts": {
@@ -385,6 +404,7 @@ rm docker-compose.yml
 ```
 
 **Update CLAUDE.md:**
+
 - Remove PostgreSQL/Docker references
 - Update Database Commands section
 - Add SQLite-specific notes about single-file database
@@ -405,18 +425,23 @@ rm docker-compose.yml
 ## Potential Issues & Solutions
 
 ### Issue: Array fields in SQLite
+
 **Solution:** Store as JSON text with type casting (`$type<string[]>()`)
 
 ### Issue: Enum types
+
 **Solution:** Use text fields with application-level validation or check constraints
 
 ### Issue: Concurrent writes
+
 **Solution:** WAL mode handles this well for typical web app patterns
 
 ### Issue: Large result sets
+
 **Solution:** SQLite with proper indexing handles millions of rows efficiently
 
 ### Issue: Database file locking
+
 **Solution:** WAL mode allows concurrent reads during writes
 
 ## Estimated Timeline
@@ -432,6 +457,7 @@ rm docker-compose.yml
 ## Rollback Plan
 
 If issues arise:
+
 1. Keep PostgreSQL running during initial SQLite testing
 2. Maintain parallel databases until confident
 3. Environment variable switch: `DATABASE_URL=postgresql://...` vs `DATABASE_URL=file:...`

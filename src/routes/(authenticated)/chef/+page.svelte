@@ -39,10 +39,7 @@
 			'U'
 	);
 
-	async function handleAddRecipe(
-		toolCallId: string,
-		recipe: RecipeToolOutput
-	): Promise<void> {
+	async function handleAddRecipe(toolCallId: string, recipe: RecipeToolOutput): Promise<void> {
 		await chat.addToolResult({
 			toolCallId,
 			tool: 'confirmAddRecipe',

@@ -23,4 +23,17 @@ sqlite.exec('PRAGMA cache_size = -20000'); // ~160MB cache
 // WAL checkpoint management
 sqlite.exec('PRAGMA wal_autocheckpoint = 1000');
 
+// Optional: Manual checkpoint utility (runs every hour)
+const checkpointInterval = setInterval(() => {
+	sqlite.exec('PRAGMA wal_checkpoint(TRUNCATE)');
+}, 3600000); // 1 hour
+
+// Cleanup on process exit
+if (typeof process !== 'undefined') {
+	process.on('exit', () => {
+		clearInterval(checkpointInterval);
+		sqlite.close();
+	});
+}
+
 export const db = drizzle(sqlite, { schema });

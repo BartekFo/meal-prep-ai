@@ -15,19 +15,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Database Commands
 
-- `bun run db:start` - Start PostgreSQL database via Docker Compose
-- `bun run db:push` - Push schema changes to database
+- `bun run db:push` - Push schema changes to SQLite database
 - `bun run db:migrate` - Run database migrations
 - `bun run db:generate` - Generate new migration files
 - `bun run db:studio` - Open Drizzle Studio for database management
+
+**Note:** Database is a single SQLite file specified by `DATABASE_URL` environment variable (format: `file:/path/to/db.sqlite`). No Docker required.
 
 ## Architecture Overview
 
 ### Technology Stack
 
 - **Frontend**: SvelteKit 2.0 with TypeScript and Tailwind CSS
-- **Database**: PostgreSQL with Drizzle ORM
-- **Authentication**: Better Auth with email/password
+- **Database**: SQLite with Drizzle ORM and Bun's native sqlite driver
+- **Authentication**: Better Auth with email/password and Drizzle adapter
 - **UI Components**: Custom UI components based on bits-ui library
 - **Styling**: CSS modules (prefer over inline styles)
 - **Package Manager**: Bun
@@ -108,6 +109,15 @@ Each feature module follows this structure:
 - Generate migrations with `bun run db:generate` after schema changes
 - Use `bun run db:studio` to inspect database during development
 
+#### SQLite-Specific Notes
+
+- Database connection configured in `src/lib/server/db/index.ts` with production-ready PRAGMA settings
+- WAL mode enabled for concurrent read/write operations
+- Automatic hourly checkpoint for WAL cleanup
+- Single-file database makes backups trivial (just copy the file)
+- JSON storage for array fields (Drizzle handles parsing/stringifying automatically with `$type<T[]>()`)
+- Better Auth adapter configured with `provider: 'sqlite'`
+
 ### File Uploads
 
 - Recipe images stored in `uploads/recipes/[userId]/` directory
@@ -116,7 +126,41 @@ Each feature module follows this structure:
 
 ### Environment Variables
 
-- `DATABASE_URL` - Required for database connection
-- Database runs via Docker Compose for local development
+- `DATABASE_URL` - Required for database connection (format: `file:/path/to/db.sqlite`)
+  - Example: `DATABASE_URL=file:./data/db.sqlite` (development)
+  - Example: `DATABASE_URL=file:/var/lib/meal-prep-ai/db.sqlite` (production)
+
+### Production Deployment
+
+#### Database File Setup
+
+```bash
+mkdir -p /var/lib/meal-prep-ai
+chown -R app-user:app-user /var/lib/meal-prep-ai
+```
+
+#### Backup Strategy
+
+- Use `scripts/backup-sqlite.sh` for automated backups
+- Backups are safe even during concurrent operations (WAL mode)
+- Keep 7 days of rolling backups
+- Add to crontab: `0 2 * * * /usr/local/bin/backup-sqlite.sh` (daily at 2 AM)
+
+#### Systemd Service
+
+- Use `deployment/meal-prep-ai.service` for systemd integration
+- Provides security hardening and resource limits
+- Automatically restarts on failure
+
+#### SQLite PRAGMA Settings (Production)
+
+- `PRAGMA journal_mode = WAL` - Write-Ahead Logging for concurrent operations
+- `PRAGMA synchronous = NORMAL` - Balanced safety/performance (safe with WAL)
+- `PRAGMA temp_store = MEMORY` - In-memory temp tables
+- `PRAGMA cache_size = -20000` - ~160MB page cache
+- `PRAGMA wal_autocheckpoint = 1000` - Checkpoint every 1000 pages
+- Automatic hourly manual checkpoint for WAL cleanup
+
+### Notes
 
 - correct type for load is ServerLoad not PageServerLoad

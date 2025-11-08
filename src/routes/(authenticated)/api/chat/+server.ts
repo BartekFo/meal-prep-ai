@@ -1,10 +1,5 @@
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
-import {
-	convertToModelMessages,
-	stepCountIs,
-	streamText,
-	type UIMessage
-} from 'ai';
+import { convertToModelMessages, stepCountIs, streamText, type UIMessage } from 'ai';
 import { GEMINI_API_KEY } from '$env/static/private';
 import { createConfirmAddRecipeTool } from './tools/confirm-add-recipe-tool';
 import { createGenerateRecipeTool } from './tools/generate-recipe-tool';

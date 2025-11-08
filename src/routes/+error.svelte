@@ -1,28 +1,26 @@
 <script lang="ts">
-  import { AlertCircle, ArrowLeft, Home } from "@lucide/svelte";
-  import { goto } from "$app/navigation";
-  import { page } from "$app/state";
-  import { Button } from "$lib/components/ui/button";
-  import { routes } from "$lib/constants/routes";
+	import { AlertCircle, ArrowLeft, Home } from '@lucide/svelte';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
+	import { Button } from '$lib/components/ui/button';
+	import { routes } from '$lib/constants/routes';
 
-  const status = $derived(page.status);
-  const message = $derived(page.error?.message ?? "An error occurred");
+	const status = $derived(page.status);
+	const message = $derived(page.error?.message ?? 'An error occurred');
 
-  const is404 = $derived(status === 404);
-  const title = $derived(is404 ? "Page Not Found" : "Something Went Wrong");
-  const description = $derived(
-    is404
-      ? "The page you're looking for doesn't exist or has been moved."
-      : message
-  );
+	const is404 = $derived(status === 404);
+	const title = $derived(is404 ? 'Page Not Found' : 'Something Went Wrong');
+	const description = $derived(
+		is404 ? "The page you're looking for doesn't exist or has been moved." : message
+	);
 
-  function handleGoBack() {
-    if (typeof window !== "undefined" && window.history.length > 1) {
-      window.history.back();
-    } else {
-      goto(routes.dashboard);
-    }
-  }
+	function handleGoBack() {
+		if (typeof window !== 'undefined' && window.history.length > 1) {
+			window.history.back();
+		} else {
+			goto(routes.dashboard);
+		}
+	}
 </script>
 
 <svelte:head>
