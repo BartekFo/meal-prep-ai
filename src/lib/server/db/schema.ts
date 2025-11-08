@@ -1,22 +1,11 @@
 import {
-	bigint,
-	bigserial,
-	boolean,
 	integer,
-	jsonb,
-	pgEnum,
-	pgTable,
 	primaryKey,
-	text,
-	timestamp,
-	uuid,
-	varchar
-} from 'drizzle-orm/pg-core';
-import { MEAL_TYPES } from '../../constants/meal-types';
+	sqliteTable,
+	text
+} from 'drizzle-orm/sqlite-core';
 
-export const mealTypeEnum = pgEnum('meal_type', MEAL_TYPES);
-
-export const user = pgTable('user', {
+export const user = sqliteTable('user', {
 	id: text('id').primaryKey(),
 	name: text('name').notNull(),
 	email: text('email').notNull().unique(),
@@ -24,11 +13,11 @@ export const user = pgTable('user', {
 		.$defaultFn(() => false)
 		.notNull(),
 	image: text('image'),
-	createdAt: timestamp('created_at')
-		.$defaultFn(() => /* @__PURE__ */ new Date())
+	createdAt: integer('created_at', { mode: 'timestamp' })
+		.$defaultFn(() => new Date())
 		.notNull(),
-	updatedAt: timestamp('updated_at')
-		.$defaultFn(() => /* @__PURE__ */ new Date())
+	updatedAt: integer('updated_at', { mode: 'timestamp' })
+		.$defaultFn(() => new Date())
 		.notNull(),
 	firstName: text('first_name'),
 	lastName: text('last_name'),
@@ -36,8 +25,8 @@ export const user = pgTable('user', {
 	dietaryType: text('dietary_type'),
 	allergies: text('allergies'),
 	dislikedFoods: text('disliked_foods'),
-	preferredMealTypes: text('preferred_meal_types').array(),
-	dateOfBirth: timestamp('date_of_birth'),
+	preferredMealTypes: text('preferred_meal_types', { mode: 'json' }).$type<string[]>(),
+	dateOfBirth: integer('date_of_birth', { mode: 'timestamp' }),
 	gender: text('gender'),
 	activityLevel: text('activity_level'),
 	currentWeight: integer('current_weight'),
@@ -47,15 +36,15 @@ export const user = pgTable('user', {
 	})
 		.$defaultFn(() => 'not_started')
 		.notNull(),
-	onboardingCompletedAt: timestamp('onboarding_completed_at')
+	onboardingCompletedAt: integer('onboarding_completed_at', { mode: 'timestamp' })
 });
 
-export const session = pgTable('session', {
+export const session = sqliteTable('session', {
 	id: text('id').primaryKey(),
-	expiresAt: timestamp('expires_at').notNull(),
+	expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
 	token: text('token').notNull().unique(),
-	createdAt: timestamp('created_at').notNull(),
-	updatedAt: timestamp('updated_at').notNull(),
+	createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+	updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
 	ipAddress: text('ip_address'),
 	userAgent: text('user_agent'),
 	userId: text('user_id')
@@ -63,7 +52,7 @@ export const session = pgTable('session', {
 		.references(() => user.id, { onDelete: 'cascade' })
 });
 
-export const account = pgTable('account', {
+export const account = sqliteTable('account', {
 	id: text('id').primaryKey(),
 	accountId: text('account_id').notNull(),
 	providerId: text('provider_id').notNull(),
@@ -73,28 +62,28 @@ export const account = pgTable('account', {
 	accessToken: text('access_token'),
 	refreshToken: text('refresh_token'),
 	idToken: text('id_token'),
-	accessTokenExpiresAt: timestamp('access_token_expires_at'),
-	refreshTokenExpiresAt: timestamp('refresh_token_expires_at'),
+	accessTokenExpiresAt: integer('access_token_expires_at', { mode: 'timestamp' }),
+	refreshTokenExpiresAt: integer('refresh_token_expires_at', { mode: 'timestamp' }),
 	scope: text('scope'),
 	password: text('password'),
-	createdAt: timestamp('created_at').notNull(),
-	updatedAt: timestamp('updated_at').notNull()
+	createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+	updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull()
 });
 
-export const verification = pgTable('verification', {
+export const verification = sqliteTable('verification', {
 	id: text('id').primaryKey(),
 	identifier: text('identifier').notNull(),
 	value: text('value').notNull(),
-	expiresAt: timestamp('expires_at').notNull(),
-	createdAt: timestamp('created_at').$defaultFn(() => /* @__PURE__ */ new Date()),
-	updatedAt: timestamp('updated_at').$defaultFn(() => /* @__PURE__ */ new Date())
+	expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
+	createdAt: integer('created_at', { mode: 'timestamp' }).$defaultFn(() => new Date()),
+	updatedAt: integer('updated_at', { mode: 'timestamp' }).$defaultFn(() => new Date())
 });
 
-export const chat = pgTable('chat', {
-	id: uuid('id')
+export const chat = sqliteTable('chat', {
+	id: text('id')
 		.primaryKey()
 		.$defaultFn(() => crypto.randomUUID()),
-	createdAt: timestamp('created_at', { withTimezone: true })
+	createdAt: integer('created_at', { mode: 'timestamp' })
 		.$defaultFn(() => new Date())
 		.notNull(),
 	title: text('title').notNull(),
@@ -103,8 +92,8 @@ export const chat = pgTable('chat', {
 		.references(() => user.id)
 });
 
-export const dietaryOptions = pgTable('dietary_options', {
-	id: uuid('id')
+export const dietaryOptions = sqliteTable('dietary_options', {
+	id: text('id')
 		.primaryKey()
 		.$defaultFn(() => crypto.randomUUID()),
 	title: text('title').notNull(),
@@ -112,12 +101,12 @@ export const dietaryOptions = pgTable('dietary_options', {
 	icon: text('icon').notNull()
 });
 
-export const favorites = pgTable('favorites', {
-	id: bigserial('id', { mode: 'number' }).primaryKey(),
-	createdAt: timestamp('created_at', { withTimezone: true })
+export const favorites = sqliteTable('favorites', {
+	id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+	createdAt: integer('created_at', { mode: 'timestamp' })
 		.$defaultFn(() => new Date())
 		.notNull(),
-	recipeId: bigint('recipe_id', { mode: 'number' })
+	recipeId: integer('recipe_id', { mode: 'number' })
 		.notNull()
 		.references(() => recipes.id),
 	userId: text('user_id')
@@ -125,28 +114,28 @@ export const favorites = pgTable('favorites', {
 		.references(() => user.id)
 });
 
-export const message = pgTable('message', {
-	id: uuid('id')
+export const message = sqliteTable('message', {
+	id: text('id')
 		.primaryKey()
 		.$defaultFn(() => crypto.randomUUID()),
-	chatId: uuid('chat_id')
+	chatId: text('chat_id')
 		.notNull()
 		.references(() => chat.id),
-	role: varchar('role').notNull(),
-	parts: jsonb('parts').notNull(),
-	createdAt: timestamp('created_at', { withTimezone: true })
+	role: text('role').notNull(),
+	parts: text('parts', { mode: 'json' }).notNull(),
+	createdAt: integer('created_at', { mode: 'timestamp' })
 		.$defaultFn(() => new Date())
 		.notNull()
 });
 
-export const preferences = pgTable('preferences', {
-	id: bigserial('id', { mode: 'number' }).primaryKey(),
-	createdAt: timestamp('created_at', { withTimezone: true })
+export const preferences = sqliteTable('preferences', {
+	id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+	createdAt: integer('created_at', { mode: 'timestamp' })
 		.$defaultFn(() => new Date())
 		.notNull(),
 	key: text('key').notNull(),
 	value: text('value').notNull(),
-	updatedAt: timestamp('updated_at', { withTimezone: true })
+	updatedAt: integer('updated_at', { mode: 'timestamp' })
 		.$defaultFn(() => new Date())
 		.notNull(),
 	userId: text('user_id')
@@ -154,9 +143,9 @@ export const preferences = pgTable('preferences', {
 		.references(() => user.id)
 });
 
-export const recipes = pgTable('recipes', {
-	id: bigserial('id', { mode: 'number' }).primaryKey(),
-	createdAt: timestamp('created_at', { withTimezone: true })
+export const recipes = sqliteTable('recipes', {
+	id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+	createdAt: integer('created_at', { mode: 'timestamp' })
 		.$defaultFn(() => new Date())
 		.notNull(),
 	userId: text('user_id')
@@ -164,44 +153,44 @@ export const recipes = pgTable('recipes', {
 		.references(() => user.id),
 	title: text('title').notNull(),
 	description: text('description'),
-	ingredients: text('ingredients').array().notNull(),
+	ingredients: text('ingredients', { mode: 'json' }).$type<string[]>().notNull(),
 	servings: integer('servings').notNull(),
-	prepTime: bigint('prep_time', { mode: 'number' }).notNull(),
-	cookTime: bigint('cook_time', { mode: 'number' }).notNull(),
-	mealType: mealTypeEnum('meal_type').notNull(),
-	instructions: text('instructions').array().notNull(),
+	prepTime: integer('prep_time', { mode: 'number' }).notNull(),
+	cookTime: integer('cook_time', { mode: 'number' }).notNull(),
+	mealType: text('meal_type').notNull(),
+	instructions: text('instructions', { mode: 'json' }).$type<string[]>().notNull(),
 	imageUrl: text('image_url'),
 	calories: integer('calories').notNull(),
 	protein: integer('protein').notNull(),
 	carbs: integer('carbs').notNull(),
 	fat: integer('fat').notNull(),
 	imageData: text('image_data'),
-	imageType: varchar('image_type', { length: 50 }),
+	imageType: text('image_type'),
 	imageSize: integer('image_size')
 });
 
-export const stream = pgTable('stream', {
-	id: uuid('id')
+export const stream = sqliteTable('stream', {
+	id: text('id')
 		.primaryKey()
 		.$defaultFn(() => crypto.randomUUID()),
-	chatId: uuid('chat_id')
+	chatId: text('chat_id')
 		.notNull()
 		.references(() => chat.id),
-	createdAt: timestamp('created_at', { withTimezone: true })
+	createdAt: integer('created_at', { mode: 'timestamp' })
 		.$defaultFn(() => new Date())
 		.notNull()
 });
 
-export const vote = pgTable(
+export const vote = sqliteTable(
 	'vote',
 	{
-		chatId: uuid('chat_id')
+		chatId: text('chat_id')
 			.notNull()
 			.references(() => chat.id),
-		messageId: uuid('message_id')
+		messageId: text('message_id')
 			.notNull()
 			.references(() => message.id),
-		isUpvoted: boolean('is_upvoted').notNull()
+		isUpvoted: integer('is_upvoted', { mode: 'boolean' }).notNull()
 	},
 	(table) => [primaryKey({ columns: [table.chatId, table.messageId] })]
 );
