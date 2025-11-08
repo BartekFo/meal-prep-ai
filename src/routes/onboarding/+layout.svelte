@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { LogOut } from '@lucide/svelte';
+	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { authClient } from '$lib/auth/auth-client';
 	import AppLogo from '$lib/components/app-logo.svelte';
@@ -10,6 +11,7 @@
 
 	async function handleLogout() {
 		await authClient.signOut();
+		goto(resolve('/login'));
 	}
 </script>
 

@@ -65,7 +65,8 @@ export const auth = betterAuth({
 			},
 			onboardingStatus: {
 				type: 'string',
-				required: false
+				required: false,
+				defaultValue: 'not_started'
 			},
 			onboardingCompletedAt: {
 				type: 'date',

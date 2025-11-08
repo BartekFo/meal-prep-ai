@@ -32,7 +32,8 @@
 			if (result.error) {
 				error = result.error.message || 'Sign up failed';
 			} else {
-				goto(resolve('/dashboard'));
+				// Redirect to onboarding for new users
+				goto(resolve('/onboarding'));
 			}
 		} catch {
 			error = 'An unexpected error occurred';

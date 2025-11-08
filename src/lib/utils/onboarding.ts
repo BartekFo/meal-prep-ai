@@ -31,3 +31,9 @@ export function isAllowedRoute(pathname: string): boolean {
 
 	return allowedRoutes.some((route) => pathname.startsWith(route));
 }
+
+export function isPublicRoute(pathname: string): boolean {
+	const publicRoutes = ['/login', '/sign-up', '/api'];
+
+	return pathname === '/' || publicRoutes.some((route) => pathname.startsWith(route));
+}
