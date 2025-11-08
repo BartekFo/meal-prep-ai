@@ -8,6 +8,7 @@ export const auth = betterAuth({
 	database: drizzleAdapter(db, {
 		provider: 'sqlite'
 	}),
+	trustedOrigins: ['http://localhost:5173'],
 	plugins: [sveltekitCookies(getRequestEvent)],
 	emailAndPassword: {
 		enabled: true
