@@ -1,5 +1,5 @@
-import { json } from '@sveltejs/kit';
 import { createChat } from '$lib/modules/chef/db/queries';
+import { json } from '@sveltejs/kit';
 
 export async function POST({ request, locals }) {
 	if (!locals.user) {
