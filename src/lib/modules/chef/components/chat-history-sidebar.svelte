@@ -18,7 +18,7 @@
 
 	let sheetOpen = $state(false);
 
-	const currentChatId = $derived(page.url.searchParams.get('chatId'));
+	const currentChatId = $derived(page.params.chatId);
 
 	async function handleNewChat() {
 		await goto(resolve(routes.chef));
@@ -28,7 +28,7 @@
 	}
 
 	async function handleChatClick(chatId: string) {
-		await goto(resolve(`${routes.chef}?chatId=${chatId}`));
+		await goto(resolve(`${routes.chef}/${chatId}`));
 		if (isMobile) {
 			sheetOpen = false;
 		}

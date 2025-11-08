@@ -17,7 +17,7 @@
 
 	let input = $state('');
 
-	// Create Chat instance - this is for new chats only
+	// Create Chat instance - page reloads automatically when chatId changes via route params
 	const chat = new Chat({});
 
 	function handleSubmit(event: SubmitEvent) {
