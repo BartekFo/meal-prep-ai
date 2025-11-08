@@ -39,10 +39,17 @@ export default defineConfig(
 		}
 	},
 	{
-		files: ['src/lib/components/ui/button/button.svelte'],
+		files: ['src/lib/components/ui/button/button.svelte', 'src/routes/+error.svelte'],
 		rules: {
 			// Disable for button component as it handles resolve() via $derived
 			'svelte/no-navigation-without-resolve': 'off'
+		}
+	},
+	{
+		files: ['src/lib/modules/chef/components/chat-message.svelte'],
+		rules: {
+			// Content is sanitized by marked library
+			'svelte/no-at-html-tags': 'off'
 		}
 	}
 );
