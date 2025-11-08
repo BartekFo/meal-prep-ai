@@ -34,6 +34,7 @@
 		"@tailwindcss/vite": "4.1.12",
 		"@types/node": "^20.19.11",
 		"ai": "^5.0.80",
+		"better-sqlite3": "^12.4.1",
 		"bits-ui": "^2.11.0",
 		"clsx": "2.1.1",
 		"drizzle-kit": "0.31.4",
