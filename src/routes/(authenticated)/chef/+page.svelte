@@ -17,8 +17,9 @@
 
 	let input = $state('');
 
-	// Create Chat instance - this is for new chats only
-	const chat = new Chat({});
+	const chat = new Chat({
+		id: ''
+	});
 
 	function handleSubmit(event: SubmitEvent) {
 		event.preventDefault();

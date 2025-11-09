@@ -21,6 +21,7 @@
 		// Track chatId to force recreation when it changes
 		const _ = data.chatId;
 		return new Chat({
+			id: data.chatId,
 			messages: data.initialMessages
 		});
 	});

@@ -27,7 +27,7 @@ async function generateTitleFromMessage(message: UIMessage): Promise<string> {
 
 	try {
 		const { text } = await generateText({
-			model: google('gemini-2.5-flash'),
+			model: google('gemini-2.5-flash-lite'),
 			prompt: `Generate a concise, descriptive title (max 6 words) for a chat conversation that starts with this message: "${userMessage}"
 
 Return only the title, nothing else.`
@@ -42,7 +42,7 @@ Return only the title, nothing else.`
 }
 
 export async function POST({ request, locals }) {
-	const { messages, chatId }: { messages: UIMessage[]; chatId?: string } = await request.json();
+	const { messages, id }: { messages: UIMessage[]; id?: string } = await request.json();
 
 	if (!locals.user) {
 		return new Response(JSON.stringify({ error: 'Unauthorized' }), {
@@ -50,7 +50,7 @@ export async function POST({ request, locals }) {
 		});
 	}
 
-	let currentChatId = chatId;
+	let currentChatId = id;
 	let allMessages = messages;
 
 	if (!currentChatId) {
@@ -77,14 +77,14 @@ export async function POST({ request, locals }) {
 	}
 
 	const lastUserMessage = messages[messages.length - 1];
-	const isNewChat = !chatId;
+	const isNewChat = !id;
 
 	if (lastUserMessage && lastUserMessage.role === 'user') {
 		await saveMessage(currentChatId, 'user', lastUserMessage.parts);
 	}
 
 	const result = streamText({
-		model: google('gemini-2.5-flash'),
+		model: google('gemini-2.5-flash-lite'),
 		messages: convertToModelMessages(allMessages),
 		stopWhen: stepCountIs(5),
 		tools: {
@@ -107,9 +107,6 @@ export async function POST({ request, locals }) {
 				const title = await generateTitleFromMessage(lastUserMessage);
 				await updateChatTitle(currentChatId, title, locals.user.id);
 			}
-		},
-		headers: {
-			'X-Chat-Id': currentChatId
 		}
 	});
 }
