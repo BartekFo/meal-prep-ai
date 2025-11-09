@@ -1,7 +1,7 @@
 import { hashPassword } from 'better-auth/crypto';
 import { eq } from 'drizzle-orm';
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
+import { drizzle } from 'drizzle-orm/bun-sqlite';
+import { Database } from 'bun:sqlite';
 import { account, recipes, user } from './schema';
 
 // Get DATABASE_URL from environment
@@ -10,9 +10,12 @@ if (!DATABASE_URL) {
 	throw new Error('DATABASE_URL is not set');
 }
 
+// Extract file path from DATABASE_URL (format: file:/path/to/db.sqlite)
+const dbPath = DATABASE_URL.replace('file:', '');
+const sqlite = new Database(dbPath, { strict: true });
+
 // Create database connection for seed script
-const client = postgres(DATABASE_URL);
-const db = drizzle(client);
+const db = drizzle(sqlite);
 
 const SEED_USER = {
 	id: 'seed_user_1',
@@ -290,6 +293,118 @@ const SEED_RECIPES = [
 		protein: 6,
 		carbs: 18,
 		fat: 10
+	},
+	{
+		userId: SEED_USER.id,
+		title: 'Pasta Primavera',
+		description: 'Light and fresh pasta with seasonal vegetables and garlic-infused olive oil',
+		ingredients: [
+			'8 oz whole wheat pasta',
+			'2 cups fresh zucchini, sliced',
+			'1 cup cherry tomatoes, halved',
+			'1 cup asparagus, cut into pieces',
+			'3 cloves garlic, minced',
+			'3 tbsp olive oil',
+			'1/4 cup fresh basil, chopped',
+			'2 tbsp grated Parmesan cheese',
+			'Salt and pepper to taste',
+			'Red pepper flakes'
+		],
+		servings: 2,
+		prepTime: 10,
+		cookTime: 12,
+		mealType: 'lunch' as const,
+		instructions: [
+			'Cook pasta according to package directions until al dente, then drain',
+			'In a large pan, heat olive oil over medium heat',
+			'Add garlic and cook for 30 seconds until fragrant',
+			'Add zucchini, asparagus, and cherry tomatoes',
+			'Sauté vegetables for 5-7 minutes until tender-crisp',
+			'Add cooked pasta to the pan and toss to combine',
+			'Season with salt, pepper, and red pepper flakes',
+			'Top with fresh basil and Parmesan cheese before serving'
+		],
+		calories: 380,
+		protein: 14,
+		carbs: 48,
+		fat: 14
+	},
+	{
+		userId: SEED_USER.id,
+		title: 'Turkey Meatballs with Marinara',
+		description: 'Lean turkey meatballs baked with marinara sauce and served with pasta',
+		ingredients: [
+			'1 lb ground turkey',
+			'1/2 cup panko breadcrumbs',
+			'1 egg',
+			'1/4 cup grated Parmesan cheese',
+			'3 cloves garlic, minced',
+			'1 tsp Italian seasoning',
+			'1/2 cup whole wheat pasta',
+			'2 cups marinara sauce',
+			'Salt and pepper to taste',
+			'Fresh parsley for garnish'
+		],
+		servings: 4,
+		prepTime: 15,
+		cookTime: 20,
+		mealType: 'dinner' as const,
+		instructions: [
+			'Preheat oven to 400°F (200°C)',
+			'In a bowl, combine ground turkey, breadcrumbs, egg, Parmesan, garlic, and Italian seasoning',
+			'Season with salt and pepper',
+			'Form into 16-20 meatballs and arrange on a baking sheet',
+			'Bake for 15-20 minutes until cooked through',
+			'Meanwhile, cook pasta according to package directions',
+			'Heat marinara sauce in a large pot',
+			'Add cooked meatballs to marinara sauce and simmer for 5 minutes',
+			'Serve meatballs and sauce over pasta',
+			'Garnish with fresh parsley'
+		],
+		calories: 410,
+		protein: 38,
+		carbs: 38,
+		fat: 12
+	},
+	{
+		userId: SEED_USER.id,
+		title: 'Sweet Potato and Black Bean Bowl',
+		description: 'Hearty vegan bowl with roasted sweet potato, black beans, and tahini dressing',
+		ingredients: [
+			'1 large sweet potato, cubed',
+			'1 can (15 oz) black beans, drained and rinsed',
+			'2 cups fresh kale, chopped',
+			'1/2 cup cooked quinoa',
+			'1/4 red onion, thinly sliced',
+			'2 tbsp tahini',
+			'1 tbsp lemon juice',
+			'1 tbsp water',
+			'1 clove garlic, minced',
+			'2 tbsp olive oil',
+			'Salt and pepper to taste',
+			'Pumpkin seeds for topping'
+		],
+		servings: 2,
+		prepTime: 15,
+		cookTime: 25,
+		mealType: 'lunch' as const,
+		instructions: [
+			'Preheat oven to 425°F (220°C)',
+			'Toss sweet potato cubes with olive oil, salt, and pepper',
+			'Roast for 20-25 minutes until tender and caramelized',
+			'While potatoes roast, prepare tahini dressing by mixing tahini, lemon juice, water, and garlic',
+			'Season dressing with salt and pepper',
+			'In a pot, heat black beans with a pinch of cumin',
+			'Massage kale with a bit of lemon juice to soften',
+			'Divide quinoa, kale, and red onion between two bowls',
+			'Top with roasted sweet potato and warm black beans',
+			'Drizzle with tahini dressing',
+			'Garnish with pumpkin seeds and serve'
+		],
+		calories: 440,
+		protein: 16,
+		carbs: 52,
+		fat: 18
 	}
 ];
 
