@@ -1,5 +1,5 @@
-import { error } from '@sveltejs/kit';
 import { getChats } from '$lib/modules/chef/db/queries';
+import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 function isMobileDevice(userAgent: string): boolean {

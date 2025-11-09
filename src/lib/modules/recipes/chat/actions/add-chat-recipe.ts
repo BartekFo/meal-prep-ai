@@ -1,6 +1,6 @@
+import { createRecipeRecord, type NewRecipe } from '$lib/modules/recipes/new/db/queries';
 import { type } from 'arktype';
 import { errAsync, ResultAsync } from 'neverthrow';
-import { createRecipeRecord, type NewRecipe } from '$lib/modules/recipes/new/db/queries';
 import type { RecipeToolOutput } from '../types';
 
 const RecipeToolOutputSchema = type({

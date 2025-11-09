@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { CircleCheckBig, CircleX, Clock, LoaderCircle, Users } from '@lucide/svelte';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
 	import {
@@ -10,6 +9,7 @@
 		CardHeader,
 		CardTitle
 	} from '$lib/components/ui/card';
+	import { CircleCheckBig, CircleX, Clock, LoaderCircle, Users } from '@lucide/svelte';
 	import type { GeneratedRecipeCardProps } from '../chat/types';
 	import RecipeIngredients from './recipe-ingredients.svelte';
 	import RecipeInstructions from './recipe-instructions.svelte';

@@ -1,9 +1,9 @@
 <script lang="ts">
+	import { Avatar, AvatarFallback } from '$lib/components/ui/avatar';
+	import { Card } from '$lib/components/ui/card';
 	import type { UIMessage } from '@ai-sdk/svelte';
 	import { ChefHat } from '@lucide/svelte';
 	import { marked } from 'marked';
-	import { Avatar, AvatarFallback } from '$lib/components/ui/avatar';
-	import { Card } from '$lib/components/ui/card';
 
 	type Props = {
 		message: UIMessage;

@@ -1,5 +1,5 @@
-import { tool } from 'ai';
 import { addChatRecipe } from '$lib/modules/recipes/chat/actions/add-chat-recipe';
+import { tool } from 'ai';
 import type { RecipeToolOutput } from '../types';
 import { recipeSchema } from './schemas';
 
@@ -34,7 +34,6 @@ export function createConfirmAddRecipeTool(locals: App.Locals) {
 			};
 
 			const addResult = await addChatRecipe(recipe, locals.user.id);
-
 			if (addResult.isErr()) {
 				return {
 					success: false,
