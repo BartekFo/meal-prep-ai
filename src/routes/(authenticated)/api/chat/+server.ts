@@ -1,5 +1,3 @@
-import { createGoogleGenerativeAI } from '@ai-sdk/google';
-import { convertToModelMessages, generateText, stepCountIs, streamText, type UIMessage } from 'ai';
 import { GEMINI_API_KEY } from '$env/static/private';
 import {
 	createChat,
@@ -7,6 +5,8 @@ import {
 	saveMessage,
 	updateChatTitle
 } from '$lib/modules/chef/db/queries';
+import { createGoogleGenerativeAI } from '@ai-sdk/google';
+import { convertToModelMessages, generateText, stepCountIs, streamText, type UIMessage } from 'ai';
 import { createConfirmAddRecipeTool } from './tools/confirm-add-recipe-tool';
 import { createGenerateRecipeTool } from './tools/generate-recipe-tool';
 import { createRecipesTool } from './tools/recipes-tool';
@@ -59,12 +59,20 @@ export async function POST({ request, locals }) {
 	} else {
 		const existingChat = await getChatById(currentChatId, locals.user.id);
 		if (existingChat) {
-			const dbMessages: UIMessage[] = existingChat.messages.map((msg) => ({
-				id: msg.id,
-				role: msg.role as 'user' | 'assistant',
-				parts: msg.parts as UIMessage['parts']
-			}));
-			allMessages = [...dbMessages, ...messages];
+			const dbMessageIds = new Set(existingChat.messages.map((msg) => msg.id));
+			const incomingMessageIds = new Set(messages.map((msg) => msg.id));
+
+			const hasAllDbMessages = existingChat.messages.every((msg) => incomingMessageIds.has(msg.id));
+
+			if (!hasAllDbMessages) {
+				const dbMessages: UIMessage[] = existingChat.messages.map((msg) => ({
+					id: msg.id,
+					role: msg.role as 'user' | 'assistant',
+					parts: msg.parts as UIMessage['parts']
+				}));
+				const newMessagesOnly = messages.filter((msg) => !dbMessageIds.has(msg.id));
+				allMessages = [...dbMessages, ...newMessagesOnly];
+			}
 		}
 	}
 

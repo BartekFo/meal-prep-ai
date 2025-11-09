@@ -17,8 +17,13 @@
 
 	let input = $state('');
 
-	// Create Chat instance - page reloads automatically when chatId changes via route params
-	const chat = new Chat({});
+	const chat = $derived.by(() => {
+		// Track chatId to force recreation when it changes
+		const _ = data.chatId;
+		return new Chat({
+			messages: data.initialMessages
+		});
+	});
 
 	function handleSubmit(event: SubmitEvent) {
 		event.preventDefault();
@@ -67,43 +72,46 @@
 		<!-- Chat Messages Area -->
 		<div class="flex-1 overflow-y-auto px-6 py-6">
 			<div class="mx-auto max-w-4xl space-y-6">
-				{#if chat.messages.length === 0}
-					<SuggestedPrompts prompts={suggestedPrompts} onPromptClick={handlePromptClick} />
-				{/if}
-
-				<!-- Messages -->
-				{#each chat.messages as message, messageIndex (messageIndex)}
-					{#if message.role === 'assistant'}
-						{@const hasRecipeCard = message.parts.some(
-							(p) => p.type === 'tool-generateRecipe' && p.state === 'output-available' && p.output
-						)}
-						{#each message.parts as part, partIndex (partIndex)}
-							{#if part.type === 'tool-generateRecipe'}
-								{#if part.state === 'output-available' && part.output}
-									<GeneratedRecipeCard
-										recipe={part.output as RecipeToolOutput}
-										toolCallId={part.toolCallId}
-										toolState={part.state}
-										onAddRecipe={handleAddRecipe}
-									/>
-								{:else if part.state === 'input-streaming' || part.state === 'input-available'}
-									<div class="text-sm text-muted-foreground">Generating recipe...</div>
-								{/if}
-							{/if}
-						{/each}
-						{@const textParts = message.parts.filter((p) => p.type === 'text')}
-						{#if textParts.length > 0 && !hasRecipeCard}
-							<ChatMessage message={{ ...message, parts: textParts }} {userInitial} />
-						{/if}
-					{:else}
-						<ChatMessage {message} {userInitial} />
+				{#key data.chatId}
+					{#if chat.messages.length === 0}
+						<SuggestedPrompts prompts={suggestedPrompts} onPromptClick={handlePromptClick} />
 					{/if}
-				{/each}
 
-				<!-- Thinking Indicator -->
-				{#if chat.status === 'streaming' || chat.status === 'submitted'}
-					<ThinkingIndicator />
-				{/if}
+					<!-- Messages -->
+					{#each chat.messages as message, messageIndex (messageIndex)}
+						{#if message.role === 'assistant'}
+							{@const hasRecipeCard = message.parts.some(
+								(p) =>
+									p.type === 'tool-generateRecipe' && p.state === 'output-available' && p.output
+							)}
+							{#each message.parts as part, partIndex (partIndex)}
+								{#if part.type === 'tool-generateRecipe'}
+									{#if part.state === 'output-available' && part.output}
+										<GeneratedRecipeCard
+											recipe={part.output as RecipeToolOutput}
+											toolCallId={part.toolCallId}
+											toolState={part.state}
+											onAddRecipe={handleAddRecipe}
+										/>
+									{:else if part.state === 'input-streaming' || part.state === 'input-available'}
+										<div class="text-sm text-muted-foreground">Generating recipe...</div>
+									{/if}
+								{/if}
+							{/each}
+							{@const textParts = message.parts.filter((p) => p.type === 'text')}
+							{#if textParts.length > 0 && !hasRecipeCard}
+								<ChatMessage message={{ ...message, parts: textParts }} {userInitial} />
+							{/if}
+						{:else}
+							<ChatMessage {message} {userInitial} />
+						{/if}
+					{/each}
+
+					<!-- Thinking Indicator -->
+					{#if chat.status === 'streaming' || chat.status === 'submitted'}
+						<ThinkingIndicator />
+					{/if}
+				{/key}
 			</div>
 		</div>
 

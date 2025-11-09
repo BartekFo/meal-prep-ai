@@ -1,6 +1,6 @@
-import { and, desc, eq } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { chat, message } from '$lib/server/db/schema';
+import { and, desc, eq } from 'drizzle-orm';
 
 export type Chat = typeof chat.$inferSelect;
 export type Message = typeof message.$inferSelect;
@@ -47,7 +47,7 @@ export async function getChatById(
 		createdAt: chatData.createdAt,
 		title: chatData.title,
 		userId: chatData.userId,
-		messages
+		messages: messages ?? null
 	};
 }
 

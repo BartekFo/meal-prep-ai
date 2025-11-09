@@ -46,7 +46,7 @@
 	);
 
 	async function handleAddRecipe(toolCallId: string, recipe: RecipeToolOutput): Promise<void> {
-		await chat.addToolResult({
+		await chat.addToolOutput({
 			toolCallId,
 			tool: 'confirmAddRecipe',
 			output: recipe

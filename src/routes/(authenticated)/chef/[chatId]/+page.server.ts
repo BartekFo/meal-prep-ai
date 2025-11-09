@@ -1,5 +1,6 @@
-import { error } from '@sveltejs/kit';
 import { getChatById, getChats } from '$lib/modules/chef/db/queries';
+import { error } from '@sveltejs/kit';
+import type { UIMessage } from 'ai';
 import type { PageServerLoad } from './$types';
 
 function isMobileDevice(userAgent: string): boolean {
@@ -24,9 +25,17 @@ export const load: PageServerLoad = async ({ locals, params, depends, request })
 		error(404, { message: 'Chat not found' });
 	}
 
+	const initialMessages: UIMessage[] = chat.messages.map((msg) => ({
+		id: msg.id,
+		role: msg.role as 'user' | 'assistant',
+		parts: msg.parts as UIMessage['parts']
+	}));
+
 	return {
 		chats,
 		chat,
+		chatId,
+		initialMessages,
 		isMobile
 	};
 };
