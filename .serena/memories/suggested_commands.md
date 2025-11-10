@@ -1,6 +1,7 @@
 # Suggested Commands for Development
 
 ## Development Server
+
 ```bash
 # Start development server with hot reload
 bun run dev
@@ -10,6 +11,7 @@ bun run preview
 ```
 
 ## Building & Deployment
+
 ```bash
 # Build for production
 bun run build
@@ -21,6 +23,7 @@ bun run prepare
 ## Quality Assurance
 
 ### Comprehensive Quality Check
+
 ```bash
 # Run all checks in sequence: type checking, linting, formatting
 bun run check && bun run lint:fix && bun run format
@@ -46,6 +49,7 @@ bun run format
 ## Database Management
 
 ### Database Operations
+
 ```bash
 # Push schema changes to database
 bun run db:push
@@ -69,6 +73,7 @@ bun run db:test
 ## Common Development Workflows
 
 ### When Starting Development
+
 ```bash
 bun install           # Install dependencies (if needed)
 bun run dev          # Start dev server
@@ -76,6 +81,7 @@ bun run dev          # Start dev server
 ```
 
 ### After Making Code Changes
+
 ```bash
 # Check for type errors
 bun run check
@@ -84,6 +90,7 @@ bun run check
 ```
 
 ### Before Committing
+
 ```bash
 # Run full quality pipeline
 bun run check && bun run lint:fix && bun run format
@@ -94,6 +101,7 @@ git diff
 ```
 
 ### After Database Schema Changes
+
 ```bash
 # Generate migration
 bun run db:generate
@@ -112,6 +120,7 @@ bun run db:seed
 ```
 
 ### Working with Recipes
+
 ```bash
 # Create a new recipe via UI: /recipes/new
 # View recipes: /recipes
@@ -123,6 +132,7 @@ bun run db:studio
 ```
 
 ### AI Chef Development
+
 ```bash
 # Start dev server
 bun run dev
@@ -136,6 +146,7 @@ bun run dev
 ```
 
 ## Package Management
+
 ```bash
 # Add a package
 bun add [package-name]
@@ -154,6 +165,7 @@ bun install
 ```
 
 ## Useful Git Commands
+
 ```bash
 # Check status
 git status
@@ -172,6 +184,7 @@ git log --oneline -10
 ```
 
 ## System Commands (Linux)
+
 ```bash
 # List files
 ls -la
@@ -198,6 +211,7 @@ rm -rf build/
 ## Debugging
 
 ### Development Mode Debugging
+
 ```bash
 # Start dev server (includes source maps)
 bun run dev
@@ -208,6 +222,7 @@ bun run dev
 ```
 
 ### TypeScript Errors
+
 ```bash
 # See all TypeScript errors
 bun run check
@@ -216,6 +231,7 @@ bun run check
 ```
 
 ### Database Debugging
+
 ```bash
 # Visual exploration
 bun run db:studio
@@ -230,6 +246,7 @@ cp data/db.sqlite data/db.sqlite.backup
 ## Performance Monitoring
 
 ### Build Performance
+
 ```bash
 # Build in production mode (slow but optimized)
 bun run build
@@ -242,6 +259,7 @@ time bun run build
 ```
 
 ### Type Check Performance
+
 ```bash
 # Time type checking
 time bun run check
@@ -251,6 +269,7 @@ bun run check:watch
 ```
 
 ## Environment Setup
+
 ```bash
 # View environment variables (if .env file exists)
 cat .env
@@ -267,6 +286,7 @@ nano .env
 ```
 
 ## Cleanup & Maintenance
+
 ```bash
 # Remove build artifacts
 rm -rf build/ .svelte-kit/ dist/
@@ -283,6 +303,7 @@ du -sh ./* # All items in current directory
 ```
 
 ## Documentation & Help
+
 ```bash
 # View TypeScript configuration
 cat tsconfig.json
@@ -304,6 +325,7 @@ cat .claude/CLAUDE.md
 ```
 
 ## Quick Reference Aliases
+
 Consider adding these to your shell profile:
 
 ```bash
@@ -318,6 +340,7 @@ alias bdb='bun run db:studio'
 Then you can use: `bdev`, `bcheck`, `blint`, etc.
 
 ## Notes
+
 - Always use `bun` instead of `npm` or `yarn` for consistency
 - Development server auto-reloads on file changes (hot module replacement)
 - TypeScript errors prevent build but not dev server

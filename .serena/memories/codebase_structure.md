@@ -1,6 +1,7 @@
 # Codebase Structure
 
 ## Root Level Organization
+
 ```
 /
 ├── .claude/              # Claude Code configuration (CLAUDE.md)
@@ -19,6 +20,7 @@
 ## Source Directory Structure
 
 ### src/lib/ - Shared Libraries
+
 - **auth/** - Better Auth configuration and client setup
 - **components/**
   - **ui/** - 30+ reusable UI components (shadcn-inspired)
@@ -61,6 +63,7 @@
 - **storage.ts** - Client-side storage management
 
 ### src/routes/ - SvelteKit File-Based Routing
+
 - **(auth)/** - Public auth pages
   - **signin/** - Login page
   - **signup/** - Registration page
@@ -77,6 +80,7 @@
 - **+page.svelte** - Home page
 
 ### Database Schema (Drizzle ORM)
+
 - **users** - Extended with onboarding fields
 - **recipes** - Full recipe with nutrition data
 - **better_auth_account** - Authentication accounts
@@ -86,6 +90,7 @@
 - **chat_messages** - Chat history
 
 ### Uploads Directory
+
 ```
 uploads/
 └── recipes/
@@ -94,7 +99,9 @@ uploads/
 ```
 
 ## Module Structure Pattern
+
 Each feature module follows this consistent structure:
+
 ```
 module/
 ├── actions/
@@ -112,6 +119,7 @@ module/
 ```
 
 ## Key Files
+
 - **src/app.html** - HTML template
 - **src/hooks.server.ts** - Server-side hooks (auth middleware)
 - **src/app.css** - Global styles + Tailwind imports
@@ -122,12 +130,14 @@ module/
 - **eslint.config.js** - Linting rules
 
 ## Database Connection
+
 - Single SQLite file (`file:/path/to/db.sqlite`)
 - WAL mode enabled for concurrent operations
 - Connection pool with ~160MB page cache
 - Automatic hourly checkpoint
 
 ## Important Notes
+
 - No separate backend server - everything is SSR via SvelteKit
 - File uploads go to `uploads/` directory on server
 - Database is single SQLite file, not Docker-based
