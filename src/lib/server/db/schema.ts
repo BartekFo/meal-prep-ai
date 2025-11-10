@@ -189,3 +189,18 @@ export const vote = sqliteTable(
 	},
 	(table) => [primaryKey({ columns: [table.chatId, table.messageId] })]
 );
+
+export const memoryHistory = sqliteTable('memory_history', {
+	id: text('id').primaryKey(),
+	memoryId: text('memory_id').notNull(),
+	previousValue: text('previous_value'),
+	newValue: text('new_value'),
+	action: text('action').notNull(),
+	createdAt: integer('created_at', { mode: 'timestamp' })
+		.$defaultFn(() => new Date())
+		.notNull(),
+	updatedAt: integer('updated_at', { mode: 'timestamp' }),
+	isDeleted: integer('is_deleted', { mode: 'boolean' })
+		.$defaultFn(() => false)
+		.notNull()
+});
