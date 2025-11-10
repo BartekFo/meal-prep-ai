@@ -19,7 +19,7 @@ const memoryConfig: Partial<MemoryConfig> = {
 		provider: 'memory',
 		config: {
 			collectionName: 'memories',
-			dimension: 1536
+			dimension: 768
 		}
 	},
 	llm: {
