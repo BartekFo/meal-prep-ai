@@ -71,7 +71,7 @@ export async function POST({ request, locals }) {
 		stopWhen: stepCountIs(5),
 		tools: {
 			recipes: createRecipesTool(locals),
-			generateRecipe: createGenerateRecipeTool(),
+			generateRecipe: createGenerateRecipeTool(userId),
 			confirmAddRecipe: createConfirmAddRecipeTool(locals)
 		}
 	});
