@@ -166,41 +166,41 @@
 								{chatGroupTitles[group as keyof typeof chatGroupTitles]}
 							</div>
 							{#each chats as chat (chat.id)}
-							{@const isActive = currentChatId === chat.id}
-							<div
-								class={cn(
-									'group flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-accent',
-									isActive && 'bg-accent font-medium'
-								)}
-							>
-								<button
-									type="button"
-									class="flex min-w-0 flex-1 items-center gap-2"
-									onclick={() => handleChatClick(chat.id)}
+								{@const isActive = currentChatId === chat.id}
+								<div
+									class={cn(
+										'group flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-accent',
+										isActive && 'bg-accent font-medium'
+									)}
 								>
-									<MessageSquare class="text-muted-foreground size-4 shrink-0" />
-									<div class="min-w-0 flex-1">
-										<div
-											class={cn(
-												'truncate text-sm',
-												isActive ? 'text-foreground' : 'text-muted-foreground'
-											)}
-										>
-											{chat.title}
+									<button
+										type="button"
+										class="flex min-w-0 flex-1 items-center gap-2"
+										onclick={() => handleChatClick(chat.id)}
+									>
+										<MessageSquare class="text-muted-foreground size-4 shrink-0" />
+										<div class="min-w-0 flex-1">
+											<div
+												class={cn(
+													'truncate text-sm',
+													isActive ? 'text-foreground' : 'text-muted-foreground'
+												)}
+											>
+												{chat.title}
+											</div>
+											<div class="text-muted-foreground text-xs">{formatDate(chat.createdAt)}</div>
 										</div>
-										<div class="text-muted-foreground text-xs">{formatDate(chat.createdAt)}</div>
-									</div>
-								</button>
-								<button
-									type="button"
-									class="text-muted-foreground opacity-0 transition-opacity hover:text-destructive group-hover:opacity-100"
-									onclick={(e) => handleDeleteChat(chat.id, e)}
-									aria-label="Delete chat"
-								>
-									<Trash2 class="size-4" />
-								</button>
-							</div>
-						{/each}
+									</button>
+									<button
+										type="button"
+										class="text-muted-foreground opacity-0 transition-opacity hover:text-destructive group-hover:opacity-100"
+										onclick={(e) => handleDeleteChat(chat.id, e)}
+										aria-label="Delete chat"
+									>
+										<Trash2 class="size-4" />
+									</button>
+								</div>
+							{/each}
 						{/if}
 					{/each}
 				</div>
