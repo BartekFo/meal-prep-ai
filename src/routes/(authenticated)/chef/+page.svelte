@@ -6,7 +6,7 @@
 		ChatInput,
 		ChatMessage,
 		SuggestedPrompts,
-		ThinkingIndicator
+		ThinkMessage
 	} from '$lib/modules/chef/components';
 	import type { RecipeToolOutput } from '$lib/modules/recipes/chat/types';
 	import GeneratedRecipeCard from '$lib/modules/recipes/components/generated-recipe-card.svelte';
@@ -15,17 +15,7 @@
 
 	const { data }: { data: PageData } = $props();
 
-	let input = $state('');
-
-	const chat = new Chat({
-		id: ''
-	});
-
-	function handleSubmit(event: SubmitEvent) {
-		event.preventDefault();
-		chat.sendMessage({ text: input });
-		input = '';
-	}
+	const chat = new Chat({});
 
 	const session = authClient.useSession();
 
@@ -37,7 +27,7 @@
 	];
 
 	function handlePromptClick(prompt: string) {
-		input = prompt;
+		chat.sendMessage({ text: prompt });
 	}
 
 	const userInitial = $derived(
@@ -101,13 +91,14 @@
 					{/if}
 				{/each}
 
-				<!-- Thinking Indicator -->
 				{#if chat.status === 'streaming' || chat.status === 'submitted'}
-					<ThinkingIndicator />
+					<ThinkMessage />
 				{/if}
 			</div>
 		</div>
 
-		<ChatInput bind:value={input} onSubmit={handleSubmit} />
+		<div class="px-6 py-6">
+			<ChatInput user={$session.data?.user} chatClient={chat} />
+		</div>
 	</div>
 </div>

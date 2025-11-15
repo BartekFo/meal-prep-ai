@@ -1,3 +1,4 @@
+import type { InferSelectModel } from 'drizzle-orm';
 import { integer, primaryKey, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 export const user = sqliteTable('user', {
@@ -86,6 +87,9 @@ export const chat = sqliteTable('chat', {
 		.notNull()
 		.references(() => user.id)
 });
+
+export type Chat = InferSelectModel<typeof chat>;
+
 
 export const dietaryOptions = sqliteTable('dietary_options', {
 	id: text('id')

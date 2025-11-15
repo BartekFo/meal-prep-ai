@@ -26,7 +26,9 @@
 		<Card class="p-4 {message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-card'}">
 			{#each message.parts as part (part)}
 				{#if part.type === 'text'}
-					<p class="text-sm leading-relaxed">{@html marked(part.text)}</p>
+					<p class="text-sm leading-relaxed">
+						{@html marked(part.text, { gfm: true, breaks: true })}
+					</p>
 				{/if}
 			{/each}
 		</Card>

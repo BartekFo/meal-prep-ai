@@ -12,17 +12,16 @@
 	import type { ProposedMemoryOutput } from '$lib/modules/chef/components/memory/types';
 	import type { RecipeToolOutput } from '$lib/modules/recipes/chat/types';
 	import GeneratedRecipeCard from '$lib/modules/recipes/components/generated-recipe-card.svelte';
-	import { Chat } from '@ai-sdk/svelte';
+	import { Chat, type UIMessage } from '@ai-sdk/svelte';
 	import { untrack } from 'svelte';
-	import type { PageData } from './$types';
 
-	const { data }: { data: PageData } = $props();
+	const { chatId, initialMessages }: { chatId: string; initialMessages: UIMessage[] } = $props();
 
 	const chat = $derived(
 		new Chat({
-			id: data.chatId,
+			id: chatId,
 			generateId: crypto.randomUUID.bind(crypto),
-			messages: untrack(() => data.initialMessages)
+			messages: untrack(() => initialMessages)
 		})
 	);
 
@@ -71,7 +70,7 @@
 		<!-- Chat Messages Area -->
 		<div class="flex-1 overflow-y-auto px-6 py-6">
 			<div class="mx-auto max-w-4xl space-y-6">
-				{#key data.chatId}
+				{#key chatId}
 					{#if chat.messages.length === 0}
 						<SuggestedPrompts prompts={suggestedPrompts} onPromptClick={handlePromptClick} />
 					{/if}
