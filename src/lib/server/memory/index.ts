@@ -106,3 +106,23 @@ User Profile Information:
 
 	await saveMemory(userId, profileSummary, { source: 'profile', type: 'user_info' });
 }
+
+export async function getAllMemories(userId: string, limit = 100) {
+	try {
+		const result = await memory.getAll({ userId, limit });
+		return result.results;
+	} catch (error) {
+		console.error('Error fetching all memories:', error);
+		return [];
+	}
+}
+
+export async function deleteMemory(memoryId: string): Promise<boolean> {
+	try {
+		await memory.delete(memoryId);
+		return true;
+	} catch (error) {
+		console.error('Error deleting memory:', error);
+		return false;
+	}
+}
