@@ -1,5 +1,5 @@
 import { GEMINI_API_KEY } from '$env/static/private';
-import { saveMessage, updateChatTitle } from '$lib/modules/chef/db/queries';
+import { deleteChat, saveMessage, updateChatTitle } from '$lib/modules/chef/db/queries';
 import {
 	formatMemoriesForPrompt,
 	getRelevantMemories,
@@ -7,6 +7,7 @@ import {
 	seedInitialMemories
 } from '$lib/server/memory';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
+import { json } from '@sveltejs/kit';
 import { convertToModelMessages, stepCountIs, streamText, type UIMessage } from 'ai';
 import { generateTitleFromMessage } from './generate-title';
 import { initializeChat } from './initialize-chat';
@@ -119,4 +120,20 @@ YOU CAN CALL TOOLS MULTIPLE TIMES. proposeMemory does NOT prevent you from calli
 			}
 		}
 	});
+}
+
+export async function DELETE({ locals, request }) {
+	if (!locals.user) {
+		return json({ error: 'Unauthorized' }, { status: 401 });
+	}
+
+	const { id } = await request.json();
+
+	const deleted = await deleteChat(id, locals.user.id);
+
+	if (!deleted) {
+		return json({ error: 'Chat not found' }, { status: 404 });
+	}
+
+	return json({ success: true });
 }

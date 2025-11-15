@@ -1,34 +1,87 @@
 <script lang="ts">
-	import { goto, invalidate } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { Button } from '$lib/components/ui/button';
 	import * as Sheet from '$lib/components/ui/sheet';
-	import { routes } from '$lib/constants/routes';
+	import { ChatHistory } from '$lib/hooks/chat-history';
 	import { cn } from '$lib/utils';
 	import { MessageSquare, Plus, Trash2 } from '@lucide/svelte';
+	import { isToday, isYesterday, subMonths, subWeeks } from 'date-fns';
+	import { toast } from 'svelte-sonner';
 	import type { Chat } from '../db/queries';
 
 	interface Props {
-		chats: Chat[];
 		isMobile?: boolean;
 	}
 
-	let { chats, isMobile = false }: Props = $props();
+	let { isMobile = false }: Props = $props();
+
+	const chatHistory = ChatHistory.fromContext();
+	const groupedChats = $derived(groupChatsByDate(chatHistory.chats));
 
 	let sheetOpen = $state(false);
 
 	const currentChatId = $derived(page.params.chatId);
 
+	type GroupedChats = {
+		today: Chat[];
+		yesterday: Chat[];
+		lastWeek: Chat[];
+		lastMonth: Chat[];
+		older: Chat[];
+	};
+
+	const chatGroupTitles = {
+		today: 'Today',
+		yesterday: 'Yesterday',
+		lastWeek: 'Last 7 days',
+		lastMonth: 'Last 30 days',
+		older: 'Older'
+	} as const;
+
+	function groupChatsByDate(chats: Chat[]): GroupedChats {
+		const now = new Date();
+		const oneWeekAgo = subWeeks(now, 1);
+		const oneMonthAgo = subMonths(now, 1);
+
+		return chats.reduce(
+			(groups, chat) => {
+				const chatDate = new Date(chat.createdAt);
+
+				if (isToday(chatDate)) {
+					groups.today.push(chat);
+				} else if (isYesterday(chatDate)) {
+					groups.yesterday.push(chat);
+				} else if (chatDate > oneWeekAgo) {
+					groups.lastWeek.push(chat);
+				} else if (chatDate > oneMonthAgo) {
+					groups.lastMonth.push(chat);
+				} else {
+					groups.older.push(chat);
+				}
+
+				return groups;
+			},
+			{
+				today: [],
+				yesterday: [],
+				lastWeek: [],
+				lastMonth: [],
+				older: []
+			} as GroupedChats
+		);
+	}
+
 	async function handleNewChat() {
-		await goto(resolve(routes.chef));
+		await goto(resolve('/(authenticated)/chef'));
 		if (isMobile) {
 			sheetOpen = false;
 		}
 	}
 
 	async function handleChatClick(chatId: string) {
-		await goto(resolve(`${routes.chef}/${chatId}`));
+		await goto(resolve(`/(authenticated)/chef/[chatId]`, { chatId }));
 		if (isMobile) {
 			sheetOpen = false;
 		}
@@ -40,19 +93,31 @@
 			return;
 		}
 
-		try {
-			const response = await fetch(`/api/chats/${chatId}`, {
-				method: 'DELETE'
+		const deletePromise = (async () => {
+			const res = await fetch('/api/chat', {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ id: chatId })
 			});
-
-			if (response.ok) {
-				if (currentChatId === chatId) {
-					await goto(resolve(routes.chef));
-				}
-				await invalidate('chef:chats');
+			if (!res.ok) {
+				throw new Error();
 			}
-		} catch (error) {
-			console.error('Failed to delete chat:', error);
+		})();
+
+		toast.promise(deletePromise, {
+			loading: 'Deleting chat...',
+			success: () => {
+				chatHistory.chats = chatHistory.chats.filter((chat) => chat.id !== chatId);
+				chatHistory.refetch();
+				return 'Chat deleted successfully';
+			},
+			error: 'Failed to delete chat'
+		});
+
+		if (currentChatId === chatId) {
+			await goto(resolve('/(authenticated)/chef'));
 		}
 	}
 
@@ -89,47 +154,52 @@
 		</div>
 
 		<div class="flex-1 overflow-y-auto p-2">
-			{#if chats.length === 0}
+			{#if chatHistory.chats.length === 0}
 				<div class="text-muted-foreground p-4 text-center text-sm">
-					No chats yet. Start a new conversation!
+					Your conversations will appear here once you start chatting!
 				</div>
 			{:else}
 				<div class="space-y-1">
-					{#each chats as chat (chat.id)}
-						{@const isActive = currentChatId === chat.id}
-						<div
-							class={cn(
-								'group flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-accent',
-								isActive && 'bg-accent font-medium'
-							)}
-						>
-							<button
-								type="button"
-								class="flex min-w-0 flex-1 items-center gap-2"
-								onclick={() => handleChatClick(chat.id)}
-							>
-								<MessageSquare class="text-muted-foreground size-4 shrink-0" />
-								<div class="min-w-0 flex-1">
-									<div
-										class={cn(
-											'truncate text-sm',
-											isActive ? 'text-foreground' : 'text-muted-foreground'
-										)}
-									>
-										{chat.title}
-									</div>
-									<div class="text-muted-foreground text-xs">{formatDate(chat.createdAt)}</div>
-								</div>
-							</button>
-							<button
-								type="button"
-								class="text-muted-foreground opacity-0 transition-opacity hover:text-destructive group-hover:opacity-100"
-								onclick={(e) => handleDeleteChat(chat.id, e)}
-								aria-label="Delete chat"
-							>
-								<Trash2 class="size-4" />
-							</button>
+					{#each Object.entries(groupedChats) as [group, chats] (group)}
+						<div class="text-sidebar-foreground/50 px-2 py-1 text-xs">
+							{chatGroupTitles[group as keyof typeof chatGroupTitles]}
 						</div>
+						{#each chats as chat (chat.id)}
+							{@const isActive = currentChatId === chat.id}
+							<div
+								class={cn(
+									'group flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-accent',
+									isActive && 'bg-accent font-medium'
+								)}
+							>
+								<button
+									type="button"
+									class="flex min-w-0 flex-1 items-center gap-2"
+									onclick={() => handleChatClick(chat.id)}
+								>
+									<MessageSquare class="text-muted-foreground size-4 shrink-0" />
+									<div class="min-w-0 flex-1">
+										<div
+											class={cn(
+												'truncate text-sm',
+												isActive ? 'text-foreground' : 'text-muted-foreground'
+											)}
+										>
+											{chat.title}
+										</div>
+										<div class="text-muted-foreground text-xs">{formatDate(chat.createdAt)}</div>
+									</div>
+								</button>
+								<button
+									type="button"
+									class="text-muted-foreground opacity-0 transition-opacity hover:text-destructive group-hover:opacity-100"
+									onclick={(e) => handleDeleteChat(chat.id, e)}
+									aria-label="Delete chat"
+								>
+									<Trash2 class="size-4" />
+								</button>
+							</div>
+						{/each}
 					{/each}
 				</div>
 			{/if}

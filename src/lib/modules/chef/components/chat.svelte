@@ -15,7 +15,13 @@
 	import { Chat, type UIMessage } from '@ai-sdk/svelte';
 	import { untrack } from 'svelte';
 
-	const { chatId, initialMessages }: { chatId: string; initialMessages: UIMessage[] } = $props();
+	type Props = {
+		chatId: string;
+		initialMessages: UIMessage[];
+		isMobile?: boolean;
+	};
+
+	const { chatId, initialMessages, isMobile = false }: Props = $props();
 
 	const chat = $derived(
 		new Chat({
@@ -62,7 +68,7 @@
 </svelte:head>
 
 <div class="flex h-full">
-	<ChatHistorySidebar chats={data.chats} isMobile={data.isMobile} />
+	<ChatHistorySidebar {isMobile} />
 
 	<div class="flex flex-1 flex-col">
 		<ChatHeader />
