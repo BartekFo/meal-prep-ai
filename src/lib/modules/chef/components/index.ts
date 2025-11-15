@@ -6,3 +6,4 @@ export { MemoryDrawer } from './memory';
 export { default as SuggestedPrompts } from './suggested-prompts.svelte';
 export { default as ThinkMessage } from './think-message.svelte';
 export { default as ProposedMemoryCard } from './memory/proposed-memory-card.svelte';
+export { default as Chat } from './chat.svelte';

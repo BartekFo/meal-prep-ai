@@ -14,18 +14,19 @@
 	import GeneratedRecipeCard from '$lib/modules/recipes/components/generated-recipe-card.svelte';
 	import { Chat, type UIMessage } from '@ai-sdk/svelte';
 	import { untrack } from 'svelte';
+	import type { Chat as DbChat } from '../db/queries';
 
 	type Props = {
-		chatId: string;
+		chat: DbChat | undefined;
 		initialMessages: UIMessage[];
 		isMobile?: boolean;
 	};
 
-	const { chatId, initialMessages, isMobile = false }: Props = $props();
+	const { chat, initialMessages, isMobile = false }: Props = $props();
 
-	const chat = $derived(
+	const chatClient = $derived(
 		new Chat({
-			id: chatId,
+			...(chat ? { id: chat.id } : {}),
 			generateId: crypto.randomUUID.bind(crypto),
 			messages: untrack(() => initialMessages)
 		})
@@ -41,7 +42,7 @@
 	];
 
 	function handlePromptClick(prompt: string) {
-		chat.sendMessage({ text: prompt });
+		chatClient.sendMessage({ text: prompt });
 	}
 
 	const userInitial = $derived(
@@ -51,13 +52,13 @@
 	);
 
 	async function handleAddRecipe(toolCallId: string, recipe: RecipeToolOutput): Promise<void> {
-		await chat.sendMessage({
+		await chatClient.sendMessage({
 			text: `Please add the recipe "${recipe.title}" to my recipes`
 		});
 	}
 
 	async function handleConfirmMemory(memory: ProposedMemoryOutput): Promise<void> {
-		await chat.sendMessage({
+		await chatClient.sendMessage({
 			text: `Please save this memory: "${memory.content}"`
 		});
 	}
@@ -76,13 +77,13 @@
 		<!-- Chat Messages Area -->
 		<div class="flex-1 overflow-y-auto px-6 py-6">
 			<div class="mx-auto max-w-4xl space-y-6">
-				{#key chatId}
-					{#if chat.messages.length === 0}
+				{#key chat?.id}
+					{#if chatClient.messages.length === 0}
 						<SuggestedPrompts prompts={suggestedPrompts} onPromptClick={handlePromptClick} />
 					{/if}
 
 					<!-- Messages -->
-					{#each chat.messages as message, messageIndex (messageIndex)}
+					{#each chatClient.messages as message, messageIndex (messageIndex)}
 						{#if message.role === 'assistant'}
 							{@const hasRecipeCard = message.parts.some(
 								(p) =>
@@ -119,7 +120,7 @@
 						{/if}
 					{/each}
 
-					{#if chat.status === 'streaming' || chat.status === 'submitted'}
+					{#if chatClient.status === 'streaming' || chatClient.status === 'submitted'}
 						<ThinkMessage />
 					{/if}
 				{/key}
@@ -127,7 +128,7 @@
 		</div>
 
 		<div class="px-6 py-6">
-			<ChatInput user={$session.data?.user} chatClient={chat} />
+			<ChatInput user={$session.data?.user} {chatClient} />
 		</div>
 	</div>
 </div>

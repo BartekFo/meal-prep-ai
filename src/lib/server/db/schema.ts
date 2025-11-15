@@ -90,7 +90,6 @@ export const chat = sqliteTable('chat', {
 
 export type Chat = InferSelectModel<typeof chat>;
 
-
 export const dietaryOptions = sqliteTable('dietary_options', {
 	id: text('id')
 		.primaryKey()
@@ -126,6 +125,8 @@ export const message = sqliteTable('message', {
 		.$defaultFn(() => new Date())
 		.notNull()
 });
+
+export type Message = InferSelectModel<typeof message>;
 
 export const preferences = sqliteTable('preferences', {
 	id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
