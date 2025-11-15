@@ -161,10 +161,11 @@
 			{:else}
 				<div class="space-y-1">
 					{#each Object.entries(groupedChats) as [group, chats] (group)}
-						<div class="text-sidebar-foreground/50 px-2 py-1 text-xs">
-							{chatGroupTitles[group as keyof typeof chatGroupTitles]}
-						</div>
-						{#each chats as chat (chat.id)}
+						{#if chats.length > 0}
+							<div class="text-sidebar-foreground/50 px-2 py-1 text-xs">
+								{chatGroupTitles[group as keyof typeof chatGroupTitles]}
+							</div>
+							{#each chats as chat (chat.id)}
 							{@const isActive = currentChatId === chat.id}
 							<div
 								class={cn(
@@ -200,6 +201,7 @@
 								</button>
 							</div>
 						{/each}
+						{/if}
 					{/each}
 				</div>
 			{/if}

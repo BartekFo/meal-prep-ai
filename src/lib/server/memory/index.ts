@@ -79,7 +79,7 @@ export async function saveMemory(
 	}
 }
 
-export async function seedInitialMemories(userId: string, user: User): Promise<void> {
+export async function seedInitialMemories(user: User): Promise<void> {
 	if (user.onboardingStatus !== 'completed') {
 		return;
 	}
@@ -104,7 +104,7 @@ User Profile Information:
 - Preferred Meal Types: ${preferredMeals}
 `.trim();
 
-	await saveMemory(userId, profileSummary, { source: 'profile', type: 'user_info' });
+	await saveMemory(user.id, profileSummary, { source: 'profile', type: 'user_info' });
 }
 
 export async function getAllMemories(userId: string, limit = 100) {

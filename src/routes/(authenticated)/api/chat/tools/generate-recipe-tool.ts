@@ -1,14 +1,9 @@
-import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { generateObject, tool } from 'ai';
 import z from 'zod';
-import { GEMINI_API_KEY } from '$env/static/private';
+import { google } from '$lib/modules/chef/google';
 import { formatMemoriesForPrompt, getRelevantMemories } from '$lib/server/memory';
 import type { RecipeToolOutput } from '../types';
 import { recipeSchema } from './schemas';
-
-const google = createGoogleGenerativeAI({
-	apiKey: GEMINI_API_KEY
-});
 
 export function createGenerateRecipeTool(userId: string) {
 	return tool({

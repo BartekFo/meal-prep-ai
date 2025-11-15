@@ -2,14 +2,15 @@ import { addChatRecipe } from '$lib/modules/recipes/chat/actions/add-chat-recipe
 import { tool } from 'ai';
 import type { RecipeToolOutput } from '../types';
 import { recipeSchema } from './schemas';
+import type { User } from '$lib/types/auth';
 
-export function createConfirmAddRecipeTool(locals: App.Locals) {
+export function createConfirmAddRecipeTool(user: User) {
 	return tool({
 		description:
 			"Confirm adding generated recipe to user's collection. Call this tool when the user wants to save a generated recipe.",
 		inputSchema: recipeSchema,
 		execute: async (recipeInput) => {
-			if (!locals.user) {
+			if (!user) {
 				return {
 					success: false,
 					error: 'User not authenticated'
@@ -33,7 +34,7 @@ export function createConfirmAddRecipeTool(locals: App.Locals) {
 				fat: recipeInput.fat
 			};
 
-			const addResult = await addChatRecipe(recipe, locals.user.id);
+			const addResult = await addChatRecipe(recipe, user.id);
 			if (addResult.isErr()) {
 				return {
 					success: false,

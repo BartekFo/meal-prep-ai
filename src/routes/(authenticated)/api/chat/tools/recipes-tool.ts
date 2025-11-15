@@ -2,8 +2,9 @@ import { tool } from 'ai';
 import z from 'zod';
 import { getAllRecipes } from '$lib/modules/recipes/db/queries';
 import type { RecipeFilters } from '$lib/modules/recipes/types';
+import type { User } from '$lib/types/auth';
 
-export function createRecipesTool(locals: App.Locals) {
+export function createRecipesTool(user: User) {
 	return tool({
 		description:
 			'Get recipes for the current user. Can filter by search term, meal type (breakfast, lunch, dinner, snack), and sort order (newest, oldest, a-z, z-a).',
@@ -16,7 +17,7 @@ export function createRecipesTool(locals: App.Locals) {
 			sort: z.enum(['newest', 'oldest', 'a-z', 'z-a']).optional().describe('Sort order for recipes')
 		}),
 		execute: async ({ search, type, sort }) => {
-			if (!locals.user) {
+			if (!user) {
 				return {
 					error: 'User not authenticated',
 					recipes: []
@@ -37,7 +38,7 @@ export function createRecipesTool(locals: App.Locals) {
 				filters.sort = sort;
 			}
 
-			const recipes = await getAllRecipes(locals.user.id, filters);
+			const recipes = await getAllRecipes(user.id, filters);
 
 			return {
 				recipes,

@@ -48,21 +48,31 @@ export function getMessagesByChatId({ id }: { id: string }): ResultAsync<Message
 	});
 }
 
-export async function createChat(userId: string, title: string): Promise<Chat> {
-	const result = await db
-		.insert(chat)
-		.values({
-			userId,
-			title
-		})
-		.returning();
+export function saveChat({
+	id,
+	userId,
+	title
+}: {
+	id: string;
+	userId: string;
+	title: string;
+}): ResultAsync<Chat, DbError> {
+	return safeTry(async function* () {
+		const insertResult = yield* fromPromise(
+			db
+				.insert(chat)
+				.values({
+					id,
+					createdAt: new Date(),
+					userId,
+					title
+				})
+				.returning(),
+			(e) => new DbInternalError({ cause: e })
+		);
 
-	const newChat = result[0];
-	if (!newChat) {
-		throw new Error('Failed to create chat');
-	}
-
-	return newChat;
+		return unwrapSingleQueryResult(insertResult, id, 'Chat');
+	});
 }
 
 export function deleteChatById({ id }: { id: string }): ResultAsync<undefined, DbError> {
@@ -80,22 +90,19 @@ export function deleteChatById({ id }: { id: string }): ResultAsync<undefined, D
 	});
 }
 
-export async function saveMessage(chatId: string, role: string, parts: unknown): Promise<Message> {
-	const result = await db
-		.insert(message)
-		.values({
-			chatId,
-			role,
-			parts: parts as never
-		})
-		.returning();
+export function saveMessages({
+	messages
+}: {
+	messages: Array<Message>;
+}): ResultAsync<Message[], DbError> {
+	return safeTry(async function* () {
+		const insertResult = yield* fromPromise(
+			db.insert(message).values(messages).returning(),
+			(e) => new DbInternalError({ cause: e })
+		);
 
-	const newMessage = result[0];
-	if (!newMessage) {
-		throw new Error('Failed to save message');
-	}
-
-	return newMessage;
+		return ok(insertResult);
+	});
 }
 
 export async function updateChatTitle(

@@ -1,16 +1,25 @@
-import { GEMINI_API_KEY } from '$env/static/private';
-import { deleteChat, saveMessage, updateChatTitle } from '$lib/modules/chef/db/queries';
+import { deleteChatById, getChatById, saveChat, saveMessages } from '$lib/modules/chef/db/queries';
+import { google } from '$lib/modules/chef/google';
+import { getMostRecentUserMessage } from '$lib/modules/chef/utils';
+import type { Chat } from '$lib/server/db/schema';
 import {
 	formatMemoriesForPrompt,
 	getRelevantMemories,
 	memory,
 	seedInitialMemories
 } from '$lib/server/memory';
-import { createGoogleGenerativeAI } from '@ai-sdk/google';
-import { json } from '@sveltejs/kit';
-import { convertToModelMessages, stepCountIs, streamText, type UIMessage } from 'ai';
-import { generateTitleFromMessage } from './generate-title';
-import { initializeChat } from './initialize-chat';
+import { error, json } from '@sveltejs/kit';
+import {
+	convertToModelMessages,
+	generateId,
+	smoothStream,
+	stepCountIs,
+	streamText,
+	type UIMessage
+} from 'ai';
+import { ok, safeTry } from 'neverthrow';
+import { generateTitleFromUserMessage } from './generate-title';
+import { getSystemPrompt } from './prompt';
 import { createConfirmAddRecipeTool } from './tools/confirm-add-recipe-tool';
 import { createConfirmSaveMemoryTool } from './tools/confirm-save-memory-tool';
 import { createGenerateRecipeTool } from './tools/generate-recipe-tool';
@@ -19,36 +28,68 @@ import { createRecipesTool } from './tools/recipes-tool';
 
 export type { RecipeToolOutput } from './types';
 
-const google = createGoogleGenerativeAI({
-	apiKey: GEMINI_API_KEY
-});
+export async function POST({ request, locals: { user } }) {
+	const { messages, id }: { messages: UIMessage[]; id: string } = await request.json();
 
-export async function POST({ request, locals }) {
-	const { messages, id }: { messages: UIMessage[]; id?: string } = await request.json();
-
-	if (!locals.user) {
+	if (!user) {
 		return new Response(JSON.stringify({ error: 'Unauthorized' }), {
 			status: 401
 		});
 	}
 
-	const { chatId: currentChatId, messages: allMessages } = await initializeChat(
-		id,
-		locals.user.id,
-		messages
-	);
+	const userMessage = getMostRecentUserMessage(messages);
 
-	const userId = locals.user.id;
-	const lastUserMessage = messages[messages.length - 1];
-	const isNewChat = !id;
+	if (!userMessage) {
+		error(400, 'No user message found');
+	}
 
-	if (lastUserMessage && lastUserMessage.role === 'user') {
-		await saveMessage(currentChatId, 'user', lastUserMessage.parts);
+	const userId = user.id;
+
+	if (user) {
+		await safeTry(async function* () {
+			let chat: Chat;
+			const chatResult = await getChatById({ id, userId });
+			console.log('chatResult', chatResult.isErr());
+			if (chatResult.isErr()) {
+				if (chatResult.error._tag !== 'DbEntityNotFoundError') {
+					console.log('chatResult.error is not DbEntityNotFoundError');
+					return chatResult;
+				}
+				const title = yield* generateTitleFromUserMessage({ message: userMessage });
+				console.log('title', title);
+				chat = yield* saveChat({ id, userId: user.id, title });
+				console.log('chat', chat);
+			} else {
+				chat = chatResult.value;
+			}
+
+			console.log('chat', chat);
+
+			if (chat.userId !== user.id) {
+				error(403, 'Forbidden');
+			}
+
+			yield* saveMessages({
+				messages: [
+					{
+						chatId: id,
+						id: userMessage.id,
+						role: 'user',
+						parts: userMessage.parts,
+						createdAt: new Date()
+					}
+				]
+			});
+
+			console.log('messages saved');
+
+			return ok(undefined);
+		}).orElse(() => error(500, 'An error occurred while processing your request'));
 	}
 
 	const userMessageText =
-		lastUserMessage && lastUserMessage.role === 'user'
-			? lastUserMessage.parts
+		userMessage && userMessage.role === 'user'
+			? userMessage.parts
 					.filter((p) => p.type === 'text')
 					.map((p) => ('text' in p ? p.text : ''))
 					.join(' ')
@@ -56,7 +97,7 @@ export async function POST({ request, locals }) {
 
 	const existingMemories = await memory.getAll({ userId, limit: 1 });
 	if (existingMemories.results.length === 0) {
-		await seedInitialMemories(userId, locals.user);
+		await seedInitialMemories(user);
 	}
 
 	const relevantMemories = userMessageText
@@ -64,60 +105,39 @@ export async function POST({ request, locals }) {
 		: [];
 	const memoryContext = formatMemoriesForPrompt(relevantMemories);
 
-	const systemPrompt = `You are a helpful AI chef assistant that helps users with meal planning, recipe suggestions, and cooking advice.${memoryContext}
-
-CRITICAL - MEMORY MANAGEMENT (ALWAYS CHECK THIS FIRST):
-You can and MUST call multiple tools in the same response when appropriate. Memory saving is INDEPENDENT from other actions.
-
-ALWAYS scan EVERY user message for food preferences/restrictions:
-- Food dislikes: "I don't like X", "I hate X", "not a fan of X", "nie lubię X"
-- Allergies: "I'm allergic to X", "X gives me a reaction", "jestem uczulony na X"  
-- Dietary preferences: "I prefer X", "I love X", "preferuję X"
-- Dietary restrictions: "I avoid X", "I don't eat X", "I can't have X"
-
-MANDATORY WORKFLOW - When you detect ANY preference:
-1. Call proposeMemory tool IMMEDIATELY (even if you're also generating a recipe or using other tools)
-2. Continue with other actions (generateRecipe, respond with text, etc.)
-
-EXAMPLES OF MULTI-TOOL USAGE:
-- User asks for recipe, then says "I don't like kidney beans":
-  * Call proposeMemory(content: "User dislikes kidney beans", context: "Food preference")  
-  * Call generateRecipe without kidney beans
-  * Both tools are called in the SAME response
-  
-- User: "I'm allergic to peanuts, can you suggest a snack?":
-  * Call proposeMemory(content: "User is allergic to peanuts", context: "CRITICAL - Allergy")
-  * Respond with text suggestions
-
-YOU CAN CALL TOOLS MULTIPLE TIMES. proposeMemory does NOT prevent you from calling other tools. The user will see a memory card they can accept/dismiss.`;
+	const systemPrompt = getSystemPrompt(memoryContext);
 
 	const result = streamText({
 		model: google('gemini-2.5-flash-lite'),
 		system: systemPrompt,
-		messages: convertToModelMessages(allMessages),
+		messages: convertToModelMessages(messages),
+		experimental_transform: smoothStream({ chunking: 'word' }),
 		stopWhen: stepCountIs(5),
 		tools: {
-			recipes: createRecipesTool(locals),
+			recipes: createRecipesTool(user),
 			generateRecipe: createGenerateRecipeTool(userId),
-			confirmAddRecipe: createConfirmAddRecipeTool(locals),
+			confirmAddRecipe: createConfirmAddRecipeTool(user),
 			proposeMemory: createProposeMemoryTool(),
 			confirmSaveMemory: createConfirmSaveMemoryTool(userId)
 		}
 	});
 
 	return result.toUIMessageStreamResponse({
-		originalMessages: allMessages,
-		onFinish: async ({ messages: finalMessages }) => {
-			const newMessages = finalMessages.slice(allMessages.length);
-
-			for (const message of newMessages) {
-				await saveMessage(currentChatId, message.role, message.parts);
-			}
-
-			if (isNewChat && lastUserMessage) {
-				const title = await generateTitleFromMessage(lastUserMessage);
-				await updateChatTitle(currentChatId, title, userId);
-			}
+		originalMessages: messages,
+		generateMessageId: () => generateId(),
+		onFinish: async ({ responseMessage }) => {
+			if (!user) return;
+			await saveMessages({
+				messages: [
+					{
+						id: responseMessage.id,
+						chatId: id,
+						role: responseMessage.role,
+						parts: responseMessage.parts,
+						createdAt: new Date()
+					}
+				]
+			});
 		}
 	});
 }
@@ -129,7 +149,7 @@ export async function DELETE({ locals, request }) {
 
 	const { id } = await request.json();
 
-	const deleted = await deleteChat(id, locals.user.id);
+	const deleted = await deleteChatById({ id });
 
 	if (!deleted) {
 		return json({ error: 'Chat not found' }, { status: 404 });

@@ -1,31 +1,29 @@
-import { GEMINI_API_KEY } from '$env/static/private';
-import { createGoogleGenerativeAI } from '@ai-sdk/google';
+import { AIInternalError, type AIError } from '$lib/errors/ai';
+import { google } from '$lib/modules/chef/google';
 import { generateText, type UIMessage } from 'ai';
+import { fromPromise, ok, safeTry, type ResultAsync } from 'neverthrow';
 
-const google = createGoogleGenerativeAI({
-	apiKey: GEMINI_API_KEY
-});
+export function generateTitleFromUserMessage({
+	message
+}: {
+	message: UIMessage;
+}): ResultAsync<string, AIError> {
+	return safeTry(async function* () {
+		const result = yield* fromPromise(
+			generateText({
+				model: google('gemini-2.5-flash-lite'),
+				system: `\n
+          - you will generate a short title based on the first message a user begins a conversation with
+          - ensure it is not more than 80 characters long
+          - the title should be a summary of the user's message
+          - do not use quotes or colons`,
+				prompt: JSON.stringify(message)
+			}),
+			(e) => new AIInternalError({ cause: e })
+		);
 
-export async function generateTitleFromMessage(message: UIMessage): Promise<string> {
-	const textPart = message.parts.find((p) => p.type === 'text');
-	if (!textPart || !('text' in textPart)) {
-		return 'New Chat';
-	}
+		console.log('result', result.text);
 
-	const userMessage = textPart.text;
-
-	try {
-		const { text } = await generateText({
-			model: google('gemini-2.5-flash-lite'),
-			prompt: `Generate a concise, descriptive title (max 6 words) for a chat conversation that starts with this message: "${userMessage}"
-
-Return only the title, nothing else.`
-		});
-
-		return text.trim() || 'New Chat';
-	} catch (error) {
-		console.error('Failed to generate chat title:', error);
-		const fallback = userMessage.length > 50 ? `${userMessage.slice(0, 47)}...` : userMessage;
-		return fallback;
-	}
+		return ok(result.text);
+	});
 }
