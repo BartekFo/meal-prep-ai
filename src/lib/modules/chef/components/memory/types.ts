@@ -8,3 +8,8 @@ export type Memory = {
 		chatId?: string;
 	};
 };
+
+export type ProposedMemoryOutput = {
+	content: string;
+	context: string;
+};

@@ -5,9 +5,11 @@
 		ChatHistorySidebar,
 		ChatInput,
 		ChatMessage,
+		ProposedMemoryCard,
 		SuggestedPrompts,
 		ThinkingIndicator
 	} from '$lib/modules/chef/components';
+	import type { ProposedMemoryOutput } from '$lib/modules/chef/components/memory/types';
 	import type { RecipeToolOutput } from '$lib/modules/recipes/chat/types';
 	import GeneratedRecipeCard from '$lib/modules/recipes/components/generated-recipe-card.svelte';
 	import { Chat } from '@ai-sdk/svelte';
@@ -56,6 +58,12 @@
 			text: `Please add the recipe "${recipe.title}" to my recipes`
 		});
 	}
+
+	async function handleConfirmMemory(memory: ProposedMemoryOutput): Promise<void> {
+		await chat.sendMessage({
+			text: `Please save this memory: "${memory.content}"`
+		});
+	}
 </script>
 
 <svelte:head>
@@ -94,6 +102,14 @@
 										/>
 									{:else if part.state === 'input-streaming' || part.state === 'input-available'}
 										<div class="text-sm text-muted-foreground">Generating recipe...</div>
+									{/if}
+								{:else if part.type === 'tool-proposeMemory'}
+									{#if part.state === 'output-available' && part.output}
+										<ProposedMemoryCard
+											memory={part.output as ProposedMemoryOutput}
+											toolState={part.state}
+											onConfirm={handleConfirmMemory}
+										/>
 									{/if}
 								{/if}
 							{/each}

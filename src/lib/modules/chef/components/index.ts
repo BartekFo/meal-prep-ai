@@ -5,3 +5,4 @@ export { default as ChatMessage } from './chat-message.svelte';
 export { MemoryDrawer } from './memory';
 export { default as SuggestedPrompts } from './suggested-prompts.svelte';
 export { default as ThinkingIndicator } from './thinking-indicator.svelte';
+export { default as ProposedMemoryCard } from './memory/proposed-memory-card.svelte';

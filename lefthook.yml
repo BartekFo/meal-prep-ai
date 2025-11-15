@@ -1,6 +1,6 @@
 pre-commit:
   jobs:
-    - run: bun lint
+    - run: bun lint:fix
       glob:
         - '*.js'
         - '*.jsx'
