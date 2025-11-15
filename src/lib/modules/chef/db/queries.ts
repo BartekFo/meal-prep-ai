@@ -2,7 +2,7 @@ import { DbInternalError, type DbError } from '$lib/errors/db';
 import { db } from '$lib/server/db';
 import { chat, message } from '$lib/server/db/schema';
 import { unwrapSingleQueryResult } from '$lib/utils/unwrapSingleQueryResult';
-import { and, asc, eq } from 'drizzle-orm';
+import { and, asc, desc, eq } from 'drizzle-orm';
 import { fromPromise, ok, safeTry, type ResultAsync } from 'neverthrow';
 
 export type Chat = typeof chat.$inferSelect;
@@ -28,6 +28,13 @@ export function getChatById({
 
 		return unwrapSingleQueryResult(chatResult, id, 'Chat');
 	});
+}
+
+export function getChatsByUserId({ id }: { id: string }): ResultAsync<Chat[], DbError> {
+	return fromPromise(
+		db.select().from(chat).where(eq(chat.userId, id)).orderBy(desc(chat.createdAt)),
+		(e) => new DbInternalError({ cause: e })
+	);
 }
 
 export function getMessagesByChatId({ id }: { id: string }): ResultAsync<Message[], DbError> {

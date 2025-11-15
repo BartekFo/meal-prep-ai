@@ -15,15 +15,12 @@ export class ChatHistory {
 		return this.#revalidating;
 	}
 
-	constructor(chatsPromise: Promise<Chat[]>) {
+	constructor(chats: Chat[]) {
 		this.#loading = true;
 		this.#revalidating = true;
-		chatsPromise
-			.then((chats) => (this.chats = chats))
-			.finally(() => {
-				this.#loading = false;
-				this.#revalidating = false;
-			});
+		this.chats = chats;
+		this.#loading = false;
+		this.#revalidating = false;
 	}
 
 	getChatDetails = (chatId: string) => {

@@ -15,6 +15,7 @@
 	import { Chat, type UIMessage } from '@ai-sdk/svelte';
 	import { untrack } from 'svelte';
 	import type { Chat as DbChat } from '../db/queries';
+	import { ChatHistory } from '$lib/hooks/chat-history.svelte';
 
 	type Props = {
 		chat: DbChat | undefined;
@@ -23,12 +24,16 @@
 	};
 
 	const { chat, initialMessages, isMobile = false }: Props = $props();
+	const chatHistory = ChatHistory.fromContext();
 
 	const chatClient = $derived(
 		new Chat({
 			...(chat ? { id: chat.id } : {}),
 			generateId: crypto.randomUUID.bind(crypto),
-			messages: untrack(() => initialMessages)
+			messages: untrack(() => initialMessages),
+			onFinish: async () => {
+				await chatHistory.refetch();
+			}
 		})
 	);
 

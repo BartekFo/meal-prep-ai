@@ -4,7 +4,7 @@
 	import { page } from '$app/state';
 	import { Button } from '$lib/components/ui/button';
 	import * as Sheet from '$lib/components/ui/sheet';
-	import { ChatHistory } from '$lib/hooks/chat-history';
+	import { ChatHistory } from '$lib/hooks/chat-history.svelte';
 	import { cn } from '$lib/utils';
 	import { MessageSquare, Plus, Trash2 } from '@lucide/svelte';
 	import { isToday, isYesterday, subMonths, subWeeks } from 'date-fns';
