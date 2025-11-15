@@ -49,21 +49,15 @@ export async function POST({ request, locals: { user } }) {
 		await safeTry(async function* () {
 			let chat: Chat;
 			const chatResult = await getChatById({ id, userId });
-			console.log('chatResult', chatResult.isErr());
 			if (chatResult.isErr()) {
 				if (chatResult.error._tag !== 'DbEntityNotFoundError') {
-					console.log('chatResult.error is not DbEntityNotFoundError');
 					return chatResult;
 				}
 				const title = yield* generateTitleFromUserMessage({ message: userMessage });
-				console.log('title', title);
 				chat = yield* saveChat({ id, userId: user.id, title });
-				console.log('chat', chat);
 			} else {
 				chat = chatResult.value;
 			}
-
-			console.log('chat', chat);
 
 			if (chat.userId !== user.id) {
 				error(403, 'Forbidden');
@@ -80,8 +74,6 @@ export async function POST({ request, locals: { user } }) {
 					}
 				]
 			});
-
-			console.log('messages saved');
 
 			return ok(undefined);
 		}).orElse(() => error(500, 'An error occurred while processing your request'));

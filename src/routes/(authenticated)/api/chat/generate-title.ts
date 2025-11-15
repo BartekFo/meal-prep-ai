@@ -22,8 +22,6 @@ export function generateTitleFromUserMessage({
 			(e) => new AIInternalError({ cause: e })
 		);
 
-		console.log('result', result.text);
-
 		return ok(result.text);
 	});
 }
