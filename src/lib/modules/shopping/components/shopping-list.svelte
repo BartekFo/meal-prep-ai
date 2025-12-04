@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
+	import type { ShoppingItem as ShoppingItemType } from '$lib/server/db/schema';
 	import { AlertCircle } from '@lucide/svelte';
 	import ShoppingItem from './shopping-item.svelte';
-	import type { ShoppingItem as ShoppingItemType } from '$lib/server/db/schema';
 
 	interface Props {
 		items: ShoppingItemType[];
@@ -11,7 +11,12 @@
 		isLoading?: boolean;
 	}
 
-	const { items, onDelete = undefined, onPurchase = undefined, isLoading = false }: Props = $props();
+	const {
+		items,
+		onDelete = undefined,
+		onPurchase = undefined,
+		isLoading = false
+	}: Props = $props();
 </script>
 
 <Card>

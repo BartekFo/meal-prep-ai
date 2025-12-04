@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import { Checkbox } from '$lib/components/ui/checkbox';
-	import { Trash2 } from '@lucide/svelte';
 	import type { ShoppingItem } from '$lib/server/db/schema';
+	import { Trash2 } from '@lucide/svelte';
 
 	interface Props {
 		item: ShoppingItem;

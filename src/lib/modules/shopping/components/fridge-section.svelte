@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
-	import { AlertCircle, Trash2 } from '@lucide/svelte';
 	import type { ShoppingItem } from '$lib/server/db/schema';
+	import { AlertCircle, Trash2 } from '@lucide/svelte';
 
 	interface FridgeItem extends ShoppingItem {
 		expiryStatus?: 'fresh' | 'expiring' | 'expired';
@@ -61,7 +61,9 @@
 			<div class="flex flex-col items-center justify-center py-8 text-center">
 				<AlertCircle class="mb-3 h-8 w-8 text-gray-400" />
 				<p class="text-gray-600">Your fridge is empty</p>
-				<p class="mt-1 text-sm text-gray-500">Check off items from your shopping list to add them</p>
+				<p class="mt-1 text-sm text-gray-500">
+					Check off items from your shopping list to add them
+				</p>
 			</div>
 		{:else}
 			<div class="space-y-2">

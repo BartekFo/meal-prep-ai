@@ -29,7 +29,7 @@
 	}
 </script>
 
-<Dialog {open} onOpenChange={onOpenChange}>
+<Dialog {open} {onOpenChange}>
 	<DialogContent>
 		<DialogHeader>
 			<DialogTitle>Item Purchased</DialogTitle>

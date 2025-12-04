@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
+	import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { Select, SelectContent, SelectItem, SelectTrigger } from '$lib/components/ui/select';
-	import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
 	import { Plus } from '@lucide/svelte';
 
 	interface Props {
@@ -13,11 +13,11 @@
 
 	const { onAddItem, isLoading = false }: Props = $props();
 
-	const units = ['szt', 'kg', 'g', 'l', 'ml', 'porcja', 'opakowanie', 'litr'];
+	const units = ['piece', 'kg', 'g', 'l', 'ml', 'serving', 'package', 'liter'];
 
 	let name = $state('');
 	let quantity = $state(1);
-	let unit = $state('szt');
+	let unit = $state('piece');
 
 	function handleSubmit(e: SubmitEvent) {
 		e.preventDefault();
@@ -31,7 +31,7 @@
 
 		name = '';
 		quantity = 1;
-		unit = 'szt';
+		unit = 'piece';
 	}
 
 	function handleKeydown(e: KeyboardEvent) {

@@ -1,9 +1,9 @@
 <script lang="ts">
 	import {
-		ShoppingList,
 		AddItemForm,
 		FridgeSection,
-		PurchaseDialog
+		PurchaseDialog,
+		ShoppingList
 	} from '$lib/modules/shopping/components';
 	import { ChefHat } from '@lucide/svelte';
 	import type { PageData } from './$types';
@@ -126,5 +126,10 @@
 		</div>
 	</div>
 
-	<PurchaseDialog open={showPurchaseDialog} onOpenChange={(open) => (showPurchaseDialog = open)} {isLoading} onConfirm={handleConfirmPurchase} />
+	<PurchaseDialog
+		open={showPurchaseDialog}
+		onOpenChange={(open) => (showPurchaseDialog = open)}
+		{isLoading}
+		onConfirm={handleConfirmPurchase}
+	/>
 </div>
