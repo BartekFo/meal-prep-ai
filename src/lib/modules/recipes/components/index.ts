@@ -1,4 +1,5 @@
 export type { RecipeToolOutput } from './generated-recipe-card.svelte';
+export { default as AddToShoppingDialog } from './add-to-shopping-dialog.svelte';
 export { default as GeneratedRecipeCard } from './generated-recipe-card.svelte';
 export { default as NutritionItem } from './nutrition-item.svelte';
 export { default as RecipeCard } from './recipe-card.svelte';

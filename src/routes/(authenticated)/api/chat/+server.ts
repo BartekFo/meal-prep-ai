@@ -22,6 +22,7 @@ import { generateTitleFromUserMessage } from './generate-title';
 import { getSystemPrompt } from './prompt';
 import { createConfirmAddRecipeTool } from './tools/confirm-add-recipe-tool';
 import { createConfirmSaveMemoryTool } from './tools/confirm-save-memory-tool';
+import { createFridgeContentsTool } from './tools/fridge-contents-tool';
 import { createGenerateRecipeTool } from './tools/generate-recipe-tool';
 import { createProposeMemoryTool } from './tools/propose-memory-tool';
 import { createRecipesTool } from './tools/recipes-tool';
@@ -110,7 +111,8 @@ export async function POST({ request, locals: { user } }) {
 			generateRecipe: createGenerateRecipeTool(userId),
 			confirmAddRecipe: createConfirmAddRecipeTool(user),
 			proposeMemory: createProposeMemoryTool(),
-			confirmSaveMemory: createConfirmSaveMemoryTool(userId)
+			confirmSaveMemory: createConfirmSaveMemoryTool(userId),
+			fridgeContents: createFridgeContentsTool(userId)
 		}
 	});
 

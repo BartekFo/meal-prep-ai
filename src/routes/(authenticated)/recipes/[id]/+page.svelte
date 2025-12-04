@@ -20,12 +20,14 @@
 		RecipeNutrition,
 		RecipeStatCard
 	} from '$lib/modules/recipes';
+	import { AddToShoppingDialog } from '$lib/modules/recipes/components';
 	import type { PageData } from './$types';
 
 	const { data }: { data: PageData } = $props();
 
 	let dialogOpen = $state(false);
 	let isDeleting = $state(false);
+	let isAddingToShopping = $state(false);
 
 	const recipe = $derived(data.recipe);
 	let currentPortions = $state(data.recipe.servings);
@@ -47,6 +49,29 @@
 			currentPortions -= 1;
 		}
 	}
+
+	async function handleAddToShopping(ingredients: string[]) {
+		isAddingToShopping = true;
+		try {
+			const promises = ingredients.map((ingredient) =>
+				fetch('/api/shopping', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({
+						name: ingredient,
+						quantity: 1,
+						unit: 'szt'
+					})
+				})
+			);
+
+			await Promise.all(promises);
+		} catch (error) {
+			console.error('Error adding to shopping list:', error);
+		} finally {
+			isAddingToShopping = false;
+		}
+	}
 </script>
 
 <div class="container mx-auto max-w-5xl p-6">
@@ -57,6 +82,11 @@
 		</Button>
 		<div class="flex gap-2">
 			<Button href="/recipes/{data.recipe.id}/edit">Edit Recipe</Button>
+			<AddToShoppingDialog
+				ingredients={recipe.ingredients}
+				isLoading={isAddingToShopping}
+				onAdd={handleAddToShopping}
+			/>
 			<Button variant="outline" size="sm" onclick={() => window.print()}>
 				<Printer class="mr-2 h-4 w-4" />
 				Print

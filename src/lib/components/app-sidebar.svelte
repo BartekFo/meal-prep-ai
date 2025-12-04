@@ -23,6 +23,10 @@
 					{
 						title: 'Recipes',
 						url: routes.recipes.base
+					},
+					{
+						title: 'Shopping',
+						url: routes.shopping
 					}
 				]
 			}

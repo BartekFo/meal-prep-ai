@@ -194,3 +194,25 @@ export const vote = sqliteTable(
 	},
 	(table) => [primaryKey({ columns: [table.chatId, table.messageId] })]
 );
+
+export const shoppingItems = sqliteTable('shopping_items', {
+	id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+	userId: text('user_id')
+		.notNull()
+		.references(() => user.id, { onDelete: 'cascade' }),
+	name: text('name').notNull(),
+	quantity: integer('quantity').notNull().default(1),
+	unit: text('unit').notNull().default('szt'),
+	status: text('status', {
+		enum: ['shopping', 'fridge']
+	})
+		.notNull()
+		.default('shopping'),
+	purchasedAt: integer('purchased_at', { mode: 'timestamp' }),
+	expiryDate: integer('expiry_date', { mode: 'timestamp' }),
+	createdAt: integer('created_at', { mode: 'timestamp' })
+		.$defaultFn(() => new Date())
+		.notNull()
+});
+
+export type ShoppingItem = InferSelectModel<typeof shoppingItems>;

@@ -5,6 +5,7 @@ export const routes = {
 		base: '/recipes',
 		new: '/recipes/new'
 	},
+	shopping: '/shopping',
 	onboarding: {
 		base: '/onboarding',
 		ai: '/onboarding/ai',
