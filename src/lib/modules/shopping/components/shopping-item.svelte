@@ -6,12 +6,12 @@
 
 	interface Props {
 		item: ShoppingItem;
-		onDelete?: (id: number) => void;
-		onPurchase?: (id: number) => void;
+		onDelete?: ((id: number) => void) | undefined;
+		onPurchase?: ((id: number) => void) | undefined;
 		isLoading?: boolean;
 	}
 
-	const { item, onDelete, onPurchase, isLoading = false }: Props = $props();
+	const { item, onDelete = undefined, onPurchase = undefined, isLoading = false }: Props = $props();
 
 	let isChecked = $state(false);
 	let isDeleting = $state(false);
@@ -20,9 +20,9 @@
 <div class="flex items-center gap-3 rounded-lg border bg-white p-3 hover:bg-gray-50">
 	<Checkbox
 		checked={isChecked}
-		onchange={(checked) => {
-			isChecked = checked;
-			if (checked) {
+		onchange={(e) => {
+			isChecked = (e.target as HTMLInputElement).checked;
+			if (isChecked) {
 				onPurchase?.(item.id);
 			}
 		}}

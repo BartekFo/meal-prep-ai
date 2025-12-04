@@ -17,8 +17,8 @@
 	const { items, onRemove, isLoading = false }: Props = $props();
 
 	function formatDate(date: Date | null | undefined): string {
-		if (!date) return 'Bez daty';
-		return new Date(date).toLocaleDateString('pl-PL', {
+		if (!date) return 'No date';
+		return new Date(date).toLocaleDateString('en-US', {
 			year: 'numeric',
 			month: 'long',
 			day: 'numeric'
@@ -41,32 +41,34 @@
 	function getStatusLabel(status?: string): string {
 		switch (status) {
 			case 'fresh':
-				return 'Świeży';
+				return 'Fresh';
 			case 'expiring':
-				return 'Wkrótce przeterminuje się';
+				return 'Expiring soon';
 			case 'expired':
-				return 'Przeterminowany';
+				return 'Expired';
 			default:
-				return 'Bez daty';
+				return 'No date';
 		}
 	}
 </script>
 
 <Card>
 	<CardHeader>
-		<CardTitle>Moja lodówka</CardTitle>
+		<CardTitle>My Fridge</CardTitle>
 	</CardHeader>
 	<CardContent>
 		{#if items.length === 0}
 			<div class="flex flex-col items-center justify-center py-8 text-center">
 				<AlertCircle class="mb-3 h-8 w-8 text-gray-400" />
-				<p class="text-gray-600">Twoja lodówka jest pusta</p>
-				<p class="mt-1 text-sm text-gray-500">Zaznacz produkty z listy zakupów aby je dodać</p>
+				<p class="text-gray-600">Your fridge is empty</p>
+				<p class="mt-1 text-sm text-gray-500">Check off items from your shopping list to add them</p>
 			</div>
 		{:else}
 			<div class="space-y-2">
 				{#each items as item (item.id)}
-					<div class={`flex items-start justify-between rounded-lg border p-4 ${getStatusColor(item.expiryStatus)}`}>
+					<div
+						class={`flex items-start justify-between rounded-lg border p-4 ${getStatusColor(item.expiryStatus)}`}
+					>
 						<div class="flex-1 min-w-0">
 							<p class="font-medium">{item.name}</p>
 							<p class="text-sm text-gray-600">
@@ -74,15 +76,17 @@
 								{item.unit}
 							</p>
 							<p class="mt-1 text-xs text-gray-600">
-								Ważny do: {formatDate(item.expiryDate)}
+								Expires: {formatDate(item.expiryDate)}
 							</p>
-							<p class={`mt-1 text-xs font-medium ${
-								item.expiryStatus === 'expired'
-									? 'text-red-700'
-									: item.expiryStatus === 'expiring'
-										? 'text-yellow-700'
-										: 'text-green-700'
-							}`}>
+							<p
+								class={`mt-1 text-xs font-medium ${
+									item.expiryStatus === 'expired'
+										? 'text-red-700'
+										: item.expiryStatus === 'expiring'
+											? 'text-yellow-700'
+											: 'text-green-700'
+								}`}
+							>
 								{getStatusLabel(item.expiryStatus)}
 							</p>
 						</div>

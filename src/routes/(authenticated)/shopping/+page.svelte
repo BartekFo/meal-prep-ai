@@ -1,5 +1,10 @@
 <script lang="ts">
-	import { ShoppingList, AddItemForm, FridgeSection, PurchaseDialog } from '$lib/modules/shopping/components';
+	import {
+		ShoppingList,
+		AddItemForm,
+		FridgeSection,
+		PurchaseDialog
+	} from '$lib/modules/shopping/components';
 	import { ChefHat } from '@lucide/svelte';
 	import type { PageData } from './$types';
 
@@ -100,11 +105,9 @@
 	<div class="mb-8">
 		<h1 class="mb-2 flex items-center gap-2 text-3xl font-bold">
 			<ChefHat class="h-8 w-8" />
-			Moje zakupy
+			My Shopping
 		</h1>
-		<p class="text-gray-600">
-			Zarządzaj listą zakupów i śledź zawartość swojej lodówki
-		</p>
+		<p class="text-gray-600">Manage your shopping list and track your fridge contents</p>
 	</div>
 
 	<div class="grid gap-8 lg:grid-cols-3">
@@ -119,17 +122,9 @@
 		</div>
 
 		<div>
-			<FridgeSection
-				items={fridgeItems}
-				onRemove={handleRemoveFromFridge}
-				{isLoading}
-			/>
+			<FridgeSection items={fridgeItems} onRemove={handleRemoveFromFridge} {isLoading} />
 		</div>
 	</div>
 
-	<PurchaseDialog
-		bind:open={showPurchaseDialog}
-		{isLoading}
-		onConfirm={handleConfirmPurchase}
-	/>
+	<PurchaseDialog open={showPurchaseDialog} onOpenChange={(open) => (showPurchaseDialog = open)} {isLoading} onConfirm={handleConfirmPurchase} />
 </div>
