@@ -14,14 +14,14 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		error(400, 'Invalid recipe ID');
 	}
 
-	const recipe = await getRecipeById(recipeId, locals.user.id);
+	const recipeResult = await getRecipeById(recipeId, locals.user.id);
 
-	if (!recipe) {
+	if (recipeResult.isErr()) {
 		error(404, 'Recipe not found');
 	}
 
 	return {
-		recipe
+		recipe: recipeResult.value
 	};
 };
 
