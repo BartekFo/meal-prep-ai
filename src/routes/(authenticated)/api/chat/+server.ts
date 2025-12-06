@@ -93,9 +93,10 @@ export async function POST({ request, locals: { user } }) {
 		await seedInitialMemories(user);
 	}
 
-	const relevantMemories = userMessageText
+	const relevantMemoriesResult = userMessageText
 		? await getRelevantMemories(userId, userMessageText, 5)
-		: [];
+		: ok([]);
+	const relevantMemories = relevantMemoriesResult.isOk() ? relevantMemoriesResult.value : [];
 	const memoryContext = formatMemoriesForPrompt(relevantMemories);
 
 	const systemPrompt = getSystemPrompt(memoryContext);
