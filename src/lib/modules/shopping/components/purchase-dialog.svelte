@@ -16,9 +16,10 @@
 		onOpenChange: (open: boolean) => void;
 		onConfirm?: (expiryDate?: Date) => void;
 		isLoading?: boolean;
+		itemCount?: number;
 	}
 
-	const { open = false, onOpenChange, onConfirm, isLoading = false }: Props = $props();
+	const { open = false, onOpenChange, onConfirm, isLoading = false, itemCount = 1 }: Props = $props();
 
 	let expiryDate = $state('');
 
@@ -32,9 +33,11 @@
 <Dialog {open} {onOpenChange}>
 	<DialogContent>
 		<DialogHeader>
-			<DialogTitle>Item Purchased</DialogTitle>
+			<DialogTitle>
+				{itemCount === 1 ? 'Item Purchased' : `${itemCount} Items Purchased`}
+			</DialogTitle>
 			<DialogDescription>
-				Set the expiry date for this item (optional). It will be added to your fridge.
+				Set the expiry date for {itemCount === 1 ? 'this item' : 'these items'} (optional). {itemCount === 1 ? 'It' : 'They'} will be added to your fridge.
 			</DialogDescription>
 		</DialogHeader>
 

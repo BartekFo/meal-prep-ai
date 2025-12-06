@@ -74,28 +74,26 @@ export const actions: Actions = {
 		}
 	},
 
-	purchaseItem: async ({ locals, request }) => {
+	purchaseItems: async ({ locals, request }) => {
 		if (!locals.user) {
 			return fail(401, { error: 'Unauthorized' });
 		}
 
 		const formData = await request.formData();
-		const idStr = formData.get('id')?.toString();
-		const expiryDateStr = formData.get('expiryDate')?.toString();
+		const ids = formData.getAll('ids[]').map((id) => parseInt(id.toString()));
 
-		if (!idStr) {
-			return fail(400, { error: 'Missing item id' });
+		if (ids.length === 0) {
+			return fail(400, { error: 'No items selected' });
 		}
 
-		const id = parseInt(idStr);
-		const expiryDate = expiryDateStr ? new Date(expiryDateStr) : undefined;
-
 		try {
-			await markAsPurchased(id, expiryDate);
+			for (const id of ids) {
+				await markAsPurchased(id);
+			}
 			return { success: true };
 		} catch (error) {
-			console.error('Error marking as purchased:', error);
-			return fail(500, { error: 'Failed to mark as purchased' });
+			console.error('Error marking items as purchased:', error);
+			return fail(500, { error: 'Failed to mark items as purchased' });
 		}
 	},
 

@@ -8,29 +8,36 @@
 
 	interface Props {
 		item: ShoppingItem;
-		onPurchase?: ((id: number) => void) | undefined;
+		selected?: boolean;
+		onSelectionChange?: ((id: number, selected: boolean) => void) | undefined;
 	}
 
-	const { item, onPurchase = undefined }: Props = $props();
+	const { item, selected = false, onSelectionChange = undefined }: Props = $props();
 
-	let isChecked = $state(false);
 	let isDeleting = $state(false);
+	let checked = $state(selected);
+	let isUserChange = $state(false);
+
+	$effect(() => {
+		if (!isUserChange) {
+			checked = selected;
+		}
+		isUserChange = false;
+	});
+
+	$effect(() => {
+		if (checked !== selected) {
+			isUserChange = true;
+			onSelectionChange?.(item.id, checked);
+		}
+	});
 </script>
 
 <div class="flex items-center gap-3 rounded-lg border bg-white p-3 hover:bg-gray-50">
-	<Checkbox
-		checked={isChecked}
-		onchange={(e) => {
-			isChecked = (e.target as HTMLInputElement).checked;
-			if (isChecked) {
-				onPurchase?.(item.id);
-			}
-		}}
-		disabled={isDeleting}
-	/>
+	<Checkbox bind:checked disabled={isDeleting} />
 
 	<div class="flex-1 min-w-0">
-		<p class={`font-medium ${isChecked ? 'line-through text-gray-500' : ''}`}>
+		<p class={`font-medium ${checked ? 'line-through text-gray-500' : ''}`}>
 			{item.name}
 		</p>
 		<p class="text-sm text-gray-600">

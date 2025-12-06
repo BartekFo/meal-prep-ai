@@ -6,50 +6,11 @@
 	import type { ShoppingItem } from '$lib/server/db/schema';
 	import { AlertCircle, Trash2 } from '@lucide/svelte';
 
-	interface FridgeItem extends ShoppingItem {
-		expiryStatus?: 'fresh' | 'expiring' | 'expired';
-	}
-
 	interface Props {
-		items: FridgeItem[];
+		items: ShoppingItem[];
 	}
 
 	const { items }: Props = $props();
-
-	function formatDate(date: Date | null | undefined): string {
-		if (!date) return 'No date';
-		return new Date(date).toLocaleDateString('en-US', {
-			year: 'numeric',
-			month: 'long',
-			day: 'numeric'
-		});
-	}
-
-	function getStatusColor(status?: string): string {
-		switch (status) {
-			case 'fresh':
-				return 'bg-green-50 border-green-200';
-			case 'expiring':
-				return 'bg-yellow-50 border-yellow-200';
-			case 'expired':
-				return 'bg-red-50 border-red-200';
-			default:
-				return 'bg-gray-50 border-gray-200';
-		}
-	}
-
-	function getStatusLabel(status?: string): string {
-		switch (status) {
-			case 'fresh':
-				return 'Fresh';
-			case 'expiring':
-				return 'Expiring soon';
-			case 'expired':
-				return 'Expired';
-			default:
-				return 'No date';
-		}
-	}
 </script>
 
 <Card>
@@ -68,28 +29,12 @@
 		{:else}
 			<div class="space-y-2">
 				{#each items as item (item.id)}
-					<div
-						class={`flex items-start justify-between rounded-lg border p-4 ${getStatusColor(item.expiryStatus)}`}
-					>
+					<div class="flex items-start justify-between rounded-lg border bg-white p-4">
 						<div class="flex-1 min-w-0">
 							<p class="font-medium">{item.name}</p>
 							<p class="text-sm text-gray-600">
 								{item.quantity}
 								{item.unit}
-							</p>
-							<p class="mt-1 text-xs text-gray-600">
-								Expires: {formatDate(item.expiryDate)}
-							</p>
-							<p
-								class={`mt-1 text-xs font-medium ${
-									item.expiryStatus === 'expired'
-										? 'text-red-700'
-										: item.expiryStatus === 'expiring'
-											? 'text-yellow-700'
-											: 'text-green-700'
-								}`}
-							>
-								{getStatusLabel(item.expiryStatus)}
 							</p>
 						</div>
 
