@@ -1,6 +1,6 @@
-import { error } from '@sveltejs/kit';
 import type { MealType } from '$lib/constants/meal-types';
 import { getAllRecipes } from '$lib/modules/recipes/db/queries';
+import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals, url }) => {
@@ -18,9 +18,13 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		...(sort && { sort })
 	};
 
-	const recipes = await getAllRecipes(locals.user.id, filters);
+	const recipesResult = await getAllRecipes(locals.user.id, filters);
+
+	if (recipesResult.isErr()) {
+		error(500, { message: recipesResult.error.message });
+	}
 
 	return {
-		recipes
+		recipes: recipesResult.value
 	};
 };
