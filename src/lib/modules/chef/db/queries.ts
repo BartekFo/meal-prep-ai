@@ -105,16 +105,18 @@ export function saveMessages({
 	});
 }
 
-export async function updateChatTitle(
+export function updateChatTitle(
 	chatId: string,
 	title: string,
 	userId: string
-): Promise<boolean> {
-	const result = await db
-		.update(chat)
-		.set({ title })
-		.where(and(eq(chat.id, chatId), eq(chat.userId, userId)))
-		.returning();
-
-	return result.length > 0;
+): ResultAsync<boolean, DbError> {
+	return fromPromise(
+		db
+			.update(chat)
+			.set({ title })
+			.where(and(eq(chat.id, chatId), eq(chat.userId, userId)))
+			.returning()
+			.then((result) => result.length > 0),
+		(e) => new DbInternalError({ cause: e })
+	);
 }

@@ -6,13 +6,14 @@ export async function GET({ locals }) {
 		return json({ error: 'Unauthorized' }, { status: 401 });
 	}
 
-	try {
-		const memories = await getAllMemories(locals.user.id);
-		return json({ memories });
-	} catch (error) {
-		console.error('Error fetching memories:', error);
+	const result = await getAllMemories(locals.user.id);
+
+	if (result.isErr()) {
+		console.error('Error fetching memories:', result.error);
 		return json({ error: 'Failed to fetch memories' }, { status: 500 });
 	}
+
+	return json({ memories: result.value });
 }
 
 export async function POST({ request, locals }) {
@@ -27,11 +28,16 @@ export async function POST({ request, locals }) {
 			return json({ error: 'Content is required' }, { status: 400 });
 		}
 
-		await saveMemory(locals.user.id, content.trim(), {
+		const result = await saveMemory(locals.user.id, content.trim(), {
 			...metadata,
 			source: 'manual',
 			type: 'user_added'
 		});
+
+		if (result.isErr()) {
+			console.error('Error adding memory:', result.error);
+			return json({ error: 'Failed to add memory' }, { status: 500 });
+		}
 
 		return json({ success: true });
 	} catch (error) {

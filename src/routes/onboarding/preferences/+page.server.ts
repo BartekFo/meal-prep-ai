@@ -35,10 +35,10 @@ export const actions: Actions = {
 
 		const result = await saveFoodPreferences(form.data, request);
 
-		if (!result.success) {
+		if (result.isErr()) {
 			return fail(400, {
 				form,
-				error: result.errors || 'Failed to save food preferences'
+				error: 'Failed to save food preferences'
 			});
 		}
 

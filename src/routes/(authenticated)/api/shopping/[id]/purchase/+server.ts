@@ -9,11 +9,14 @@ export const POST: RequestHandler = async ({ locals, params, request }) => {
 
 	try {
 		const id = parseInt(params.id);
-		const item = await getShoppingItem(id);
+		const itemResult = await getShoppingItem(id);
 
-		if (!item) {
+		if (itemResult.isErr()) {
+			console.error('Error fetching item:', itemResult.error);
 			return json({ error: 'Item not found' }, { status: 404 });
 		}
+
+		const item = itemResult.value;
 
 		if (item.userId !== locals.user.id) {
 			return json({ error: 'Forbidden' }, { status: 403 });
@@ -21,9 +24,14 @@ export const POST: RequestHandler = async ({ locals, params, request }) => {
 
 		const { expiryDate } = await request.json();
 
-		const updated = await markAsPurchased(id, expiryDate ? new Date(expiryDate) : undefined);
+		const updateResult = await markAsPurchased(id, expiryDate ? new Date(expiryDate) : undefined);
 
-		return json({ item: updated });
+		if (updateResult.isErr()) {
+			console.error('Error marking item as purchased:', updateResult.error);
+			return json({ error: 'Failed to mark as purchased' }, { status: 500 });
+		}
+
+		return json({ item: updateResult.value });
 	} catch (error) {
 		console.error('Error marking item as purchased:', error);
 		return json({ error: 'Failed to mark as purchased' }, { status: 500 });

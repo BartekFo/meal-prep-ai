@@ -7,23 +7,21 @@ export const GET: RequestHandler = async ({ locals, params }) => {
 		return json({ error: 'Unauthorized' }, { status: 401 });
 	}
 
-	try {
-		const id = parseInt(params.id);
-		const item = await getShoppingItem(id);
+	const id = parseInt(params.id);
+	const result = await getShoppingItem(id);
 
-		if (!item) {
-			return json({ error: 'Item not found' }, { status: 404 });
-		}
-
-		if (item.userId !== locals.user.id) {
-			return json({ error: 'Forbidden' }, { status: 403 });
-		}
-
-		return json({ item });
-	} catch (error) {
-		console.error('Error fetching item:', error);
-		return json({ error: 'Failed to fetch item' }, { status: 500 });
+	if (result.isErr()) {
+		console.error('Error fetching item:', result.error);
+		return json({ error: 'Item not found' }, { status: 404 });
 	}
+
+	const item = result.value;
+
+	if (item.userId !== locals.user.id) {
+		return json({ error: 'Forbidden' }, { status: 403 });
+	}
+
+	return json({ item });
 };
 
 export const PUT: RequestHandler = async ({ locals, params, request }) => {
@@ -33,20 +31,28 @@ export const PUT: RequestHandler = async ({ locals, params, request }) => {
 
 	try {
 		const id = parseInt(params.id);
-		const item = await getShoppingItem(id);
+		const itemResult = await getShoppingItem(id);
 
-		if (!item) {
+		if (itemResult.isErr()) {
+			console.error('Error fetching item:', itemResult.error);
 			return json({ error: 'Item not found' }, { status: 404 });
 		}
+
+		const item = itemResult.value;
 
 		if (item.userId !== locals.user.id) {
 			return json({ error: 'Forbidden' }, { status: 403 });
 		}
 
 		const updates = await request.json();
-		const updated = await updateShoppingItem(id, updates);
+		const updateResult = await updateShoppingItem(id, updates);
 
-		return json({ item: updated });
+		if (updateResult.isErr()) {
+			console.error('Error updating item:', updateResult.error);
+			return json({ error: 'Failed to update item' }, { status: 500 });
+		}
+
+		return json({ item: updateResult.value });
 	} catch (error) {
 		console.error('Error updating item:', error);
 		return json({ error: 'Failed to update item' }, { status: 500 });
@@ -60,17 +66,26 @@ export const DELETE: RequestHandler = async ({ locals, params }) => {
 
 	try {
 		const id = parseInt(params.id);
-		const item = await getShoppingItem(id);
+		const itemResult = await getShoppingItem(id);
 
-		if (!item) {
+		if (itemResult.isErr()) {
+			console.error('Error fetching item:', itemResult.error);
 			return json({ error: 'Item not found' }, { status: 404 });
 		}
+
+		const item = itemResult.value;
 
 		if (item.userId !== locals.user.id) {
 			return json({ error: 'Forbidden' }, { status: 403 });
 		}
 
-		await deleteShoppingItem(id);
+		const deleteResult = await deleteShoppingItem(id);
+
+		if (deleteResult.isErr()) {
+			console.error('Error deleting item:', deleteResult.error);
+			return json({ error: 'Failed to delete item' }, { status: 500 });
+		}
+
 		return json({ success: true });
 	} catch (error) {
 		console.error('Error deleting item:', error);

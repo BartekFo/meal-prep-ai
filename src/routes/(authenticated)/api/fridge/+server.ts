@@ -7,11 +7,12 @@ export const GET: RequestHandler = async ({ locals }) => {
 		return json({ error: 'Unauthorized' }, { status: 401 });
 	}
 
-	try {
-		const items = await getFridgeItemsWithExpiry(locals.user.id);
-		return json({ items });
-	} catch (error) {
-		console.error('Error fetching fridge items:', error);
+	const result = await getFridgeItemsWithExpiry(locals.user.id);
+
+	if (result.isErr()) {
+		console.error('Error fetching fridge items:', result.error);
 		return json({ error: 'Failed to fetch fridge items' }, { status: 500 });
 	}
+
+	return json({ items: result.value });
 };

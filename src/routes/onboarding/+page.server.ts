@@ -38,10 +38,10 @@ export const actions: Actions = {
 
 		const result = await saveEssentialInfo(form.data, request);
 
-		if (!result.success) {
+		if (result.isErr()) {
 			return fail(400, {
 				form,
-				error: result.errors || 'Failed to save essential information'
+				error: 'Failed to save essential information'
 			});
 		}
 

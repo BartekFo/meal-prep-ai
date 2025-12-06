@@ -13,23 +13,23 @@ export function createConfirmSaveMemoryTool(userId: string) {
 			"Confirm saving a proposed memory to the user's memory store. Call this tool when the user confirms they want to save the proposed memory.",
 		inputSchema: confirmSaveMemoryInputSchema,
 		execute: async ({ content, context }) => {
-			try {
-				await saveMemory(userId, content, {
-					context,
-					source: 'chat_ai_proposed',
-					type: 'ai_extracted'
-				});
+			const result = await saveMemory(userId, content, {
+				context,
+				source: 'chat_ai_proposed',
+				type: 'ai_extracted'
+			});
 
-				return {
-					success: true,
-					message: 'Memory saved successfully!'
-				};
-			} catch (error) {
+			if (result.isErr()) {
 				return {
 					success: false,
-					error: error instanceof Error ? error.message : 'Failed to save memory'
+					error: result.error.message || 'Failed to save memory'
 				};
 			}
+
+			return {
+				success: true,
+				message: 'Memory saved successfully!'
+			};
 		}
 	});
 }

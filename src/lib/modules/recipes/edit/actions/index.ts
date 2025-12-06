@@ -1,4 +1,5 @@
-import { ResultAsync } from 'neverthrow';
+import type { DbError } from '$lib/errors/db';
+import { err, type Result } from 'neverthrow';
 import { getRecipeById, type NewRecipe, updateRecipeRecord } from '../../db/queries';
 import { uploadRecipeImage } from '../../new/actions/upload-recipe-image';
 import type { IRecipeFormValues } from '../../new/schema';
@@ -9,16 +10,18 @@ type UpdateRecipeProps = {
 	userId: string;
 };
 
-export async function updateRecipe({ id, formData, userId }: UpdateRecipeProps) {
+export async function updateRecipe({
+	id,
+	formData,
+	userId
+}: UpdateRecipeProps): Promise<Result<NewRecipe, DbError | Error>> {
 	// Get existing recipe to preserve current image if no new image is uploaded
-	const existingRecipe = await getRecipeById(id, userId);
-	if (!existingRecipe) {
-		return ResultAsync.fromPromise(
-			Promise.reject(new Error('Recipe not found')),
-			() => new Error('Recipe not found')
-		);
+	const existingRecipeResult = await getRecipeById(id, userId);
+	if (existingRecipeResult.isErr()) {
+		return err(existingRecipeResult.error);
 	}
 
+	const existingRecipe = existingRecipeResult.value;
 	let imageUrl = existingRecipe.imageUrl; // Preserve existing image by default
 
 	// Only upload new image if one was provided
@@ -36,8 +39,10 @@ export async function updateRecipe({ id, formData, userId }: UpdateRecipeProps) 
 		userId
 	};
 
-	return ResultAsync.fromPromise(
-		updateRecipeRecord(id, recipe, userId),
-		() => new Error('Failed to update recipe')
-	);
+	const updateResult = await updateRecipeRecord(id, recipe, userId);
+	if (updateResult.isErr()) {
+		return err(updateResult.error);
+	}
+
+	return updateResult;
 }

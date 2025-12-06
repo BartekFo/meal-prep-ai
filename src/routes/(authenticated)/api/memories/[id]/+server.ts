@@ -12,16 +12,12 @@ export async function DELETE({ params, locals }) {
 		return json({ error: 'Memory ID is required' }, { status: 400 });
 	}
 
-	try {
-		const success = await deleteMemory(id);
+	const result = await deleteMemory(id);
 
-		if (!success) {
-			return json({ error: 'Failed to delete memory' }, { status: 500 });
-		}
-
-		return json({ success: true });
-	} catch (error) {
-		console.error('Error deleting memory:', error);
+	if (result.isErr()) {
+		console.error('Error deleting memory:', result.error);
 		return json({ error: 'Failed to delete memory' }, { status: 500 });
 	}
+
+	return json({ success: true });
 }

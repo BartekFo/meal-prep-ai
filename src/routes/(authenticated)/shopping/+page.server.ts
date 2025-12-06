@@ -17,11 +17,14 @@ export const load: PageServerLoad = async ({ locals }) => {
 		redirect(302, '/login');
 	}
 
-	const [shoppingItems, fridgeItems, form] = await Promise.all([
+	const [shoppingResult, fridgeResult, form] = await Promise.all([
 		getShoppingList(locals.user.id),
 		getFridgeItemsWithExpiry(locals.user.id),
 		superValidate(zod4(ShoppingItemFormSchema))
 	]);
+
+	const shoppingItems = shoppingResult.isOk() ? shoppingResult.value : [];
+	const fridgeItems = fridgeResult.isOk() ? fridgeResult.value : [];
 
 	return {
 		shoppingItems,
@@ -42,13 +45,19 @@ export const actions: Actions = {
 			return fail(400, { form });
 		}
 
-		try {
-			await addShoppingItem(locals.user.id, form.data.name, form.data.quantity, form.data.unit);
-			return { form };
-		} catch (error) {
-			console.error('Error adding item:', error);
+		const result = await addShoppingItem(
+			locals.user.id,
+			form.data.name,
+			form.data.quantity,
+			form.data.unit
+		);
+
+		if (result.isErr()) {
+			console.error('Error adding item:', result.error);
 			return fail(500, { form, error: 'Failed to add item' });
 		}
+
+		return { form };
 	},
 
 	deleteItem: async ({ locals, request }) => {
@@ -65,13 +74,14 @@ export const actions: Actions = {
 
 		const id = parseInt(idStr);
 
-		try {
-			await deleteShoppingItem(id);
-			return { success: true };
-		} catch (error) {
-			console.error('Error deleting item:', error);
+		const result = await deleteShoppingItem(id);
+
+		if (result.isErr()) {
+			console.error('Error deleting item:', result.error);
 			return fail(500, { error: 'Failed to delete item' });
 		}
+
+		return { success: true };
 	},
 
 	purchaseItems: async ({ locals, request }) => {
@@ -86,15 +96,15 @@ export const actions: Actions = {
 			return fail(400, { error: 'No items selected' });
 		}
 
-		try {
-			for (const id of ids) {
-				await markAsPurchased(id);
+		for (const id of ids) {
+			const result = await markAsPurchased(id);
+			if (result.isErr()) {
+				console.error('Error marking items as purchased:', result.error);
+				return fail(500, { error: 'Failed to mark items as purchased' });
 			}
-			return { success: true };
-		} catch (error) {
-			console.error('Error marking items as purchased:', error);
-			return fail(500, { error: 'Failed to mark items as purchased' });
 		}
+
+		return { success: true };
 	},
 
 	removeFromFridge: async ({ locals, request }) => {
@@ -111,12 +121,13 @@ export const actions: Actions = {
 
 		const id = parseInt(idStr);
 
-		try {
-			await deleteShoppingItem(id);
-			return { success: true };
-		} catch (error) {
-			console.error('Error removing from fridge:', error);
+		const result = await deleteShoppingItem(id);
+
+		if (result.isErr()) {
+			console.error('Error removing from fridge:', result.error);
 			return fail(500, { error: 'Failed to remove from fridge' });
 		}
+
+		return { success: true };
 	}
 };

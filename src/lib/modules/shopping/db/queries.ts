@@ -1,49 +1,74 @@
-import { eq, and, desc, asc } from 'drizzle-orm';
+import { DbInternalError, type DbError } from '$lib/errors/db';
 import { db } from '$lib/server/db';
-import { shoppingItems } from '$lib/server/db/schema';
 import type { ShoppingItem } from '$lib/server/db/schema';
+import { shoppingItems } from '$lib/server/db/schema';
+import { unwrapSingleQueryResult } from '$lib/utils/unwrapSingleQueryResult';
+import { and, asc, desc, eq } from 'drizzle-orm';
+import { fromPromise, ok, safeTry, type ResultAsync } from 'neverthrow';
 
-export async function addShoppingItem(
+export function addShoppingItem(
 	userId: string,
 	name: string,
 	quantity: number = 1,
 	unit: string = 'szt'
-): Promise<ShoppingItem> {
-	const result = await db
-		.insert(shoppingItems)
-		.values({
-			userId,
-			name,
-			quantity,
-			unit,
-			status: 'shopping'
-		})
-		.returning();
+): ResultAsync<ShoppingItem, DbError> {
+	return safeTry(async function* () {
+		const result = yield* fromPromise(
+			db
+				.insert(shoppingItems)
+				.values({
+					userId,
+					name,
+					quantity,
+					unit,
+					status: 'shopping'
+				})
+				.returning(),
+			(e) => new DbInternalError({ cause: e })
+		);
 
-	return result[0];
-}
-
-export async function getShoppingList(userId: string): Promise<ShoppingItem[]> {
-	return db.query.shoppingItems.findMany({
-		where: and(eq(shoppingItems.userId, userId), eq(shoppingItems.status, 'shopping')),
-		orderBy: asc(shoppingItems.createdAt)
+		return unwrapSingleQueryResult(result, `${userId}:${name}`, 'ShoppingItem');
 	});
 }
 
-export async function getFridgeItems(userId: string): Promise<ShoppingItem[]> {
-	return db.query.shoppingItems.findMany({
-		where: and(eq(shoppingItems.userId, userId), eq(shoppingItems.status, 'fridge')),
-		orderBy: desc(shoppingItems.purchasedAt)
+export function getShoppingList(userId: string): ResultAsync<ShoppingItem[], DbError> {
+	return fromPromise(
+		db.query.shoppingItems.findMany({
+			where: and(eq(shoppingItems.userId, userId), eq(shoppingItems.status, 'shopping')),
+			orderBy: asc(shoppingItems.createdAt)
+		}),
+		(e) => new DbInternalError({ cause: e })
+	);
+}
+
+export function getFridgeItems(userId: string): ResultAsync<ShoppingItem[], DbError> {
+	return fromPromise(
+		db.query.shoppingItems.findMany({
+			where: and(eq(shoppingItems.userId, userId), eq(shoppingItems.status, 'fridge')),
+			orderBy: desc(shoppingItems.purchasedAt)
+		}),
+		(e) => new DbInternalError({ cause: e })
+	);
+}
+
+export function getShoppingItem(id: number): ResultAsync<ShoppingItem, DbError> {
+	return safeTry(async function* () {
+		const result = yield* fromPromise(
+			db.query.shoppingItems.findFirst({
+				where: eq(shoppingItems.id, id)
+			}),
+			(e) => new DbInternalError({ cause: e })
+		);
+
+		return unwrapSingleQueryResult(
+			[result].filter((r) => r !== undefined),
+			String(id),
+			'ShoppingItem'
+		);
 	});
 }
 
-export async function getShoppingItem(id: number): Promise<ShoppingItem | null> {
-	return db.query.shoppingItems.findFirst({
-		where: eq(shoppingItems.id, id)
-	});
-}
-
-export async function updateShoppingItem(
+export function updateShoppingItem(
 	id: number,
 	updates: Partial<{
 		name: string;
@@ -52,51 +77,68 @@ export async function updateShoppingItem(
 		status: 'shopping' | 'fridge';
 		expiryDate: Date | null;
 	}>
-): Promise<ShoppingItem> {
-	const result = await db
-		.update(shoppingItems)
-		.set({
-			...updates,
-			...(updates.status === 'fridge' && !updates.purchasedAt && { purchasedAt: new Date() })
-		})
-		.where(eq(shoppingItems.id, id))
-		.returning();
+): ResultAsync<ShoppingItem, DbError> {
+	return safeTry(async function* () {
+		const result = yield* fromPromise(
+			db
+				.update(shoppingItems)
+				.set({
+					...updates,
+					...(updates.status === 'fridge' && { purchasedAt: new Date() })
+				})
+				.where(eq(shoppingItems.id, id))
+				.returning(),
+			(e) => new DbInternalError({ cause: e })
+		);
 
-	return result[0];
-}
-
-export async function deleteShoppingItem(id: number): Promise<void> {
-	await db.delete(shoppingItems).where(eq(shoppingItems.id, id));
-}
-
-export async function markAsPurchased(id: number, expiryDate?: Date): Promise<ShoppingItem> {
-	return updateShoppingItem(id, {
-		status: 'fridge',
-		expiryDate
+		return unwrapSingleQueryResult(result, String(id), 'ShoppingItem');
 	});
 }
 
-export async function removeFromFridge(id: number): Promise<void> {
-	await deleteShoppingItem(id);
+export function deleteShoppingItem(id: number): ResultAsync<void, DbError> {
+	return fromPromise(
+		db
+			.delete(shoppingItems)
+			.where(eq(shoppingItems.id, id))
+			.then(() => undefined),
+		(e) => new DbInternalError({ cause: e })
+	);
 }
 
-export async function getFridgeItemsWithExpiry(userId: string) {
-	const items = await getFridgeItems(userId);
+export function markAsPurchased(id: number, expiryDate?: Date): ResultAsync<ShoppingItem, DbError> {
+	return updateShoppingItem(id, {
+		status: 'fridge',
+		expiryDate: expiryDate ?? null
+	});
+}
 
-	const now = new Date();
-	const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+export function removeFromFridge(id: number): ResultAsync<void, DbError> {
+	return deleteShoppingItem(id);
+}
 
-	return items.map((item) => {
-		let status: 'fresh' | 'expiring' | 'expired' = 'fresh';
+export function getFridgeItemsWithExpiry(
+	userId: string
+): ResultAsync<Array<ShoppingItem & { expiryStatus: 'fresh' | 'expiring' | 'expired' }>, DbError> {
+	return safeTry(async function* () {
+		const items = yield* getFridgeItems(userId);
 
-		if (item.expiryDate) {
-			if (item.expiryDate < now) {
-				status = 'expired';
-			} else if (item.expiryDate <= sevenDaysFromNow) {
-				status = 'expiring';
+		const now = new Date();
+		const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+		const itemsWithStatus = items.map((item) => {
+			let status: 'fresh' | 'expiring' | 'expired' = 'fresh';
+
+			if (item.expiryDate) {
+				if (item.expiryDate < now) {
+					status = 'expired';
+				} else if (item.expiryDate <= sevenDaysFromNow) {
+					status = 'expiring';
+				}
 			}
-		}
 
-		return { ...item, expiryStatus: status };
+			return { ...item, expiryStatus: status };
+		});
+
+		return ok(itemsWithStatus);
 	});
 }

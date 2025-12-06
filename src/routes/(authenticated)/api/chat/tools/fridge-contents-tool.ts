@@ -7,34 +7,36 @@ export function createFridgeContentsTool(userId: string) {
 		description: 'Get contents of user fridge to suggest recipes based on available ingredients',
 		inputSchema: z.object({}).describe('No input parameters required'),
 		execute: async () => {
-			try {
-				const items = await getFridgeItemsWithExpiry(userId);
+			const result = await getFridgeItemsWithExpiry(userId);
 
-				const itemsList = items
-					.map((item) => {
-						let status = '';
-						if (item.expiryStatus === 'expired') {
-							status = ' (PRZETERMINOWANY)';
-						} else if (item.expiryStatus === 'expiring') {
-							status = ' (WKRÓTCE PRZETERMINUJE)';
-						}
-						return `${item.name} (${item.quantity} ${item.unit})${status}`;
-					})
-					.join('\n');
-
-				return {
-					items,
-					count: items.length,
-					itemsList: itemsList || 'Lodówka jest pusta'
-				};
-			} catch (error) {
-				console.error('Error fetching fridge contents:', error);
+			if (result.isErr()) {
+				console.error('Error fetching fridge contents:', result.error);
 				return {
 					items: [],
 					count: 0,
 					itemsList: 'Nie udało się pobrać zawartości lodówki'
 				};
 			}
+
+			const items = result.value;
+
+			const itemsList = items
+				.map((item) => {
+					let status = '';
+					if (item.expiryStatus === 'expired') {
+						status = ' (PRZETERMINOWANY)';
+					} else if (item.expiryStatus === 'expiring') {
+						status = ' (WKRÓTCE PRZETERMINUJE)';
+					}
+					return `${item.name} (${item.quantity} ${item.unit})${status}`;
+				})
+				.join('\n');
+
+			return {
+				items,
+				count: items.length,
+				itemsList: itemsList || 'Lodówka jest pusta'
+			};
 		}
 	});
 }

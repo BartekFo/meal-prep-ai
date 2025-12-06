@@ -1,5 +1,7 @@
 import { auth } from '$lib/auth';
 import type { DietaryType } from '../constants';
+import { fromPromise, type ResultAsync } from 'neverthrow';
+import { AuthInternalError, type AuthError } from '$lib/errors/auth';
 
 type FoodPreferencesData = {
 	dietaryType: DietaryType;
@@ -7,21 +9,25 @@ type FoodPreferencesData = {
 	preferredMealTypes: string[];
 };
 
-export async function saveFoodPreferences(data: FoodPreferencesData, request: Request) {
-	try {
-		const result = await auth.api.updateUser({
-			body: {
-				dietaryType: data.dietaryType,
-				dislikedFoods: data.dislikedFoods,
-				preferredMealTypes: data.preferredMealTypes,
-				onboardingStatus: 'completed',
-				onboardingCompletedAt: new Date()
-			},
-			headers: request.headers
-		});
+export function saveFoodPreferences(
+	data: FoodPreferencesData,
+	request: Request
+): ResultAsync<{ data: unknown }, AuthError> {
+	return fromPromise(
+		(async () => {
+			const result = await auth.api.updateUser({
+				body: {
+					dietaryType: data.dietaryType,
+					dislikedFoods: data.dislikedFoods,
+					preferredMealTypes: data.preferredMealTypes,
+					onboardingStatus: 'completed',
+					onboardingCompletedAt: new Date()
+				},
+				headers: request.headers
+			});
 
-		return { success: true, data: result };
-	} catch {
-		return { success: false, errors: 'Failed to save food preferences' };
-	}
+			return { data: result };
+		})(),
+		(e) => new AuthInternalError({ cause: e })
+	);
 }

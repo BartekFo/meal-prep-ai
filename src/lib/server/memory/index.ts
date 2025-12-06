@@ -2,6 +2,8 @@ import { GEMINI_API_KEY } from '$env/static/private';
 import type { User } from '$lib/types/auth';
 import type { MemoryConfig } from 'mem0ai/oss';
 import { Memory } from 'mem0ai/oss';
+import { fromPromise, ok, safeTry, type ResultAsync } from 'neverthrow';
+import { MemoryInternalError, type MemoryError } from '$lib/errors/memory';
 
 if (!GEMINI_API_KEY) {
 	throw new Error('GEMINI_API_KEY is not set');
@@ -39,21 +41,20 @@ const memoryConfig: Partial<MemoryConfig> = {
 
 export const memory = new Memory(memoryConfig);
 
-export async function getRelevantMemories(
+export function getRelevantMemories(
 	userId: string,
 	query: string,
 	limit = 5
-): Promise<string[]> {
-	try {
-		const result = await memory.search(query, {
-			userId,
-			limit
-		});
-		return result.results.map((item) => item.memory);
-	} catch (error) {
-		console.error('Error retrieving memories:', error);
-		return [];
-	}
+): ResultAsync<string[], MemoryError> {
+	return fromPromise(
+		memory
+			.search(query, {
+				userId,
+				limit
+			})
+			.then((result) => result.results.map((item) => item.memory)),
+		(e) => new MemoryInternalError({ cause: e })
+	);
 }
 
 export function formatMemoriesForPrompt(memories: string[]): string {
@@ -63,33 +64,35 @@ export function formatMemoriesForPrompt(memories: string[]): string {
 	return `\n\nRelevant context from previous conversations:\n${memories.map((m, i) => `${i + 1}. ${m}`).join('\n')}`;
 }
 
-export async function saveMemory(
+export function saveMemory(
 	userId: string,
 	content: string,
 	metadata?: Record<string, unknown>
-): Promise<void> {
-	try {
-		const options: { userId: string; metadata?: Record<string, unknown> } = { userId };
-		if (metadata) {
-			options.metadata = metadata;
-		}
-		await memory.add(content, options);
-	} catch (error) {
-		console.error('Error saving memory:', error);
-	}
+): ResultAsync<void, MemoryError> {
+	return fromPromise(
+		(async () => {
+			const options: { userId: string; metadata?: Record<string, unknown> } = { userId };
+			if (metadata) {
+				options.metadata = metadata;
+			}
+			await memory.add(content, options);
+		})(),
+		(e) => new MemoryInternalError({ cause: e })
+	);
 }
 
-export async function seedInitialMemories(user: User): Promise<void> {
-	if (user.onboardingStatus !== 'completed') {
-		return;
-	}
+export function seedInitialMemories(user: User): ResultAsync<void, MemoryError> {
+	return safeTry(async function* () {
+		if (user.onboardingStatus !== 'completed') {
+			return ok(undefined);
+		}
 
-	const preferredMeals =
-		user.preferredMealTypes && Array.isArray(user.preferredMealTypes)
-			? user.preferredMealTypes.join(', ')
-			: 'not specified';
+		const preferredMeals =
+			user.preferredMealTypes && Array.isArray(user.preferredMealTypes)
+				? user.preferredMealTypes.join(', ')
+				: 'not specified';
 
-	const profileSummary = `
+		const profileSummary = `
 User Profile Information:
 - Name: ${user.firstName} ${user.lastName}
 - Date of Birth: ${user.dateOfBirth}
@@ -104,25 +107,21 @@ User Profile Information:
 - Preferred Meal Types: ${preferredMeals}
 `.trim();
 
-	await saveMemory(user.id, profileSummary, { source: 'profile', type: 'user_info' });
+		yield* saveMemory(user.id, profileSummary, { source: 'profile', type: 'user_info' });
+		return ok(undefined);
+	});
 }
 
-export async function getAllMemories(userId: string, limit = 100) {
-	try {
-		const result = await memory.getAll({ userId, limit });
-		return result.results;
-	} catch (error) {
-		console.error('Error fetching all memories:', error);
-		return [];
-	}
+export function getAllMemories(userId: string, limit = 100): ResultAsync<unknown[], MemoryError> {
+	return fromPromise(
+		memory.getAll({ userId, limit }).then((result) => result.results),
+		(e) => new MemoryInternalError({ cause: e })
+	);
 }
 
-export async function deleteMemory(memoryId: string): Promise<boolean> {
-	try {
-		await memory.delete(memoryId);
-		return true;
-	} catch (error) {
-		console.error('Error deleting memory:', error);
-		return false;
-	}
+export function deleteMemory(memoryId: string): ResultAsync<boolean, MemoryError> {
+	return fromPromise(
+		memory.delete(memoryId).then(() => true),
+		(e) => new MemoryInternalError({ cause: e })
+	);
 }
