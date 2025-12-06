@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button';
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import type { ShoppingItem } from '$lib/server/db/schema';
@@ -6,12 +8,10 @@
 
 	interface Props {
 		item: ShoppingItem;
-		onDelete?: ((id: number) => void) | undefined;
 		onPurchase?: ((id: number) => void) | undefined;
-		isLoading?: boolean;
 	}
 
-	const { item, onDelete = undefined, onPurchase = undefined, isLoading = false }: Props = $props();
+	const { item, onPurchase = undefined }: Props = $props();
 
 	let isChecked = $state(false);
 	let isDeleting = $state(false);
@@ -26,7 +26,7 @@
 				onPurchase?.(item.id);
 			}
 		}}
-		disabled={isLoading || isDeleting}
+		disabled={isDeleting}
 	/>
 
 	<div class="flex-1 min-w-0">
@@ -39,17 +39,30 @@
 		</p>
 	</div>
 
-	<Button
-		variant="ghost"
-		size="sm"
-		onclick={() => {
+	<form
+		method="POST"
+		action="?/deleteItem"
+		use:enhance={() => {
 			isDeleting = true;
-			onDelete?.(item.id);
+			return async ({ result, update }) => {
+				await update();
+				if (result.type === 'success') {
+					await invalidateAll();
+				}
+				isDeleting = false;
+			};
 		}}
-		disabled={isLoading || isDeleting}
-		class="text-red-600 hover:text-red-700 hover:bg-red-50"
 	>
-		<Trash2 class="h-4 w-4" />
-		<span class="sr-only">Delete</span>
-	</Button>
+		<input type="hidden" name="id" value={item.id} />
+		<Button
+			type="submit"
+			variant="ghost"
+			size="sm"
+			disabled={isDeleting}
+			class="text-red-600 hover:text-red-700 hover:bg-red-50"
+		>
+			<Trash2 class="h-4 w-4" />
+			<span class="sr-only">Delete</span>
+		</Button>
+	</form>
 </div>

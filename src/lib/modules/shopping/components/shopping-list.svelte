@@ -6,17 +6,10 @@
 
 	interface Props {
 		items: ShoppingItemType[];
-		onDelete?: (id: number) => void;
 		onPurchase?: (id: number) => void;
-		isLoading?: boolean;
 	}
 
-	const {
-		items,
-		onDelete = undefined,
-		onPurchase = undefined,
-		isLoading = false
-	}: Props = $props();
+	const { items, onPurchase = undefined }: Props = $props();
 </script>
 
 <Card>
@@ -33,7 +26,7 @@
 		{:else}
 			<div class="space-y-2">
 				{#each items as item (item.id)}
-					<ShoppingItem {item} {onDelete} {onPurchase} {isLoading} />
+					<ShoppingItem {item} {onPurchase} />
 				{/each}
 			</div>
 		{/if}

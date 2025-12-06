@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button';
 	import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
 	import type { ShoppingItem } from '$lib/server/db/schema';
@@ -10,11 +12,9 @@
 
 	interface Props {
 		items: FridgeItem[];
-		onRemove?: (id: number) => void;
-		isLoading?: boolean;
 	}
 
-	const { items, onRemove, isLoading = false }: Props = $props();
+	const { items }: Props = $props();
 
 	function formatDate(date: Date | null | undefined): string {
 		if (!date) return 'No date';
@@ -93,16 +93,29 @@
 							</p>
 						</div>
 
-						<Button
-							variant="ghost"
-							size="sm"
-							onclick={() => onRemove?.(item.id)}
-							disabled={isLoading}
-							class="text-red-600 hover:text-red-700 hover:bg-red-100 ml-2 flex-shrink-0"
+						<form
+							method="POST"
+							action="?/removeFromFridge"
+							use:enhance={() => {
+								return async ({ result, update }) => {
+									await update();
+									if (result.type === 'success') {
+										await invalidateAll();
+									}
+								};
+							}}
 						>
-							<Trash2 class="h-4 w-4" />
-							<span class="sr-only">Remove from fridge</span>
-						</Button>
+							<input type="hidden" name="id" value={item.id} />
+							<Button
+								type="submit"
+								variant="ghost"
+								size="sm"
+								class="text-red-600 hover:text-red-700 hover:bg-red-100 ml-2 flex-shrink-0"
+							>
+								<Trash2 class="h-4 w-4" />
+								<span class="sr-only">Remove from fridge</span>
+							</Button>
+						</form>
 					</div>
 				{/each}
 			</div>

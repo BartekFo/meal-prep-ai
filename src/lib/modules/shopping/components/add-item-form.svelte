@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button';
 	import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
 	import { Input } from '$lib/components/ui/input';
@@ -6,39 +8,12 @@
 	import { Select, SelectContent, SelectItem, SelectTrigger } from '$lib/components/ui/select';
 	import { Plus } from '@lucide/svelte';
 
-	interface Props {
-		onAddItem?: (item: { name: string; quantity: number; unit: string }) => void;
-		isLoading?: boolean;
-	}
-
-	const { onAddItem, isLoading = false }: Props = $props();
-
 	const units = ['piece', 'kg', 'g', 'l', 'ml', 'serving', 'package', 'liter'];
 
 	let name = $state('');
 	let quantity = $state(1);
 	let unit = $state('piece');
-
-	function handleSubmit(e: SubmitEvent) {
-		e.preventDefault();
-		if (!name.trim()) return;
-
-		onAddItem?.({
-			name: name.trim(),
-			quantity: Math.max(1, quantity),
-			unit
-		});
-
-		name = '';
-		quantity = 1;
-		unit = 'piece';
-	}
-
-	function handleKeydown(e: KeyboardEvent) {
-		if (e.key === 'Enter') {
-			handleSubmit(e as unknown as SubmitEvent);
-		}
-	}
+	let submitting = $state(false);
 </script>
 
 <Card>
@@ -46,15 +21,33 @@
 		<CardTitle>Add Item</CardTitle>
 	</CardHeader>
 	<CardContent>
-		<form onsubmit={handleSubmit} class="space-y-4">
+		<form
+			method="POST"
+			action="?/addItem"
+			use:enhance={() => {
+				submitting = true;
+				return async ({ result, update }) => {
+					await update();
+					if (result.type === 'success') {
+						name = '';
+						quantity = 1;
+						unit = 'piece';
+						await invalidateAll();
+					}
+					submitting = false;
+				};
+			}}
+			class="space-y-4"
+		>
 			<div>
 				<Label for="item-name">Product Name</Label>
 				<Input
 					id="item-name"
+					name="name"
 					bind:value={name}
 					placeholder="e.g. Milk, Pepper, Chicken..."
-					onkeydown={handleKeydown}
-					disabled={isLoading}
+					required
+					disabled={submitting}
 				/>
 			</div>
 
@@ -63,16 +56,17 @@
 					<Label for="item-quantity">Quantity</Label>
 					<Input
 						id="item-quantity"
+						name="quantity"
 						type="number"
 						bind:value={quantity}
 						min="1"
-						disabled={isLoading}
+						disabled={submitting}
 					/>
 				</div>
 
 				<div>
 					<Label for="item-unit">Unit</Label>
-					<Select type="single" bind:value={unit} disabled={isLoading}>
+					<Select type="single" bind:value={unit} disabled={submitting}>
 						<SelectTrigger id="item-unit">
 							{unit}
 						</SelectTrigger>
@@ -82,12 +76,13 @@
 							{/each}
 						</SelectContent>
 					</Select>
+					<input type="hidden" name="unit" value={unit} />
 				</div>
 			</div>
 
-			<Button type="submit" class="w-full" disabled={isLoading || !name.trim()}>
+			<Button type="submit" class="w-full" disabled={submitting || !name.trim()}>
 				<Plus class="mr-2 h-4 w-4" />
-				{isLoading ? 'Adding...' : 'Add'}
+				{submitting ? 'Adding...' : 'Add'}
 			</Button>
 		</form>
 	</CardContent>
