@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { Avatar, AvatarFallback } from '$lib/components/ui/avatar';
 	import { Card } from '$lib/components/ui/card';
+	import { sanitizeMarkdown } from '$lib/utils/markdown';
 	import type { UIMessage } from '@ai-sdk/svelte';
 	import { ChefHat } from '@lucide/svelte';
-	import { marked } from 'marked';
 
 	type Props = {
 		message: UIMessage;
@@ -27,7 +27,8 @@
 			{#each message.parts as part (part)}
 				{#if part.type === 'text'}
 					<p class="text-sm leading-relaxed">
-						{@html marked(part.text, { gfm: true, breaks: true })}
+						<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+						{@html sanitizeMarkdown(part.text)}
 					</p>
 				{/if}
 			{/each}

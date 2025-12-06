@@ -1,4 +1,4 @@
-import { deleteMemory } from '$lib/server/memory';
+import { deleteMemory, getAllMemories } from '$lib/server/memory';
 import { json } from '@sveltejs/kit';
 
 export async function DELETE({ params, locals }) {
@@ -10,6 +10,21 @@ export async function DELETE({ params, locals }) {
 
 	if (!id) {
 		return json({ error: 'Memory ID is required' }, { status: 400 });
+	}
+
+	// Verify ownership before deletion
+	const memoriesResult = await getAllMemories(locals.user.id);
+
+	if (memoriesResult.isErr()) {
+		return json({ error: 'Failed to fetch memories' }, { status: 500 });
+	}
+
+	const memoryExists = memoriesResult.value.some(
+		(m: { id: string; memory: string }) => m.id === id
+	);
+
+	if (!memoryExists) {
+		return json({ error: 'Memory not found' }, { status: 404 });
 	}
 
 	const result = await deleteMemory(id);

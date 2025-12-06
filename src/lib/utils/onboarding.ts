@@ -27,13 +27,19 @@ export function isAuthRoute(pathname: string): boolean {
 }
 
 export function isAllowedRoute(pathname: string): boolean {
-	const allowedRoutes = ['/onboarding', '/onboarding/preferences', '/api', '/login', '/sign-up'];
+	const allowedRoutes = ['/onboarding', '/onboarding/preferences', '/login', '/sign-up'];
 
 	return allowedRoutes.some((route) => pathname.startsWith(route));
 }
 
 export function isPublicRoute(pathname: string): boolean {
-	const publicRoutes = ['/login', '/sign-up', '/api'];
+	const publicRoutes = ['/login', '/sign-up'];
+	// Explicitly list public API routes if needed in the future
+	const publicApiRoutes: string[] = [];
 
-	return pathname === '/' || publicRoutes.some((route) => pathname.startsWith(route));
+	return (
+		pathname === '/' ||
+		publicRoutes.some((route) => pathname.startsWith(route)) ||
+		publicApiRoutes.includes(pathname)
+	);
 }

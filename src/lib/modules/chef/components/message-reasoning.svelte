@@ -1,8 +1,7 @@
 <script lang="ts">
-	/* eslint svelte/no-at-html-tags: "warn" */
 	import { getLock } from '$lib/hooks/lock';
+	import { sanitizeMarkdown } from '$lib/utils/markdown';
 	import { ChevronDown, LoaderCircle } from '@lucide/svelte';
-	import { marked } from 'marked';
 	import { tick } from 'svelte';
 	import { cubicInOut } from 'svelte/easing';
 	import { slide } from 'svelte/transition';
@@ -55,7 +54,8 @@
 			class="mt-4 mb-2 flex flex-col gap-4 border-l pl-4 text-zinc-600 dark:text-zinc-400"
 		>
 			<p class="text-sm leading-relaxed">
-				{@html marked(reasoning, { gfm: true, breaks: true })}
+				<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+				{@html sanitizeMarkdown(reasoning)}
 			</p>
 		</div>
 	{/if}
