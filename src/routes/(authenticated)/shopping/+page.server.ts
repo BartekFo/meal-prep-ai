@@ -1,21 +1,16 @@
-import { fail, redirect } from '@sveltejs/kit';
-import { superValidate } from 'sveltekit-superforms';
-import { arktype } from 'sveltekit-superforms/adapters';
 import {
 	addShoppingItem,
-	getShoppingList,
-	getFridgeItemsWithExpiry,
 	deleteShoppingItem,
+	getFridgeItemsWithExpiry,
+	getShoppingList,
 	markAsPurchased
 } from '$lib/modules/shopping';
 import { ShoppingItemFormSchema } from '$lib/modules/shopping/schema';
-import type { PageServerLoad, Actions } from './$types';
+import { fail, redirect } from '@sveltejs/kit';
+import { superValidate } from 'sveltekit-superforms';
+import { zod4 } from 'sveltekit-superforms/adapters';
 
-const defaults = {
-	name: '',
-	quantity: 1,
-	unit: 'piece' as const
-};
+import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (!locals.user) {
@@ -25,7 +20,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	const [shoppingItems, fridgeItems, form] = await Promise.all([
 		getShoppingList(locals.user.id),
 		getFridgeItemsWithExpiry(locals.user.id),
-		superValidate(arktype(ShoppingItemFormSchema, { defaults }))
+		superValidate(zod4(ShoppingItemFormSchema))
 	]);
 
 	return {
@@ -41,7 +36,7 @@ export const actions: Actions = {
 			return fail(401, { error: 'Unauthorized' });
 		}
 
-		const form = await superValidate(request, arktype(ShoppingItemFormSchema, { defaults }));
+		const form = await superValidate(request, zod4(ShoppingItemFormSchema));
 
 		if (!form.valid) {
 			return fail(400, { form });

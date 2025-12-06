@@ -5,13 +5,15 @@ import { formatMemoriesForPrompt, getRelevantMemories } from '$lib/server/memory
 import type { RecipeToolOutput } from '../types';
 import { recipeSchema } from './schemas';
 
+const generateRecipeInputSchema = z.object({
+	request: z.string().describe("User's recipe request")
+});
+
 export function createGenerateRecipeTool(userId: string) {
 	return tool({
 		description:
 			"Generate a complete recipe based on user requirements. When called, this tool will generate and display the recipe in a structured card format. Do not provide a text description of the recipe - the tool output will be displayed automatically. Just call this tool with the user's recipe request.",
-		inputSchema: z.object({
-			request: z.string().describe("User's recipe request")
-		}),
+		inputSchema: generateRecipeInputSchema,
 		execute: async ({ request }): Promise<RecipeToolOutput> => {
 			const relevantMemories = await getRelevantMemories(userId, request, 5);
 			const memoryContext = formatMemoriesForPrompt(relevantMemories);

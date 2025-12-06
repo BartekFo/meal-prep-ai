@@ -5,7 +5,7 @@ import { getFridgeItemsWithExpiry } from '$lib/modules/shopping';
 export function createFridgeContentsTool(userId: string) {
 	return tool({
 		description: 'Get contents of user fridge to suggest recipes based on available ingredients',
-		inputSchema: z.object({}),
+		inputSchema: z.object({}).describe('No input parameters required'),
 		execute: async () => {
 			try {
 				const items = await getFridgeItemsWithExpiry(userId);

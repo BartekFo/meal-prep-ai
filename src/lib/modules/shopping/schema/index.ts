@@ -1,9 +1,9 @@
-import { type } from 'arktype';
+import { z } from 'zod';
 
-export const ShoppingItemFormSchema = type({
-	name: 'string >= 1',
-	quantity: 'number >= 1',
-	unit: "'piece' | 'kg' | 'g' | 'l' | 'ml' | 'serving' | 'package' | 'liter'"
+export const ShoppingItemFormSchema = z.object({
+	name: z.string().min(1),
+	quantity: z.number().min(1),
+	unit: z.enum(['piece', 'kg', 'g', 'l', 'ml', 'serving', 'package', 'liter'])
 });
 
-export type IShoppingItemFormValues = typeof ShoppingItemFormSchema.infer;
+export type IShoppingItemFormValues = z.infer<typeof ShoppingItemFormSchema>;

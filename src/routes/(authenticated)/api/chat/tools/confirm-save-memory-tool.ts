@@ -2,14 +2,16 @@ import { saveMemory } from '$lib/server/memory';
 import { tool } from 'ai';
 import z from 'zod';
 
+const confirmSaveMemoryInputSchema = z.object({
+	content: z.string().describe('The memory content to save'),
+	context: z.string().describe('The context/reason for this memory')
+});
+
 export function createConfirmSaveMemoryTool(userId: string) {
 	return tool({
 		description:
 			"Confirm saving a proposed memory to the user's memory store. Call this tool when the user confirms they want to save the proposed memory.",
-		inputSchema: z.object({
-			content: z.string().describe('The memory content to save'),
-			context: z.string().describe('The context/reason for this memory')
-		}),
+		inputSchema: confirmSaveMemoryInputSchema,
 		execute: async ({ content, context }) => {
 			try {
 				await saveMemory(userId, content, {

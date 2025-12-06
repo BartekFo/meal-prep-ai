@@ -1,12 +1,12 @@
-import { fail, redirect } from '@sveltejs/kit';
-import { superValidate } from 'sveltekit-superforms';
-import { arktype } from 'sveltekit-superforms/adapters';
 import { foodPreferencesSchema } from '$lib/modules/onboarding/schema/food-preferences';
 import {
 	canAccessPreferences,
 	loadFoodPreferencesData,
 	saveFoodPreferences
 } from '$lib/modules/onboarding/server';
+import { fail, redirect } from '@sveltejs/kit';
+import { superValidate } from 'sveltekit-superforms';
+import { zod4 } from 'sveltekit-superforms/adapters';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -19,13 +19,13 @@ export const load: PageServerLoad = async ({ locals }) => {
 	const initialData = loadFoodPreferencesData(user);
 
 	return {
-		form: await superValidate(initialData, arktype(foodPreferencesSchema))
+		form: await superValidate(initialData, zod4(foodPreferencesSchema))
 	};
 };
 
 export const actions: Actions = {
 	default: async ({ request }) => {
-		const form = await superValidate(request, arktype(foodPreferencesSchema));
+		const form = await superValidate(request, zod4(foodPreferencesSchema));
 
 		if (!form.valid) {
 			return fail(400, {

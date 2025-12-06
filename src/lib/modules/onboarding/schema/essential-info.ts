@@ -1,15 +1,15 @@
-import { type } from 'arktype';
+import { z } from 'zod';
 
-export const essentialInfoSchema = type({
-	firstName: 'string>0',
-	lastName: 'string>0',
-	allergies: 'string',
-	weightGoal: '"lose"|"maintain"|"gain"',
-	dateOfBirth: 'string>0',
-	gender: 'string>0',
-	activityLevel: 'string>0',
-	currentWeight: 'number>0',
-	height: 'number>0'
+export const essentialInfoSchema = z.object({
+	firstName: z.string().min(1),
+	lastName: z.string().min(1),
+	allergies: z.string(),
+	weightGoal: z.enum(['lose', 'maintain', 'gain']),
+	dateOfBirth: z.string().min(1),
+	gender: z.string().min(1),
+	activityLevel: z.string().min(1),
+	currentWeight: z.number().min(0),
+	height: z.number().min(0)
 });
 
-export type EssentialInfo = typeof essentialInfoSchema.infer;
+export type EssentialInfo = z.infer<typeof essentialInfoSchema>;

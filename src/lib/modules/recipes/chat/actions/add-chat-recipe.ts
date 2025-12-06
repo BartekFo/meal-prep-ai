@@ -1,33 +1,35 @@
 import { createRecipeRecord, type NewRecipe } from '$lib/modules/recipes/new/db/queries';
-import { type } from 'arktype';
 import { errAsync, ResultAsync } from 'neverthrow';
+import { z } from 'zod';
 import type { RecipeToolOutput } from '../types';
 
-const RecipeToolOutputSchema = type({
-	title: 'string >= 3',
-	description: 'string | undefined',
-	ingredients: 'string[] > 0',
-	servings: 'number >= 1',
-	prepTime: 'number >= 1',
-	cookTime: 'number >= 1',
-	mealType: "'breakfast' | 'lunch' | 'dinner' | 'snack'",
-	instructions: 'string[] > 0',
-	calories: 'number >= 1',
-	protein: 'number >= 1',
-	carbs: 'number >= 1',
-	fat: 'number >= 1'
+const RecipeToolOutputSchema = z.object({
+	title: z.string().min(3),
+	description: z.string().optional(),
+	ingredients: z.array(z.string()).min(1),
+	servings: z.number().int().min(1),
+	prepTime: z.number().int().min(1),
+	cookTime: z.number().int().min(1),
+	mealType: z.enum(['breakfast', 'lunch', 'dinner', 'snack']),
+	instructions: z.array(z.string()).min(1),
+	calories: z.number().int().min(1),
+	protein: z.number().int().min(1),
+	carbs: z.number().int().min(1),
+	fat: z.number().int().min(1)
 });
 
 export function addChatRecipe(recipe: RecipeToolOutput, userId: string): ResultAsync<void, Error> {
-	const validationResult = RecipeToolOutputSchema(recipe);
+	const validationResult = RecipeToolOutputSchema.safeParse(recipe);
 
-	if (validationResult instanceof type.errors) {
+	if (!validationResult.success) {
 		return errAsync(
-			new Error(`Invalid recipe data: ${validationResult.summary ?? 'Validation failed'}`)
+			new Error(
+				`Invalid recipe data: ${validationResult.error.errors.map((e) => e.message).join(', ')}`
+			)
 		);
 	}
 
-	const validatedRecipe = validationResult;
+	const validatedRecipe = validationResult.data;
 
 	const newRecipe: NewRecipe = {
 		userId,
