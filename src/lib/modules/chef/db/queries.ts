@@ -75,11 +75,20 @@ export function saveChat({
 	});
 }
 
-export function deleteChatById({ id }: { id: string }): ResultAsync<undefined, DbError> {
+export function deleteChatById({
+	id,
+	userId
+}: {
+	id: string;
+	userId: string;
+}): ResultAsync<undefined, DbError> {
 	return safeTry(async function* () {
+		// First verify ownership
+		yield* getChatById({ id, userId });
+
 		const actions = [
 			() => db.delete(message).where(eq(message.chatId, id)),
-			() => db.delete(chat).where(eq(chat.id, id))
+			() => db.delete(chat).where(and(eq(chat.id, id), eq(chat.userId, userId)))
 		];
 
 		for (const action of actions) {

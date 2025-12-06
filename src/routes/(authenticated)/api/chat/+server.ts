@@ -144,10 +144,13 @@ export async function DELETE({ locals, request }) {
 
 	const { id } = await request.json();
 
-	const deleted = await deleteChatById({ id });
+	const deleted = await deleteChatById({ id, userId: locals.user.id });
 
-	if (!deleted) {
-		return json({ error: 'Chat not found' }, { status: 404 });
+	if (deleted.isErr()) {
+		if (deleted.error._tag === 'DbEntityNotFoundError') {
+			return json({ error: 'Chat not found' }, { status: 404 });
+		}
+		return json({ error: 'Internal error' }, { status: 500 });
 	}
 
 	return json({ success: true });
