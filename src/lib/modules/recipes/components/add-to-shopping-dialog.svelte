@@ -12,6 +12,7 @@
 	} from '$lib/components/ui/dialog';
 	import { Label } from '$lib/components/ui/label';
 	import { ShoppingCart } from '@lucide/svelte';
+	import IngredientCheckbox from './ingredient-checkbox.svelte';
 
 	interface Props {
 		ingredients: string[];
@@ -22,37 +23,36 @@
 	const { ingredients, onAdd, isLoading = false }: Props = $props();
 
 	let open = $state(false);
-	let selectedIngredients = $state(new Map<number, boolean>());
+	let selectedIngredients = $state<boolean[]>([]);
 
-	function toggleIngredient(index: number) {
-		const current = selectedIngredients.get(index) ?? false;
-		selectedIngredients.set(index, !current);
-		selectedIngredients = selectedIngredients;
+	$effect(() => {
+		if (open && selectedIngredients.length !== ingredients.length) {
+			selectedIngredients = new Array(ingredients.length).fill(false);
+		}
+	});
+
+	function handleIngredientChange(index: number, selected: boolean) {
+		selectedIngredients[index] = selected;
+		selectedIngredients = [...selectedIngredients];
 	}
 
 	function handleSelectAll() {
-		const allSelected = ingredients.every((_, i) => selectedIngredients.get(i) ?? false);
-		ingredients.forEach((_, i) => {
-			selectedIngredients.set(i, !allSelected);
-		});
-		selectedIngredients = selectedIngredients;
+		const allSelected = selectedIngredients.every((checked) => checked);
+		selectedIngredients = selectedIngredients.map(() => !allSelected);
 	}
 
 	function handleAdd() {
-		const selected = ingredients.filter((_, i) => selectedIngredients.get(i) ?? false);
+		const selected = ingredients.filter((_, i) => selectedIngredients[i]);
 		if (selected.length > 0) {
 			onAdd?.(selected);
-			selectedIngredients.clear();
-			selectedIngredients = selectedIngredients;
+			selectedIngredients = new Array(ingredients.length).fill(false);
 			open = false;
 		}
 	}
 
-	const areAllSelected = $derived(
-		ingredients.length > 0 && ingredients.every((_, i) => selectedIngredients.get(i) ?? false)
-	);
-	const selectedCount = $derived(
-		ingredients.filter((_, i) => selectedIngredients.get(i) ?? false).length
+	const selectedCount = $derived(selectedIngredients.filter((selected) => selected).length);
+	const selectAllChecked = $derived(
+		ingredients.length > 0 && selectedIngredients.every((checked) => checked)
 	);
 </script>
 
@@ -73,25 +73,31 @@
 
 		<div class="space-y-4">
 			<div class="flex items-center gap-2 p-2 border-b">
-				<Checkbox checked={areAllSelected} onchange={handleSelectAll} disabled={isLoading} />
-				<Label class="cursor-pointer flex-1">Select All</Label>
+				<Label
+					class="flex items-center gap-2 cursor-pointer flex-1"
+					onclick={() => {
+						if (!isLoading) {
+							handleSelectAll();
+						}
+					}}
+				>
+					<Checkbox checked={selectAllChecked} disabled={isLoading} />
+					<span>Select All</span>
+				</Label>
 				{#if selectedCount > 0}
 					<span class="text-sm text-gray-600">({selectedCount})</span>
 				{/if}
 			</div>
 
 			<div class="max-h-64 space-y-2 overflow-y-auto">
-				{#each ingredients as ingredient, i (i)}
-					<div class="flex items-start gap-2">
-						<Checkbox
-							checked={selectedIngredients.get(i) ?? false}
-							onchange={() => toggleIngredient(i)}
-							disabled={isLoading}
-						/>
-						<Label class="cursor-pointer flex-1 pt-1 text-sm">
-							{ingredient}
-						</Label>
-					</div>
+				{#each ingredients as ingredient, i (ingredient)}
+					<IngredientCheckbox
+						{ingredient}
+						index={i}
+						selected={selectedIngredients[i] ?? false}
+						onSelectionChange={handleIngredientChange}
+						disabled={isLoading}
+					/>
 				{/each}
 			</div>
 		</div>
