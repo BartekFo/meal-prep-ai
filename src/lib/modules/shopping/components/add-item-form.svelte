@@ -1,19 +1,36 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button';
 	import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
+	import * as Form from '$lib/components/ui/form/index';
 	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
-	import { Select, SelectContent, SelectItem, SelectTrigger } from '$lib/components/ui/select';
+	import * as Select from '$lib/components/ui/select/index';
 	import { Plus } from '@lucide/svelte';
+	import type { SuperValidated } from 'sveltekit-superforms';
+	import { superForm } from 'sveltekit-superforms';
+	import type { IShoppingItemFormValues } from '../schema';
 
-	const units = ['piece', 'kg', 'g', 'l', 'ml', 'serving', 'package', 'liter'];
+	const units = ['piece', 'kg', 'g', 'l', 'ml', 'serving', 'package', 'liter'] as const;
 
-	let name = $state('');
-	let quantity = $state(1);
-	let unit = $state('piece');
-	let submitting = $state(false);
+	type Props = {
+		data: {
+			form: SuperValidated<IShoppingItemFormValues>;
+		};
+	};
+
+	const { data }: Props = $props();
+
+	const form = superForm(data.form, {
+		resetForm: true,
+		taintedMessage: false,
+		onUpdated: async ({ form: updatedForm }) => {
+			if (updatedForm.valid) {
+				await invalidateAll();
+			}
+		}
+	});
+
+	const { message, submitting, enhance, form: formData } = form;
 </script>
 
 <Card>
@@ -21,68 +38,76 @@
 		<CardTitle>Add Item</CardTitle>
 	</CardHeader>
 	<CardContent>
-		<form
-			method="POST"
-			action="?/addItem"
-			use:enhance={() => {
-				submitting = true;
-				return async ({ result, update }) => {
-					await update();
-					if (result.type === 'success') {
-						name = '';
-						quantity = 1;
-						unit = 'piece';
-						await invalidateAll();
-					}
-					submitting = false;
-				};
-			}}
-			class="space-y-4"
-		>
-			<div>
-				<Label for="item-name">Product Name</Label>
-				<Input
-					id="item-name"
-					name="name"
-					bind:value={name}
-					placeholder="e.g. Milk, Pepper, Chicken..."
-					required
-					disabled={submitting}
-				/>
-			</div>
+		<form method="POST" action="?/addItem" use:enhance class="space-y-4">
+			{#if $message}
+				<div class="rounded-md border border-green-500 bg-green-50 p-4 text-green-700">
+					{$message}
+				</div>
+			{/if}
+
+			<Form.Field {form} name="name">
+				<Form.Control>
+					{#snippet children({ props })}
+						<div class="space-y-2">
+							<Form.Label>Product Name</Form.Label>
+							<Input
+								{...props}
+								bind:value={$formData.name}
+								placeholder="e.g. Milk, Pepper, Chicken..."
+								required
+								disabled={$submitting}
+							/>
+						</div>
+					{/snippet}
+				</Form.Control>
+				<Form.FieldErrors />
+			</Form.Field>
 
 			<div class="grid grid-cols-2 gap-4">
-				<div>
-					<Label for="item-quantity">Quantity</Label>
-					<Input
-						id="item-quantity"
-						name="quantity"
-						type="number"
-						bind:value={quantity}
-						min="1"
-						disabled={submitting}
-					/>
-				</div>
+				<Form.Field {form} name="quantity">
+					<Form.Control>
+						{#snippet children({ props })}
+							<div class="space-y-2">
+								<Form.Label>Quantity</Form.Label>
+								<Input
+									{...props}
+									bind:value={$formData.quantity}
+									type="number"
+									min="1"
+									required
+									disabled={$submitting}
+								/>
+							</div>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
 
-				<div>
-					<Label for="item-unit">Unit</Label>
-					<Select type="single" bind:value={unit} disabled={submitting}>
-						<SelectTrigger id="item-unit">
-							{unit}
-						</SelectTrigger>
-						<SelectContent>
-							{#each units as u (u)}
-								<SelectItem value={u}>{u}</SelectItem>
-							{/each}
-						</SelectContent>
-					</Select>
-					<input type="hidden" name="unit" value={unit} />
-				</div>
+				<Form.Field {form} name="unit">
+					<Form.Control>
+						{#snippet children({ props })}
+							<div class="space-y-2">
+								<Form.Label>Unit</Form.Label>
+								<Select.Root type="single" bind:value={$formData.unit} disabled={$submitting}>
+									<Select.Trigger class="w-full" {...props}>
+										{$formData.unit ?? 'Select unit'}
+									</Select.Trigger>
+									<Select.Content>
+										{#each units as u (u)}
+											<Select.Item value={u}>{u}</Select.Item>
+										{/each}
+									</Select.Content>
+								</Select.Root>
+							</div>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
 			</div>
 
-			<Button type="submit" class="w-full" disabled={submitting || !name.trim()}>
+			<Button type="submit" class="w-full" disabled={$submitting || !$formData.name.trim()}>
 				<Plus class="mr-2 h-4 w-4" />
-				{submitting ? 'Adding...' : 'Add'}
+				{$submitting ? 'Adding...' : 'Add'}
 			</Button>
 		</form>
 	</CardContent>

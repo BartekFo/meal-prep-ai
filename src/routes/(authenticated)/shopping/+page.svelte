@@ -45,7 +45,7 @@
 	<ShoppingHeader />
 	<div class="grid gap-8 lg:grid-cols-3">
 		<div class="lg:col-span-2 space-y-8">
-			<AddItemForm />
+			<AddItemForm data={{ form: data.form }} />
 			<ShoppingList items={data.shoppingItems} onPurchase={handlePurchaseItem} />
 		</div>
 

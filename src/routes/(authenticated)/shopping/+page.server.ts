@@ -1,4 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
+import { superValidate } from 'sveltekit-superforms';
+import { arktype } from 'sveltekit-superforms/adapters';
 import {
 	addShoppingItem,
 	getShoppingList,
@@ -6,21 +8,30 @@ import {
 	deleteShoppingItem,
 	markAsPurchased
 } from '$lib/modules/shopping';
+import { ShoppingItemFormSchema } from '$lib/modules/shopping/schema';
 import type { PageServerLoad, Actions } from './$types';
+
+const defaults = {
+	name: '',
+	quantity: 1,
+	unit: 'piece' as const
+};
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (!locals.user) {
 		redirect(302, '/login');
 	}
 
-	const [shoppingItems, fridgeItems] = await Promise.all([
+	const [shoppingItems, fridgeItems, form] = await Promise.all([
 		getShoppingList(locals.user.id),
-		getFridgeItemsWithExpiry(locals.user.id)
+		getFridgeItemsWithExpiry(locals.user.id),
+		superValidate(arktype(ShoppingItemFormSchema, { defaults }))
 	]);
 
 	return {
 		shoppingItems,
-		fridgeItems
+		fridgeItems,
+		form
 	};
 };
 
@@ -30,23 +41,18 @@ export const actions: Actions = {
 			return fail(401, { error: 'Unauthorized' });
 		}
 
-		const formData = await request.formData();
-		const name = formData.get('name')?.toString();
-		const quantityStr = formData.get('quantity')?.toString();
-		const unit = formData.get('unit')?.toString() || 'szt';
+		const form = await superValidate(request, arktype(ShoppingItemFormSchema, { defaults }));
 
-		if (!name || !quantityStr) {
-			return fail(400, { error: 'Missing required fields' });
+		if (!form.valid) {
+			return fail(400, { form });
 		}
 
-		const quantity = parseInt(quantityStr) || 1;
-
 		try {
-			await addShoppingItem(locals.user.id, name, quantity, unit);
-			return { success: true };
+			await addShoppingItem(locals.user.id, form.data.name, form.data.quantity, form.data.unit);
+			return { form };
 		} catch (error) {
 			console.error('Error adding item:', error);
-			return fail(500, { error: 'Failed to add item' });
+			return fail(500, { form, error: 'Failed to add item' });
 		}
 	},
 
