@@ -1,7 +1,7 @@
-import { generateObject, tool } from 'ai';
-import z from 'zod';
 import { google } from '$lib/modules/chef/google';
 import { formatMemoriesForPrompt, getRelevantMemories } from '$lib/server/memory';
+import { generateObject, tool } from 'ai';
+import z from 'zod';
 import type { RecipeToolOutput } from '../types';
 import { recipeSchema } from './schemas';
 
@@ -15,7 +15,8 @@ export function createGenerateRecipeTool(userId: string) {
 			"Generate a complete recipe based on user requirements. When called, this tool will generate and display the recipe in a structured card format. Do not provide a text description of the recipe - the tool output will be displayed automatically. Just call this tool with the user's recipe request.",
 		inputSchema: generateRecipeInputSchema,
 		execute: async ({ request }): Promise<RecipeToolOutput> => {
-			const relevantMemories = await getRelevantMemories(userId, request, 5);
+			const relevantMemoriesResult = await getRelevantMemories(userId, request, 5);
+			const relevantMemories = relevantMemoriesResult.isOk() ? relevantMemoriesResult.value : [];
 			const memoryContext = formatMemoriesForPrompt(relevantMemories);
 
 			const prompt = `Generate a complete recipe based on this request: "${request}".${memoryContext}

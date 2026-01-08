@@ -1,8 +1,8 @@
-import { tool } from 'ai';
-import z from 'zod';
 import { getAllRecipes } from '$lib/modules/recipes/db/queries';
 import type { RecipeFilters } from '$lib/modules/recipes/types';
 import type { User } from '$lib/types/auth';
+import { tool } from 'ai';
+import z from 'zod';
 
 const recipesToolInputSchema = z.object({
 	search: z.string().optional().describe('Search term to filter recipes by title'),
@@ -40,7 +40,17 @@ export function createRecipesTool(user: User) {
 				filters.sort = sort;
 			}
 
-			const recipes = await getAllRecipes(user.id, filters);
+			const recipesResult = await getAllRecipes(user.id, filters);
+
+			if (recipesResult.isErr()) {
+				return {
+					error: 'Failed to fetch recipes',
+					recipes: [],
+					count: 0
+				};
+			}
+
+			const recipes = recipesResult.value;
 
 			return {
 				recipes,

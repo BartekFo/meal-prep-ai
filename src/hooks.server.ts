@@ -1,9 +1,8 @@
-import { redirect } from '@sveltejs/kit';
-import { svelteKitHandler } from 'better-auth/svelte-kit';
 import { building } from '$app/environment';
 import { auth } from '$lib/auth';
-import type { OnboardingStatus } from '$lib/types/onboarding';
-import { getOnboardingRedirectPath, isAllowedRoute, isPublicRoute } from '$lib/utils/onboarding';
+import { isPublicRoute } from '$lib/utils/onboarding';
+import { redirect } from '@sveltejs/kit';
+import { svelteKitHandler } from 'better-auth/svelte-kit';
 
 export async function handle({ event, resolve }) {
 	const session = await auth.api.getSession({
@@ -15,20 +14,7 @@ export async function handle({ event, resolve }) {
 	if (session) {
 		event.locals.session = session.session;
 		event.locals.user = session.user;
-
-		// Handle onboarding redirect logic for authenticated users
-		const user = session.user;
-		const onboardingStatus = user.onboardingStatus as OnboardingStatus;
-
-		// Skip redirect for allowed routes
-		if (!isAllowedRoute(pathname)) {
-			const redirectPath = getOnboardingRedirectPath(onboardingStatus);
-			if (redirectPath && redirectPath !== pathname) {
-				throw redirect(302, redirectPath);
-			}
-		}
 	} else {
-		// No session - redirect to login if trying to access protected routes
 		if (!isPublicRoute(pathname)) {
 			throw redirect(302, '/login');
 		}

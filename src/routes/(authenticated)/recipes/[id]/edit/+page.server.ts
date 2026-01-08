@@ -26,10 +26,12 @@ export const load: ServerLoad = async ({ params, request }) => {
 		throw error(404, 'Recipe not found');
 	}
 
-	const existingRecipe = await getRecipeById(recipeId, session.user.id);
-	if (!existingRecipe) {
+	const existingRecipeResult = await getRecipeById(recipeId, session.user.id);
+	if (existingRecipeResult.isErr()) {
 		throw error(404, 'Recipe not found');
 	}
+
+	const existingRecipe = existingRecipeResult.value;
 
 	const recipeData = {
 		...existingRecipe,
